@@ -1,0 +1,76 @@
+/*
+** D&GINE Project, 2026
+** Backend
+** File description:
+** auth/login.go
+ */
+
+package auth
+
+import (
+	"database/sql"
+	"net/http"
+
+	"api-web/src/database"
+	"api-web/src/internal/structs"
+
+	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
+)
+
+type Creds struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+// Param email body string true "Email of the dedicated user"
+// Param password body string true "Password of the corresponding user"
+
+// @BasePath /api/auth/login
+// Auth godoc
+// @Summary Connection of a user
+// @Schemes
+// @Description Connection of a user <br>Token will be set in cookies if the arguments combination is valid
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param creds body Creds true "Email + Password combination of the corresponding user"
+// @Success 200 {object} structs.PostLoginResponse
+// @Router /api/auth/login [post]
+func Login(c *gin.Context) {
+	var creds Creds
+
+	// Body Json parsing
+	err := c.ShouldBindJSON(&creds)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	// Checking db if email + password combination matches
+	var id, email, username, role, hashedPassword sql.NullString
+	err = database.Db.QueryRow("SELECT id, email, name, role, password FROM accounts.users WHERE email=$1", creds.Email).Scan(&id, &email, &username, &role, &hashedPassword)
+	if err == sql.ErrNoRows {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
+		return
+	} else if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		return
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword.String), []byte(creds.Password))
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
+		return
+	}
+
+	// Generating token
+	var result structs.PostLoginResponse
+	result.Id = id.String
+	result.Token, err = BuildToken(c, UserData{id.String, email.String, username.String, role.String})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+	} else {
+		c.JSON(http.StatusOK, result)
+	}
+}

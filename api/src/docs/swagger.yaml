@@ -1,0 +1,214 @@
+definitions:
+  auth.Creds:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  auth.OauthArgs:
+    properties:
+      code:
+        type: string
+      service_name:
+        type: string
+    type: object
+  auth.RegisterArgs:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  endpoints.About:
+    properties:
+      status:
+        type: string
+    type: object
+  structs.PostLoginResponse:
+    properties:
+      id:
+        type: string
+      token:
+        type: string
+    type: object
+  structs.PostResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  user.UpdateArgs:
+    properties:
+      email:
+        type: string
+      username:
+        type: string
+    type: object
+  user.UserReadResponse:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      role:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /about.json:
+    get:
+      consumes:
+      - application/json
+      description: Gives informations about api
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/endpoints.About'
+      summary: Gives informations about api
+      tags:
+      - about.json
+  /api/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Connection of a user <br>Token will be set in cookies if the arguments
+        combination is valid
+      parameters:
+      - description: Email + Password combination of the corresponding user
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/auth.Creds'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structs.PostLoginResponse'
+      summary: Connection of a user
+      tags:
+      - auth
+  /api/auth/logout:
+    put:
+      description: Disconnection of the user <br>The token in the Cookies will be
+        deleted after this route has been called
+      responses:
+        "200":
+          description: OK
+      summary: Disconnection of the user
+      tags:
+      - auth
+  /api/auth/oauth:
+    post:
+      consumes:
+      - application/json
+      description: Connection of a user using an OAuth <br>Token will be set in cookies
+        if the arguments combination is valid
+      parameters:
+      - description: Code + Service combination of the corresponding OAuth
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/auth.OauthArgs'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structs.PostResponse'
+      summary: Connection of a user
+      tags:
+      - auth
+  /api/auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Creation and connection of a new user <br>Token will be set in
+        cookies if the arguments combination is valid
+      parameters:
+      - description: User related informations that will be later needed for the login
+          process
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/auth.RegisterArgs'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structs.PostLoginResponse'
+      summary: Creation and connection of a new user
+      tags:
+      - auth
+  /api/health:
+    get:
+      description: Healthcheck used (mainly by docker) to check if the api is up and
+        ready to respond
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Healthcheck for the api
+      tags:
+      - health
+  /api/user:
+    delete:
+      description: Deletes the actual user <br> <b>Careful, there is no turn back
+        or check, once called, this route will delete the user no matter what</b>
+        <br> It also deletes all content related to the user <br><br><b>⚠️ The user
+        must be logged in<b>
+      responses:
+        "200":
+          description: OK
+      summary: Deletes the actual user
+      tags:
+      - user
+    get:
+      description: Reads the actual user data <br><br><b>⚠️ The user must be logged
+        in<b>
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.UserReadResponse'
+      summary: Reads the actual user data
+      tags:
+      - user
+    put:
+      consumes:
+      - application/json
+      description: Updates the actual user <br><br><b>⚠️ The user must be logged in<b>
+      parameters:
+      - description: New arguments to be set in the user
+        in: body
+        name: id
+        required: true
+        schema:
+          $ref: '#/definitions/user.UpdateArgs'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structs.PostLoginResponse'
+      summary: Updates the actual user
+      tags:
+      - user
+swagger: "2.0"

@@ -1,0 +1,23 @@
+services:
+  dengine-api:
+    container_name: dengine-api
+    build: ./api
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PWD=${DB_PWD}
+      - GIN_MODE=${GIN_MODE}
+      - API_PORT=${API_PORT}
+      - TOKEN_KEY=${TOKEN_KEY}
+
+    ports:
+      - "${API_PORT}:${API_PORT}"
+    networks:
+      - database_network
+
+networks:
+  database_network:
+    external: true
+    name: database_back
