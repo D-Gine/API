@@ -8,9 +8,9 @@
 package user
 
 import (
-	"api-web/src/controllers/auth"
-	"api-web/src/database"
-	"api-web/src/internal/structs"
+	"api/src/controllers/auth"
+	"api/src/database"
+	"api/src/internal/structs"
 	"database/sql"
 	"net/http"
 

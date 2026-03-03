@@ -8,7 +8,7 @@
 package user
 
 import (
-	"api-web/src/controllers/auth"
+	"api/src/controllers/auth"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

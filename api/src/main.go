@@ -8,12 +8,12 @@
 package main
 
 import (
-	"api-web/src/controllers/auth"
-	"api-web/src/controllers/user"
-	"api-web/src/database"
-	_ "api-web/src/docs"
-	"api-web/src/internal/domains"
-	"api-web/src/internal/endpoints"
+	"api/src/controllers/auth"
+	"api/src/controllers/user"
+	"api/src/database"
+	_ "api/src/docs"
+	"api/src/internal/domains"
+	"api/src/internal/endpoints"
 	"fmt"
 	"net/http"
 	"os"
@@ -60,7 +60,7 @@ func main() {
 		{
 			authGroup.POST("/login", auth.Login)
 			authGroup.POST("/register", auth.Register)
-			authGroup.PUT("/logout", auth.Logout)
+			authGroup.POST("/logout", auth.Logout)
 			authGroup.POST("/oauth", auth.OAuthLogin)
 		}
 

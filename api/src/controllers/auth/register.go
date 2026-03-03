@@ -11,8 +11,8 @@ import (
 	"database/sql"
 	"net/http"
 
-	"api-web/src/database"
-	"api-web/src/internal/structs"
+	"api/src/database"
+	"api/src/internal/structs"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -68,7 +68,7 @@ func Register(c *gin.Context) {
 
 	// Inserting new user into db
 	var id, role sql.NullString
-	err = database.Db.QueryRow("INSERT INTO users (email, name, password) VALUES ($1, $2, $3) RETURNING id, role", args.Email, args.Username, string(hashedPassword)).Scan(&id, &role)
+	err = database.Db.QueryRow("INSERT INTO accounts.users (email, name, password) VALUES ($1, $2, $3) RETURNING id, role", args.Email, args.Username, string(hashedPassword)).Scan(&id, &role)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to register user"})
 		return

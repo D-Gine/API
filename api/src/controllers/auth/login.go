@@ -11,8 +11,8 @@ import (
 	"database/sql"
 	"net/http"
 
-	"api-web/src/database"
-	"api-web/src/internal/structs"
+	"api/src/database"
+	"api/src/internal/structs"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"

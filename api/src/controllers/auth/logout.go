@@ -8,7 +8,7 @@
 package auth
 
 import (
-	"api-web/src/internal/domains"
+	"api/src/internal/domains"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

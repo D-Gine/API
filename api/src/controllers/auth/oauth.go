@@ -8,8 +8,8 @@
 package auth
 
 import (
-	"api-web/src/database"
-	"api-web/src/internal/structs"
+	"api/src/database"
+	"api/src/internal/structs"
 	"database/sql"
 	"encoding/json"
 	"fmt"

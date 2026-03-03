@@ -1,4 +1,4 @@
-module api-web
+module api
 
 go 1.24.7
 
