@@ -5,14 +5,17 @@
 For this project you need the following environment variables:
 ```
 # DATABASE
-DB_HOST=dengine-postgres
+DB_HOST=dengine-db
 DB_PORT=5432
-DB_USER=[USER]
-DB_PWD=[PWD]
+DB_USER=[USER : string]
+DB_PWD=[PWD : string]
 DB_NAME=dengine
 
 # API
-API_PORT=8080
-GIN_MODE=release
-TOKEN_KEY=[KEY]
+API_PORT=[API_PORT : int]
+GIN_MODE=debug
+TOKEN_KEY=[TOKEN_KEY : string]
+
+# NETWORKS
+BACK_NETWORK=dengine-back-net
 ```

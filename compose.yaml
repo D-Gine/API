@@ -15,9 +15,9 @@ services:
     ports:
       - "${API_PORT}:${API_PORT}"
     networks:
-      - database_network
+      - back
 
 networks:
-  database_network:
+  back:
     external: true
-    name: database_back
+    name: ${BACK_NETWORK}
