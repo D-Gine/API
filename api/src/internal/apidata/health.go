@@ -2,10 +2,10 @@
 ** D&GINE Project, 2026
 ** Backend
 ** File description:
-** internal/endpoints/endpoints.go
+** internal/apidata/health.go
  */
 
-package endpoints
+package apidata
 
 import (
 	"net/http"
@@ -14,11 +14,11 @@ import (
 )
 
 // @BasePath /api/health
-// Users godoc
+// Apidata godoc
 // @Summary Healthcheck for the api
 // @Schemes
 // @Description Healthcheck used (mainly by docker) to check if the api is up and ready to respond
-// @Tags health
+// @Tags apidata
 // @Produce plain
 // @Success 200 {string} OK
 // @Router /api/health [get]

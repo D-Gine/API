@@ -10,11 +10,12 @@ package main
 import (
 	"api/src/controllers/account"
 	"api/src/controllers/auth"
+	"api/src/controllers/characters"
 	"api/src/controllers/users"
 	"api/src/database"
 	_ "api/src/docs"
+	"api/src/internal/apidata"
 	"api/src/internal/domains"
-	"api/src/internal/specifics"
 	"fmt"
 	"net/http"
 	"os"
@@ -52,10 +53,10 @@ func main() {
 	r.Use(CORSMiddleware)
 
 	{
-		r.GET("/about.json", specifics.GetAbout)
+		r.GET("/about.json", apidata.GetAbout)
 
 		api := r.Group("/api", CORSMiddleware)
-		api.GET("/health", specifics.GetHealthCheck)
+		api.GET("/health", apidata.GetHealthCheck)
 
 		authGroup := api.Group("/auth")
 		{
@@ -79,6 +80,15 @@ func main() {
 			usersGroup.PUT("", users.UpdateUsers)
 			usersGroup.DELETE("", users.DeleteUsers)
 			usersGroup.GET("/id", users.ReadUsersId)
+		}
+
+		charactersGroup := api.Group("/characters", auth.AuthenticateMiddleware, auth.AdminMiddleware)
+		{
+			charactersGroup.POST("", characters.CreateCharacters)
+			charactersGroup.GET("", characters.ReadCharacters)
+			charactersGroup.PUT("", characters.UpdateCharacters)
+			charactersGroup.DELETE("", characters.DeleteCharacters)
+			charactersGroup.GET("/id", characters.ReadCharactersId)
 		}
 	}
 

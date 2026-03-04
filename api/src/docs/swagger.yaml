@@ -15,6 +15,11 @@ definitions:
       role:
         type: string
     type: object
+  apidata.About:
+    properties:
+      status:
+        type: string
+    type: object
   auth.Creds:
     properties:
       email:
@@ -45,9 +50,27 @@ definitions:
       username:
         type: string
     type: object
-  endpoints.About:
+  characters.CreateArgs:
     properties:
-      status:
+      name:
+        type: string
+      player_id:
+        type: string
+    type: object
+  characters.RowReadResponse:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      player_id:
+        type: string
+    type: object
+  characters.UpdateArgs:
+    properties:
+      name:
+        type: string
+      player_id:
         type: string
     type: object
   structs.PostResponse:
@@ -104,10 +127,10 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/endpoints.About'
+            $ref: '#/definitions/apidata.About'
       summary: Gives informations about api
       tags:
-      - about.json
+      - apidata
   /api/account:
     delete:
       description: <b>⚠️ The user must be logged in ⚠️</b><br><br>Deletes the user's
@@ -233,6 +256,102 @@ paths:
       summary: Connection of a new user to a new account
       tags:
       - auth
+  /api/characters:
+    delete:
+      description: Deletes the given character's data<br> <b>Careful, there is no
+        turn back or check, once called, this route will delete the character no matter
+        what</b> <br> It also deletes all content related to the character
+      parameters:
+      - description: id of the character to do the action on
+        in: query
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+      summary: Deletes given ID character
+      tags:
+      - characters
+    get:
+      description: Reads all characters data
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/characters.RowReadResponse'
+            type: array
+      summary: Reads all characters data
+      tags:
+      - characters
+    post:
+      consumes:
+      - application/json
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Creates a character account
+        with given informations
+      parameters:
+      - description: character related informations that will be later needed for
+          the login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/characters.CreateArgs'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structs.PostResponse'
+      summary: Connection of a new character to a new account
+      tags:
+      - characters
+    put:
+      consumes:
+      - application/json
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Updates the given character's
+        account data
+      parameters:
+      - description: id of the character to update
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: New arguments to be set in the character given
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/characters.UpdateArgs'
+      responses:
+        "200":
+          description: OK
+      summary: Updates given ID character with arguments in body
+      tags:
+      - characters
+  /api/characters/id:
+    get:
+      description: Reads the given id character data
+      parameters:
+      - description: id of the character to read
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/characters.RowReadResponse'
+      summary: Reads given ID character data
+      tags:
+      - characters
   /api/health:
     get:
       description: Healthcheck used (mainly by docker) to check if the api is up and
@@ -246,7 +365,7 @@ paths:
             type: string
       summary: Healthcheck for the api
       tags:
-      - health
+      - apidata
   /api/users:
     delete:
       description: ⚠️ Only accessible to admins ⚠️<br><br>Deletes the given user's
