@@ -14,7 +14,7 @@ import (
 	"api/src/database"
 	_ "api/src/docs"
 	"api/src/internal/domains"
-	"api/src/internal/endpoints"
+	"api/src/internal/specifics"
 	"fmt"
 	"net/http"
 	"os"
@@ -52,10 +52,10 @@ func main() {
 	r.Use(CORSMiddleware)
 
 	{
-		r.GET("/about.json", endpoints.GetAbout)
+		r.GET("/about.json", specifics.GetAbout)
 
 		api := r.Group("/api", CORSMiddleware)
-		api.GET("/health", endpoints.GetHealthCheck)
+		api.GET("/health", specifics.GetHealthCheck)
 
 		authGroup := api.Group("/auth")
 		{
