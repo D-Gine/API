@@ -10,8 +10,3 @@ package structs
 type PostResponse struct {
 	Id string `json:"id"`
 }
-
-type PostLoginResponse struct {
-	Id    string `json:"id"`
-	Token string `json:"token"`
-}

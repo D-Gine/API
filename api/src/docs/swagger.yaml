@@ -1,4 +1,20 @@
 definitions:
+  account.UpdateArgs:
+    properties:
+      email:
+        type: string
+      username:
+        type: string
+    type: object
+  account.UserReadResponse:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      role:
+        type: string
+    type: object
   auth.Creds:
     properties:
       email:
@@ -11,6 +27,13 @@ definitions:
       code:
         type: string
       service_name:
+        type: string
+    type: object
+  auth.PostLoginResponse:
+    properties:
+      id:
+        type: string
+      token:
         type: string
     type: object
   auth.RegisterArgs:
@@ -27,28 +50,40 @@ definitions:
       status:
         type: string
     type: object
-  structs.PostLoginResponse:
-    properties:
-      id:
-        type: string
-      token:
-        type: string
-    type: object
   structs.PostResponse:
     properties:
       id:
         type: string
     type: object
-  user.UpdateArgs:
+  users.CreateUsersArgs:
     properties:
       email:
+        type: string
+      password:
+        type: string
+      role:
         type: string
       username:
         type: string
     type: object
-  user.UserReadResponse:
+  users.UpdateArgs:
     properties:
       email:
+        type: string
+      image:
+        type: string
+      name:
+        type: string
+      role:
+        type: string
+    type: object
+  users.UserReadResponse:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      image:
         type: string
       name:
         type: string
@@ -73,12 +108,57 @@ paths:
       summary: Gives informations about api
       tags:
       - about.json
+  /api/account:
+    delete:
+      description: <b>⚠️ The user must be logged in ⚠️</b><br><br>Deletes the user's
+        account from database, the user will also be logged out<br> <b>Careful, there
+        is no turn back or check, once called, this route will delete the user no
+        matter what</b> <br> It also deletes all content related to the user
+      responses:
+        "200":
+          description: OK
+      summary: Deletes the user's account
+      tags:
+      - account
+    get:
+      description: <b>⚠️ The user must be logged in ⚠️</b><br><br>Reads the user's
+        account data
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/account.UserReadResponse'
+      summary: Reads the user's account data
+      tags:
+      - account
+    put:
+      consumes:
+      - application/json
+      description: <b>⚠️ The user must be logged in ⚠️</b><br><br>Updates the user's
+        account
+      parameters:
+      - description: New arguments to be set in the user
+        in: body
+        name: id
+        required: true
+        schema:
+          $ref: '#/definitions/account.UpdateArgs'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.PostLoginResponse'
+      summary: Updates the user's account
+      tags:
+      - account
   /api/auth/login:
     post:
       consumes:
       - application/json
-      description: Connection of a user <br>Token will be set in cookies if the arguments
-        combination is valid
+      description: Connection of a user to an existing account<br>Token will be set
+        in cookies if the arguments combination is valid
       parameters:
       - description: Email + Password combination of the corresponding user
         in: body
@@ -92,12 +172,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structs.PostLoginResponse'
-      summary: Connection of a user
+            $ref: '#/definitions/auth.PostLoginResponse'
+      summary: Connection of a user to an existing account
       tags:
       - auth
   /api/auth/logout:
-    put:
+    post:
       description: Disconnection of the user <br>The token in the Cookies will be
         deleted after this route has been called
       responses:
@@ -133,8 +213,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: Creation and connection of a new user <br>Token will be set in
-        cookies if the arguments combination is valid
+      description: Connection of a new user to a new account<br>Token will be set
+        in cookies if the arguments combination is valid
       parameters:
       - description: User related informations that will be later needed for the login
           process
@@ -149,8 +229,8 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structs.PostLoginResponse'
-      summary: Creation and connection of a new user
+            $ref: '#/definitions/auth.PostLoginResponse'
+      summary: Connection of a new user to a new account
       tags:
       - auth
   /api/health:
@@ -167,48 +247,103 @@ paths:
       summary: Healthcheck for the api
       tags:
       - health
-  /api/user:
+  /api/users:
     delete:
-      description: Deletes the actual user <br> <b>Careful, there is no turn back
-        or check, once called, this route will delete the user no matter what</b>
-        <br> It also deletes all content related to the user <br><br><b>⚠️ The user
-        must be logged in<b>
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Deletes the given user's
+        account<br> <b>Careful, there is no turn back or check, once called, this
+        route will delete the user no matter what</b> <br> It also deletes all content
+        related to the user
+      parameters:
+      - description: id of the user to do the action on
+        in: query
+        name: id
+        required: true
+        type: string
       responses:
         "200":
           description: OK
-      summary: Deletes the actual user
+      summary: Deletes given ID user
       tags:
-      - user
+      - users
     get:
-      description: Reads the actual user data <br><br><b>⚠️ The user must be logged
-        in<b>
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Reads all users accounts
+        data
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/user.UserReadResponse'
-      summary: Reads the actual user data
+            items:
+              $ref: '#/definitions/users.UserReadResponse'
+            type: array
+      summary: Reads all users data
       tags:
-      - user
-    put:
+      - users
+    post:
       consumes:
       - application/json
-      description: Updates the actual user <br><br><b>⚠️ The user must be logged in<b>
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Creates a user account with
+        given informations
       parameters:
-      - description: New arguments to be set in the user
+      - description: User related informations that will be later needed for the login
+          process
         in: body
-        name: id
+        name: creds
         required: true
         schema:
-          $ref: '#/definitions/user.UpdateArgs'
+          $ref: '#/definitions/users.CreateUsersArgs'
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structs.PostLoginResponse'
-      summary: Updates the actual user
+            $ref: '#/definitions/structs.PostResponse'
+      summary: Connection of a new user to a new account
       tags:
-      - user
+      - users
+    put:
+      consumes:
+      - application/json
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Updates the given user's
+        account data
+      parameters:
+      - description: id of the user to do the action on
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: New arguments to be set in the user given, along with its id
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/users.UpdateArgs'
+      responses:
+        "200":
+          description: OK
+      summary: Updates given ID user with arguments in body
+      tags:
+      - users
+  /api/users/id:
+    get:
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Reads the given user's account
+        data
+      parameters:
+      - description: id of the user to do the action on
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/users.UserReadResponse'
+      summary: Reads given ID user data
+      tags:
+      - users
 swagger: "2.0"

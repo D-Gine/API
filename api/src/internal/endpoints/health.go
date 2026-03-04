@@ -14,7 +14,7 @@ import (
 )
 
 // @BasePath /api/health
-// User godoc
+// Users godoc
 // @Summary Healthcheck for the api
 // @Schemes
 // @Description Healthcheck used (mainly by docker) to check if the api is up and ready to respond

@@ -43,13 +43,13 @@ func CreateToken(user UserData) (string, error) {
 }
 
 func ExtractFromToken(tokenString string) (UserData, error) {
-	token, err := verifyToken(tokenString)
+	parsedToken, err := verifyToken(tokenString)
 	if err != nil {
 		return UserData{}, err
 	}
 
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok || !token.Valid {
+	claims, ok := parsedToken.Claims.(jwt.MapClaims)
+	if !ok || !parsedToken.Valid {
 		return UserData{}, fmt.Errorf("invalid token claims")
 	}
 
@@ -102,25 +102,12 @@ func AuthenticateMiddleware(c *gin.Context) {
 	if err != nil {
 		fmt.Println("Token verification failed")
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		c.Abort()
 		return
 	}
 
 	c.Next()
 }
-
-// 	if tokenString == "" {
-// 		fmt.Println("Token missing in cookie")
-// 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Login or Register to access this page"})
-// 		return
-// 	}
-// 	_, err := verifyToken(tokenString)
-// 	if err != nil {
-// 		fmt.Printf("Token verification failed: %v\\n", err)
-// 		c.Abort()
-// 		return
-// 	}
-// 	c.Next()
-// }
 
 func verifyToken(tokenString string) (*jwt.Token, error) {
 	if len(tokenString) > 7 && tokenString[:7] == "Bearer " {

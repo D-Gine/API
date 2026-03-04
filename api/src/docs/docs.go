@@ -38,9 +38,70 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/account": {
+            "get": {
+                "description": "\u003cb\u003e⚠️ The user must be logged in ⚠️\u003c/b\u003e\u003cbr\u003e\u003cbr\u003eReads the user's account data",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "account"
+                ],
+                "summary": "Reads the user's account data",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/account.UserReadResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "\u003cb\u003e⚠️ The user must be logged in ⚠️\u003c/b\u003e\u003cbr\u003e\u003cbr\u003eUpdates the user's account",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "account"
+                ],
+                "summary": "Updates the user's account",
+                "parameters": [
+                    {
+                        "description": "New arguments to be set in the user",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/account.UpdateArgs"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/auth.PostLoginResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "\u003cb\u003e⚠️ The user must be logged in ⚠️\u003c/b\u003e\u003cbr\u003e\u003cbr\u003eDeletes the user's account from database, the user will also be logged out\u003cbr\u003e \u003cb\u003eCareful, there is no turn back or check, once called, this route will delete the user no matter what\u003c/b\u003e \u003cbr\u003e It also deletes all content related to the user",
+                "tags": [
+                    "account"
+                ],
+                "summary": "Deletes the user's account",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/api/auth/login": {
             "post": {
-                "description": "Connection of a user \u003cbr\u003eToken will be set in cookies if the arguments combination is valid",
+                "description": "Connection of a user to an existing account\u003cbr\u003eToken will be set in cookies if the arguments combination is valid",
                 "consumes": [
                     "application/json"
                 ],
@@ -50,7 +111,7 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Connection of a user",
+                "summary": "Connection of a user to an existing account",
                 "parameters": [
                     {
                         "description": "Email + Password combination of the corresponding user",
@@ -66,14 +127,14 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structs.PostLoginResponse"
+                            "$ref": "#/definitions/auth.PostLoginResponse"
                         }
                     }
                 }
             }
         },
         "/api/auth/logout": {
-            "put": {
+            "post": {
                 "description": "Disconnection of the user \u003cbr\u003eThe token in the Cookies will be deleted after this route has been called",
                 "tags": [
                     "auth"
@@ -122,7 +183,7 @@ const docTemplate = `{
         },
         "/api/auth/register": {
             "post": {
-                "description": "Creation and connection of a new user \u003cbr\u003eToken will be set in cookies if the arguments combination is valid",
+                "description": "Connection of a new user to a new account\u003cbr\u003eToken will be set in cookies if the arguments combination is valid",
                 "consumes": [
                     "application/json"
                 ],
@@ -132,7 +193,7 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Creation and connection of a new user",
+                "summary": "Connection of a new user to a new account",
                 "parameters": [
                     {
                         "description": "User related informations that will be later needed for the login process",
@@ -148,7 +209,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structs.PostLoginResponse"
+                            "$ref": "#/definitions/auth.PostLoginResponse"
                         }
                     }
                 }
@@ -174,42 +235,81 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/user": {
+        "/api/users": {
             "get": {
-                "description": "Reads the actual user data \u003cbr\u003e\u003cbr\u003e\u003cb\u003e⚠️ The user must be logged in\u003cb\u003e",
+                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eReads all users accounts data",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
-                "summary": "Reads the actual user data",
+                "summary": "Reads all users data",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/user.UserReadResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/users.UserReadResponse"
+                            }
                         }
                     }
                 }
             },
             "put": {
-                "description": "Updates the actual user \u003cbr\u003e\u003cbr\u003e\u003cb\u003e⚠️ The user must be logged in\u003cb\u003e",
+                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eUpdates the given user's account data",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
-                "summary": "Updates the actual user",
+                "summary": "Updates given ID user with arguments in body",
                 "parameters": [
                     {
-                        "description": "New arguments to be set in the user",
+                        "type": "string",
+                        "description": "id of the user to do the action on",
                         "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "New arguments to be set in the user given, along with its id",
+                        "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/user.UpdateArgs"
+                            "$ref": "#/definitions/users.UpdateArgs"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eCreates a user account with given informations",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Connection of a new user to a new account",
+                "parameters": [
+                    {
+                        "description": "User related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/users.CreateUsersArgs"
                         }
                     }
                 ],
@@ -217,26 +317,89 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structs.PostLoginResponse"
+                            "$ref": "#/definitions/structs.PostResponse"
                         }
                     }
                 }
             },
             "delete": {
-                "description": "Deletes the actual user \u003cbr\u003e \u003cb\u003eCareful, there is no turn back or check, once called, this route will delete the user no matter what\u003c/b\u003e \u003cbr\u003e It also deletes all content related to the user \u003cbr\u003e\u003cbr\u003e\u003cb\u003e⚠️ The user must be logged in\u003cb\u003e",
+                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eDeletes the given user's account\u003cbr\u003e \u003cb\u003eCareful, there is no turn back or check, once called, this route will delete the user no matter what\u003c/b\u003e \u003cbr\u003e It also deletes all content related to the user",
                 "tags": [
-                    "user"
+                    "users"
                 ],
-                "summary": "Deletes the actual user",
+                "summary": "Deletes given ID user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id of the user to do the action on",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK"
                     }
                 }
             }
+        },
+        "/api/users/id": {
+            "get": {
+                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eReads the given user's account data",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Reads given ID user data",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id of the user to do the action on",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/users.UserReadResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "account.UpdateArgs": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "account.UserReadResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                }
+            }
+        },
         "auth.Creds": {
             "type": "object",
             "properties": {
@@ -255,6 +418,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "service_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.PostLoginResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "token": {
                     "type": "string"
                 }
             }
@@ -281,17 +455,6 @@ const docTemplate = `{
                 }
             }
         },
-        "structs.PostLoginResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "token": {
-                    "type": "string"
-                }
-            }
-        },
         "structs.PostResponse": {
             "type": "object",
             "properties": {
@@ -300,10 +463,16 @@ const docTemplate = `{
                 }
             }
         },
-        "user.UpdateArgs": {
+        "users.CreateUsersArgs": {
             "type": "object",
             "properties": {
                 "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "role": {
                     "type": "string"
                 },
                 "username": {
@@ -311,10 +480,33 @@ const docTemplate = `{
                 }
             }
         },
-        "user.UserReadResponse": {
+        "users.UpdateArgs": {
             "type": "object",
             "properties": {
                 "email": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                }
+            }
+        },
+        "users.UserReadResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "image": {
                     "type": "string"
                 },
                 "name": {

@@ -5,37 +5,39 @@
 ** auth/register.go
  */
 
-package auth
+package users
 
 import (
 	"database/sql"
 	"net/http"
 
 	"api/src/database"
+	"api/src/internal/structs"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
 
-type RegisterArgs struct {
+type CreateUsersArgs struct {
 	Email    string `json:"email"`
 	Username string `json:"username"`
 	Password string `json:"password"`
+	Role     string `json:"role"`
 }
 
-// @BasePath /api/auth/register
-// Auth godoc
+// @BasePath /api/users
+// Users godoc
 // @Summary Connection of a new user to a new account
 // @Schemes
-// @Description Connection of a new user to a new account<br>Token will be set in cookies if the arguments combination is valid
-// @Tags auth
+// @Description ⚠️ Only accessible to admins ⚠️<br><br>Creates a user account with given informations
+// @Tags users
 // @Accept json
 // @Produce json
-// @Param creds body RegisterArgs true "User related informations that will be later needed for the login process"
-// @Success 200 {object} PostLoginResponse
-// @Router /api/auth/register [post]
-func Register(c *gin.Context) {
-	var args RegisterArgs
+// @Param creds body CreateUsersArgs true "User related informations that will be later needed for the login process"
+// @Success 200 {object} structs.PostResponse
+// @Router /api/users [post]
+func CreateUsers(c *gin.Context) {
+	var args CreateUsersArgs
 
 	// Body Json parsing
 	if err := c.ShouldBindJSON(&args); err != nil {
@@ -63,19 +65,12 @@ func Register(c *gin.Context) {
 	}
 
 	// Inserting new user into db
-	var id, role sql.NullString
-	err = database.Db.QueryRow("INSERT INTO accounts.users (email, name, password) VALUES ($1, $2, $3) RETURNING id, role", args.Email, args.Username, string(hashedPassword)).Scan(&id, &role)
+	var id sql.NullString
+	err = database.Db.QueryRow("INSERT INTO accounts.users (email, name, password, role) VALUES ($1, $2, $3, $4) RETURNING id", args.Email, args.Username, string(hashedPassword), args.Role).Scan(&id)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to register user"})
 		return
 	}
 
-	var result PostLoginResponse
-	result.Id = id.String
-	result.Token, err = BuildToken(c, UserData{id.String, args.Email, args.Username, role.String})
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
-	} else {
-		c.JSON(http.StatusOK, result)
-	}
+	c.JSON(http.StatusOK, structs.PostResponse{Id: id.String})
 }

@@ -9,7 +9,6 @@ package auth
 
 import (
 	"api/src/database"
-	"api/src/internal/structs"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -158,7 +157,7 @@ func oauthGoogle(c *gin.Context, args OauthArgs) {
 
 	UserData, err := linkExternalUser(c, InternalData{username, email})
 	if err == nil {
-		var result structs.PostLoginResponse
+		var result PostLoginResponse
 		result.Id = UserData.Id
 		result.Token, err = BuildToken(c, UserData)
 		if err != nil {
@@ -221,7 +220,7 @@ func oauthDiscord(c *gin.Context, args OauthArgs) {
 
 	UserData, err := linkExternalUser(c, InternalData{username, email})
 	if err == nil {
-		var result structs.PostLoginResponse
+		var result PostLoginResponse
 		result.Id = UserData.Id
 		result.Token, err = BuildToken(c, UserData)
 		if err != nil {
@@ -233,26 +232,6 @@ func oauthDiscord(c *gin.Context, args OauthArgs) {
 		c.JSON(http.StatusInternalServerError, err)
 	}
 }
-
-//   try {
-//     const res = await fetch("https://github.com/login/oauth/access_token", {
-//       method: "POST",
-//       credentials: "include",
-//       headers: {
-//         "Content-type": "application/x-www-form-urlencoded",
-//         "Accept": "application/json"
-//       },
-//       body: new URLSearchParams(formDetails),
-//     });
-//     if (!res.status) {
-//       console.error("Cannot connect");
-//     }
-//     const data = res.json();
-
-//     const formDetail = {
-//       token: data.access_token,
-//       service: "github"
-//     };
 
 func oauthGithub(c *gin.Context, args OauthArgs) {
 	// TOKEN
@@ -344,7 +323,7 @@ func oauthGithub(c *gin.Context, args OauthArgs) {
 
 	UserData, err := linkExternalUser(c, InternalData{username, email})
 	if err == nil {
-		var result structs.PostLoginResponse
+		var result PostLoginResponse
 		result.Id = UserData.Id
 		result.Token, err = BuildToken(c, UserData)
 		if err != nil {

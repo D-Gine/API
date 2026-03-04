@@ -2,10 +2,10 @@
 ** D&GINE Project, 2026
 ** Backend
 ** File description:
-** user/read.go
+** account/read.go
  */
 
-package user
+package account
 
 import (
 	"api/src/controllers/auth"
@@ -20,16 +20,16 @@ type UserReadResponse struct {
 	Role  string `json:"role"`
 }
 
-// @BasePath /api/user
-// User godoc
-// @Summary Reads the actual user data
+// @BasePath /api/account
+// Account godoc
+// @Summary Reads the user's account data
 // @Schemes
-// @Description Reads the actual user data <br><br><b>⚠️ The user must be logged in<b>
-// @Tags user
+// @Description <b>⚠️ The user must be logged in ⚠️</b><br><br>Reads the user's account data
+// @Tags account
 // @Produce json
 // @Success 200 {object} UserReadResponse
-// @Router /api/user [get]
-func ReadUser(c *gin.Context) {
+// @Router /api/account [get]
+func ReadAccount(c *gin.Context) {
 	// Recuperation du user depuis le token
 	user, err := auth.GetUserFromToken(c)
 	if err != nil {

@@ -12,7 +12,6 @@ import (
 	"net/http"
 
 	"api/src/database"
-	"api/src/internal/structs"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -23,19 +22,16 @@ type Creds struct {
 	Password string `json:"password"`
 }
 
-// Param email body string true "Email of the dedicated user"
-// Param password body string true "Password of the corresponding user"
-
 // @BasePath /api/auth/login
 // Auth godoc
-// @Summary Connection of a user
+// @Summary Connection of a user to an existing account
 // @Schemes
-// @Description Connection of a user <br>Token will be set in cookies if the arguments combination is valid
+// @Description Connection of a user to an existing account<br>Token will be set in cookies if the arguments combination is valid
 // @Tags auth
 // @Accept json
 // @Produce json
 // @Param creds body Creds true "Email + Password combination of the corresponding user"
-// @Success 200 {object} structs.PostLoginResponse
+// @Success 200 {object} PostLoginResponse
 // @Router /api/auth/login [post]
 func Login(c *gin.Context) {
 	var creds Creds
@@ -65,7 +61,7 @@ func Login(c *gin.Context) {
 	}
 
 	// Generating token
-	var result structs.PostLoginResponse
+	var result PostLoginResponse
 	result.Id = id.String
 	result.Token, err = BuildToken(c, UserData{id.String, email.String, username.String, role.String})
 	if err != nil {

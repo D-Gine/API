@@ -5,12 +5,11 @@
 ** user/update.go
  */
 
-package user
+package account
 
 import (
 	"api/src/controllers/auth"
 	"api/src/database"
-	"api/src/internal/structs"
 	"database/sql"
 	"net/http"
 
@@ -22,17 +21,17 @@ type UpdateArgs struct {
 	Username string `json:"username"`
 }
 
-// @BasePath /api/user
-// User godoc
-// @Summary Updates the actual user
+// @BasePath /api/account
+// Account godoc
+// @Summary Updates the user's account
 // @Schemes
-// @Description Updates the actual user <br><br><b>⚠️ The user must be logged in<b>
-// @Tags user
+// @Description <b>⚠️ The user must be logged in ⚠️</b><br><br>Updates the user's account
+// @Tags account
 // @Accept json
 // @Param id body UpdateArgs true "New arguments to be set in the user"
-// @Success 200 {object} structs.PostLoginResponse
-// @Router /api/user [put]
-func UpdateUser(c *gin.Context) {
+// @Success 200 {object} auth.PostLoginResponse
+// @Router /api/account [put]
+func UpdateAccount(c *gin.Context) {
 	var args UpdateArgs
 
 	// Parsing des args
@@ -55,7 +54,7 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
-	var result structs.PostLoginResponse
+	var result auth.PostLoginResponse
 	result.Id = id.String
 	result.Token, err = auth.BuildToken(c, auth.UserData{Id: id.String, Email: args.Email, Name: args.Username, Role: role.String})
 	if err != nil {

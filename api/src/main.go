@@ -8,8 +8,9 @@
 package main
 
 import (
+	"api/src/controllers/account"
 	"api/src/controllers/auth"
-	"api/src/controllers/user"
+	"api/src/controllers/users"
 	"api/src/database"
 	_ "api/src/docs"
 	"api/src/internal/domains"
@@ -64,15 +65,24 @@ func main() {
 			authGroup.POST("/oauth", auth.OAuthLogin)
 		}
 
-		userGroup := api.Group("/user")
+		accountGroup := api.Group("/account", auth.AuthenticateMiddleware)
 		{
-			userGroup.GET("", auth.AuthenticateMiddleware, user.ReadUser)
-			userGroup.DELETE("", auth.AuthenticateMiddleware, user.DeleteUser)
-			userGroup.PUT("", auth.AuthenticateMiddleware, user.UpdateUser)
+			accountGroup.GET("", account.ReadAccount)
+			accountGroup.PUT("", account.UpdateAccount)
+			accountGroup.DELETE("", account.DeleteAccount)
+		}
+
+		usersGroup := api.Group("/users", auth.AuthenticateMiddleware, auth.AdminMiddleware)
+		{
+			usersGroup.POST("", users.CreateUsers)
+			usersGroup.GET("", users.ReadUsers)
+			usersGroup.PUT("", users.UpdateUsers)
+			usersGroup.DELETE("", users.DeleteUsers)
+			usersGroup.GET("/id", users.ReadUsersId)
 		}
 	}
 
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler, ginSwagger.DefaultModelsExpandDepth(-1)))
 	fmt.Println("Listening and serving HTTP on " + port)
 	r.Run(port)
 }

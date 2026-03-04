@@ -2,10 +2,10 @@
 ** D&GINE Project, 2026
 ** Backend
 ** File description:
-** user/delete.go
+** account/delete.go
  */
 
-package user
+package account
 
 import (
 	"api/src/controllers/auth"
@@ -17,15 +17,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// @BasePath /api/user
-// User godoc
-// @Summary Deletes the actual user
+// @BasePath /api/account
+// Account godoc
+// @Summary Deletes the user's account
 // @Schemes
-// @Description Deletes the actual user <br> <b>Careful, there is no turn back or check, once called, this route will delete the user no matter what</b> <br> It also deletes all content related to the user <br><br><b>⚠️ The user must be logged in<b>
-// @Tags user
+// @Description <b>⚠️ The user must be logged in ⚠️</b><br><br>Deletes the user's account from database, the user will also be logged out<br> <b>Careful, there is no turn back or check, once called, this route will delete the user no matter what</b> <br> It also deletes all content related to the user
+// @Tags account
 // @Success 200
-// @Router /api/user [delete]
-func DeleteUser(c *gin.Context) {
+// @Router /api/account [delete]
+func DeleteAccount(c *gin.Context) {
 	// Recuperation du user depuis le token
 	user, err := auth.GetUserFromToken(c)
 	if err != nil {
