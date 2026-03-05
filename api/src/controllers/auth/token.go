@@ -23,6 +23,7 @@ type UserData struct {
 	Id    string `json:"id"`
 	Email string `json:"email"`
 	Name  string `json:"name"`
+	Image string `json:"image"`
 	Role  string `json:"role"`
 }
 
@@ -31,6 +32,7 @@ func CreateToken(user UserData) (string, error) {
 		"id":       user.Id,
 		"email":    user.Email,
 		"username": user.Name,
+		"image":    user.Image,
 		"role":     user.Role,
 		"exp":      time.Now().Add(time.Hour).Unix(),
 		"iat":      time.Now().Unix(),
@@ -69,7 +71,11 @@ func ExtractFromToken(tokenString string) (UserData, error) {
 	if !ok {
 		return UserData{}, fmt.Errorf("role not found in token claims")
 	}
-	return UserData{id, email, username, role}, nil
+	image, ok := claims["image"].(string)
+	if !ok {
+		return UserData{}, fmt.Errorf("image not found in token claims")
+	}
+	return UserData{id, email, username, image, role}, nil
 }
 
 func AuthenticateMiddleware(c *gin.Context) {

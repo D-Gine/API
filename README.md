@@ -15,7 +15,7 @@ DB_PWD=[DB_PWD : string]
 DB_NAME=dengine
 
 # API
-VERSION=1.2.3
+VERSION=1.3.0
 API_PORT=[API_PORT : int]
 GIN_MODE=debug
 TOKEN_KEY=[TOKEN_KEY : string]
@@ -25,6 +25,14 @@ TRUSTED_PROXIES=127.0.0.1
 
 # NETWORKS
 BACK_NETWORK=dengine-back-net
+
+# VOLUMES
+API_VOLUME=dengine-api-volume
+
+# FILESERVER
+IMAGES_PATH=./img
+USERS_IMAGES_PATH=./img/users/
+
 ```
 
 ## Doc

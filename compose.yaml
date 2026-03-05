@@ -7,6 +7,12 @@ services:
       - "${API_PORT}:${API_PORT}"
     networks:
       - back
+    volumes:
+      - api:/var/www/dengine-api-${VERSION}/
+
+volumes:
+  api:
+    name: ${API_VOLUME}
 
 networks:
   back:

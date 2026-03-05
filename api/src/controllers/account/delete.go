@@ -13,6 +13,7 @@ import (
 	"api/src/internal/config"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
@@ -37,6 +38,9 @@ func DeleteAccount(c *gin.Context) {
 		fmt.Println(err)
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
 		return
+	}
+	if err := os.Remove(user.Image); err != nil && !os.IsNotExist(err) {
+		fmt.Println("Failed to delete user image:", err)
 	}
 	c.SetCookie("token", "", -1, "/", config.TokenDomain, false, true)
 	c.JSON(http.StatusOK, nil)

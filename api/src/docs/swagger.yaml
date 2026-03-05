@@ -25,6 +25,10 @@ definitions:
     properties:
       email:
         type: string
+      id:
+        type: string
+      image:
+        type: string
       name:
         type: string
       role:
@@ -42,13 +46,6 @@ definitions:
       password:
         type: string
     type: object
-  auth.OauthArgs:
-    properties:
-      code:
-        type: string
-      service_name:
-        type: string
-    type: object
   auth.PostLoginResponse:
     properties:
       id:
@@ -59,6 +56,9 @@ definitions:
   auth.RegisterArgs:
     properties:
       email:
+        type: string
+      image:
+        description: Base64 encoded PNG image
         type: string
       password:
         type: string
@@ -323,29 +323,6 @@ paths:
       summary: Disconnection of the user
       tags:
       - auth
-  /api/auth/oauth:
-    post:
-      consumes:
-      - application/json
-      description: Connection of a user using an OAuth <br>Token will be set in cookies
-        if the arguments combination is valid
-      parameters:
-      - description: Code + Service combination of the corresponding OAuth
-        in: body
-        name: creds
-        required: true
-        schema:
-          $ref: '#/definitions/auth.OauthArgs'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/structs.PostResponse'
-      summary: Connection of a user
-      tags:
-      - auth
   /api/auth/register:
     post:
       consumes:
@@ -577,4 +554,15 @@ paths:
       summary: Updates given user
       tags:
       - users
+  '/img/:filepath:':
+    get:
+      description: Reads an image file
+      produces:
+      - image/png
+      responses:
+        "200":
+          description: OK
+      summary: Reads an image file
+      tags:
+      - img
 swagger: "2.0"

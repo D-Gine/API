@@ -10,13 +10,21 @@ package fileserver
 import (
 	_ "api/src/docs"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
 
-func GetFile(c *gin.Context) {
+// @BasePath /img/*
+// Image godoc
+// @Summary Reads an image file
+// @Schemes
+// @Description Reads an image file
+// @Tags img
+// @Produce image/png
+// @Success 200
+// @Router /img/:filepath: [get]
+func GetImage(c *gin.Context) {
 	c.Request.URL.Path = c.Param("filepath")
-
-	println(c.Request.URL.Path)
-	http.FileServer(http.Dir("./img/")).ServeHTTP(c.Writer, c.Request)
+	http.FileServer(http.Dir(os.Getenv("IMAGES_PATH"))).ServeHTTP(c.Writer, c.Request)
 }

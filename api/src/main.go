@@ -76,7 +76,6 @@ func main() {
 			authGroup.POST("/login", auth.Login)
 			authGroup.POST("/register", auth.Register)
 			authGroup.POST("/logout", auth.Logout)
-			authGroup.POST("/oauth", auth.OAuthLogin)
 		}
 
 		accountGroup := api.Group("/account", auth.AuthenticateMiddleware)
@@ -107,7 +106,7 @@ func main() {
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler, ginSwagger.DefaultModelsExpandDepth(-1)))
 
 	img := r.Group("/img", CORSMiddleware)
-	img.GET("/*filepath", fileserver.GetFile)
+	img.GET("/*filepath", fileserver.GetImage)
 
 	fmt.Println("Listening and serving HTTP on " + port)
 	r.Run(port)

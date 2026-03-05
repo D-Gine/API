@@ -15,8 +15,10 @@ import (
 )
 
 type UserReadResponse struct {
+	Id    string `json:"id"`
 	Name  string `json:"name"`
 	Email string `json:"email"`
+	Image string `json:"image"`
 	Role  string `json:"role"`
 }
 
@@ -36,5 +38,11 @@ func ReadAccount(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, UserReadResponse{user.Name, user.Email, user.Role})
+	c.JSON(http.StatusOK, UserReadResponse{
+		Id:    user.Id,
+		Name:  user.Name,
+		Email: user.Email,
+		Image: user.Image,
+		Role:  user.Role,
+	})
 }

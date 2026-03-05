@@ -285,40 +285,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/auth/oauth": {
-            "post": {
-                "description": "Connection of a user using an OAuth \u003cbr\u003eToken will be set in cookies if the arguments combination is valid",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "Connection of a user",
-                "parameters": [
-                    {
-                        "description": "Code + Service combination of the corresponding OAuth",
-                        "name": "creds",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/auth.OauthArgs"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/structs.PostResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/api/auth/register": {
             "post": {
                 "description": "Connection of a new user to a new account\u003cbr\u003eToken will be set in cookies if the arguments combination is valid",
@@ -648,6 +614,23 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/img/:filepath:": {
+            "get": {
+                "description": "Reads an image file",
+                "produces": [
+                    "image/png"
+                ],
+                "tags": [
+                    "img"
+                ],
+                "summary": "Reads an image file",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -692,6 +675,12 @@ const docTemplate = `{
                 "email": {
                     "type": "string"
                 },
+                "id": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -719,17 +708,6 @@ const docTemplate = `{
                 }
             }
         },
-        "auth.OauthArgs": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "service_name": {
-                    "type": "string"
-                }
-            }
-        },
         "auth.PostLoginResponse": {
             "type": "object",
             "properties": {
@@ -745,6 +723,10 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "email": {
+                    "type": "string"
+                },
+                "image": {
+                    "description": "Base64 encoded PNG image",
                     "type": "string"
                 },
                 "password": {
