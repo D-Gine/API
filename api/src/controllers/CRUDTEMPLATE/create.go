@@ -30,7 +30,7 @@ type CreateCRUDTEMPLATEsArgs struct {
 // @Accept json
 // @Produce json
 // @Param creds body CreateCRUDTEMPLATEsArgs true "CRUDTEMPLATE related informations that will be later needed for the login process"
-// @Success 200 {object} structs.PostResponse
+// @Success 201 {object} structs.PostResponse
 // @Router /api/CRUDTEMPLATEs [post]
 func CreateCRUDTEMPLATEs(c *gin.Context) {
 	var args CreateCRUDTEMPLATEsArgs
@@ -61,5 +61,5 @@ func CreateCRUDTEMPLATEs(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, structs.PostResponse{Id: id.String})
+	c.JSON(http.StatusCreated, structs.PostResponse{Id: id.String})
 }

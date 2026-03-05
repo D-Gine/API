@@ -22,7 +22,7 @@ import (
 // @Param id query string true "id of the user to do the action on"
 // @Description ⚠️ Only accessible to admins ⚠️<br><br>Deletes the given user<br> <b>Careful, there is no turn back or check, once called, this route will delete the user no matter what</b> <br> It also deletes all content related to the user
 // @Tags users
-// @Success 200
+// @Success 204
 // @Router /api/users/id [delete]
 func DeleteUsers(c *gin.Context) {
 	idQuery := c.Request.URL.Query().Get("id")
@@ -37,5 +37,5 @@ func DeleteUsers(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error" + err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, nil)
+	c.JSON(http.StatusNoContent, nil)
 }

@@ -181,8 +181,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/structs.PostResponse'
       summary: Creates a CRUDTEMPLATE
@@ -201,8 +201,8 @@ paths:
         required: true
         type: string
       responses:
-        "200":
-          description: OK
+        "204":
+          description: No Content
       summary: Deletes given CRUDTEMPLATE
       tags:
       - CRUDTEMPLATEs
@@ -255,8 +255,8 @@ paths:
         is no turn back or check, once called, this route will delete the user no
         matter what</b> <br> It also deletes all content related to the user
       responses:
-        "200":
-          description: OK
+        "204":
+          description: No Content
       summary: Deletes the user's account
       tags:
       - account
@@ -347,8 +347,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/auth.PostLoginResponse'
       summary: Connection of a new user to a new account
@@ -385,8 +385,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/structs.PostResponse'
       summary: Creates a character
@@ -404,8 +404,8 @@ paths:
         required: true
         type: string
       responses:
-        "200":
-          description: OK
+        "204":
+          description: No Content
       summary: Deletes given character
       tags:
       - characters
@@ -495,8 +495,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/structs.PostResponse'
       summary: Creates a user
@@ -515,8 +515,8 @@ paths:
         required: true
         type: string
       responses:
-        "200":
-          description: OK
+        "204":
+          description: No Content
       summary: Deletes given user
       tags:
       - users

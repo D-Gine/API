@@ -22,7 +22,7 @@ import (
 // @Param id query string true "id of the CRUDTEMPLATE to delete"
 // @Description ⚠️ Only accessible to admins ⚠️<br><br>Deletes the given CRUDTEMPLATE<br> <b>Careful, there is no turn back or check, once called, this route will delete the CRUDTEMPLATE no matter what</b> <br> It also deletes all content related to the CRUDTEMPLATE depending on the parameters of the database
 // @Tags CRUDTEMPLATEs
-// @Success 200
+// @Success 204
 // @Router /api/CRUDTEMPLATEs/id [delete]
 func CRUDTEMPLATEs(c *gin.Context) {
 	idQuery := c.Request.URL.Query().Get("id")
@@ -37,5 +37,5 @@ func CRUDTEMPLATEs(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error" + err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, nil)
+	c.JSON(http.StatusNoContent, nil)
 }

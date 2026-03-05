@@ -36,7 +36,7 @@ type RegisterArgs struct {
 // @Accept json
 // @Produce json
 // @Param creds body RegisterArgs true "User related informations that will be later needed for the login process"
-// @Success 200 {object} PostLoginResponse
+// @Success 201 {object} PostLoginResponse
 // @Router /api/auth/register [post]
 func Register(c *gin.Context) {
 	var args RegisterArgs
@@ -133,6 +133,6 @@ func Register(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
 	} else {
-		c.JSON(http.StatusOK, result)
+		c.JSON(http.StatusCreated, result)
 	}
 }

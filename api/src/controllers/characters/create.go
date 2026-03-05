@@ -31,7 +31,7 @@ type CreateArgs struct {
 // @Accept json
 // @Produce json
 // @Param creds body CreateArgs true "character related informations that will be later needed for the login process"
-// @Success 200 {object} structs.PostResponse
+// @Success 201 {object} structs.PostResponse
 // @Router /api/characters [post]
 func CreateCharacters(c *gin.Context) {
 	var args CreateArgs
@@ -49,5 +49,5 @@ func CreateCharacters(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, structs.PostResponse{Id: id.String})
+	c.JSON(http.StatusCreated, structs.PostResponse{Id: id.String})
 }
