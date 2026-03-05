@@ -26,7 +26,7 @@ type UserReadResponse struct {
 // Account godoc
 // @Summary Reads the user's account data
 // @Schemes
-// @Description <b>⚠️ The user must be logged in ⚠️</b><br><br>Reads the user's account data
+// @Description <b>⚠️ The user must be logged in ⚠️</b><br><br>Reads the user's account data<br><br>The image is a HTTP path to the user's profile picture using the same host:port as the API
 // @Tags account
 // @Produce json
 // @Success 200 {object} UserReadResponse

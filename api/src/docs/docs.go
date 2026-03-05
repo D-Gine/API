@@ -178,7 +178,7 @@ const docTemplate = `{
         },
         "/api/account": {
             "get": {
-                "description": "\u003cb\u003e⚠️ The user must be logged in ⚠️\u003c/b\u003e\u003cbr\u003e\u003cbr\u003eReads the user's account data",
+                "description": "\u003cb\u003e⚠️ The user must be logged in ⚠️\u003c/b\u003e\u003cbr\u003e\u003cbr\u003eReads the user's account data\u003cbr\u003e\u003cbr\u003eThe image is a HTTP path to the user's profile picture using the same host:port as the API",
                 "produces": [
                     "application/json"
                 ],
@@ -196,7 +196,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "\u003cb\u003e⚠️ The user must be logged in ⚠️\u003c/b\u003e\u003cbr\u003e\u003cbr\u003eUpdates the user's account",
+                "description": "\u003cb\u003e⚠️ The user must be logged in ⚠️\u003c/b\u003e\u003cbr\u003e\u003cbr\u003eUpdates the user's account\u003cbr\u003e\u003cbr\u003eThe image must be base64 encoded and must contain the file type in the header (ex: data:image/png;base64,...)\u003cbr\u003e\u003cbr\u003eAll fields are optionals, if a field is empty or not provided, it will not be updated",
                 "consumes": [
                     "application/json"
                 ],
@@ -287,7 +287,7 @@ const docTemplate = `{
         },
         "/api/auth/register": {
             "post": {
-                "description": "Connection of a new user to a new account\u003cbr\u003eToken will be set in cookies if the arguments combination is valid",
+                "description": "Connection of a new user to a new account\u003cbr\u003eToken will be set in cookies if the username or email is not already taken\u003cbr\u003e\u003cbr\u003eThe image must be base64 encoded and must contain the file type in the header (ex: data:image/png;base64,...)",
                 "consumes": [
                     "application/json"
                 ],
@@ -664,6 +664,12 @@ const docTemplate = `{
                 "email": {
                     "type": "string"
                 },
+                "image": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
                 "username": {
                     "type": "string"
                 }
@@ -726,7 +732,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "image": {
-                    "description": "Base64 encoded PNG image",
                     "type": "string"
                 },
                 "password": {

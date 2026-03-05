@@ -18,6 +18,10 @@ definitions:
     properties:
       email:
         type: string
+      image:
+        type: string
+      password:
+        type: string
       username:
         type: string
     type: object
@@ -58,7 +62,6 @@ definitions:
       email:
         type: string
       image:
-        description: Base64 encoded PNG image
         type: string
       password:
         type: string
@@ -259,7 +262,8 @@ paths:
       - account
     get:
       description: <b>⚠️ The user must be logged in ⚠️</b><br><br>Reads the user's
-        account data
+        account data<br><br>The image is a HTTP path to the user's profile picture
+        using the same host:port as the API
       produces:
       - application/json
       responses:
@@ -273,8 +277,10 @@ paths:
     put:
       consumes:
       - application/json
-      description: <b>⚠️ The user must be logged in ⚠️</b><br><br>Updates the user's
-        account
+      description: '<b>⚠️ The user must be logged in ⚠️</b><br><br>Updates the user''s
+        account<br><br>The image must be base64 encoded and must contain the file
+        type in the header (ex: data:image/png;base64,...)<br><br>All fields are optionals,
+        if a field is empty or not provided, it will not be updated'
       parameters:
       - description: New arguments to be set in the user
         in: body
@@ -327,8 +333,9 @@ paths:
     post:
       consumes:
       - application/json
-      description: Connection of a new user to a new account<br>Token will be set
-        in cookies if the arguments combination is valid
+      description: 'Connection of a new user to a new account<br>Token will be set
+        in cookies if the username or email is not already taken<br><br>The image
+        must be base64 encoded and must contain the file type in the header (ex: data:image/png;base64,...)'
       parameters:
       - description: User related informations that will be later needed for the login
           process
