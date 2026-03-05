@@ -1,14 +1,17 @@
 # D&Gine API
 
-## Build and Run with
+## Prerequisites
+To run the API using the docker-compose, you need to have an existing external network with the database connected, i.e. launched [THIS PROJECT](https://github.com/D-Gine/Database)
 
+
+## Build and Run with
 For this project you need the following environment variables:
 ```
 # DATABASE
 DB_HOST=dengine-db
-DB_PORT=5432
-DB_USER=[USER : string]
-DB_PWD=[PWD : string]
+DB_PORT=[DB_PORT : int]
+DB_USER=[DB_USER : string]
+DB_PWD=[DB_PWD : string]
 DB_NAME=dengine
 
 # API
