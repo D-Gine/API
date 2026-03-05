@@ -2,7 +2,7 @@
 ** D&GINE Project, 2026
 ** Backend
 ** File description:
-** user/shared.go
+** users/shared.go
  */
 
 package users

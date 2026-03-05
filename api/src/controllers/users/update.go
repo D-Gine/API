@@ -2,7 +2,7 @@
 ** D&GINE Project, 2026
 ** Backend
 ** File description:
-** user/update.go
+** users/update.go
  */
 
 package users
@@ -23,9 +23,9 @@ type UpdateArgs struct {
 
 // @BasePath /api/users
 // Users godoc
-// @Summary Updates given ID user with arguments in body
+// @Summary Updates given user
 // @Schemes
-// @Description ⚠️ Only accessible to admins ⚠️<br><br>Updates the given user's account data
+// @Description ⚠️ Only accessible to admins ⚠️<br><br>Updates given user with arguments in body
 // @Tags users
 // @Accept json
 // @Param id query string true "id of the user to do the action on"

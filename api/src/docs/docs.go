@@ -376,7 +376,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eCreates a character account with given informations",
+                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eCreates a character with arguments in body\u003cbr\u003e\u003cbr\u003eWill return the id of created character",
                 "consumes": [
                     "application/json"
                 ],
@@ -386,7 +386,7 @@ const docTemplate = `{
                 "tags": [
                     "characters"
                 ],
-                "summary": "Connection of a new character to a new account",
+                "summary": "Creates a character",
                 "parameters": [
                     {
                         "description": "character related informations that will be later needed for the login process",
@@ -410,14 +410,14 @@ const docTemplate = `{
         },
         "/api/characters/id": {
             "get": {
-                "description": "Reads the given id character data",
+                "description": "Reads the given character data",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "characters"
                 ],
-                "summary": "Reads given ID character data",
+                "summary": "Reads given character data",
                 "parameters": [
                     {
                         "type": "string",
@@ -437,14 +437,14 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eUpdates the given character's account data",
+                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eUpdates given character with arguments in body",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
                     "characters"
                 ],
-                "summary": "Updates given ID character with arguments in body",
+                "summary": "Updates given character",
                 "parameters": [
                     {
                         "type": "string",
@@ -470,11 +470,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Deletes the given character's data\u003cbr\u003e \u003cb\u003eCareful, there is no turn back or check, once called, this route will delete the character no matter what\u003c/b\u003e \u003cbr\u003e It also deletes all content related to the character",
+                "description": "Deletes the given character\u003cbr\u003e \u003cb\u003eCareful, there is no turn back or check, once called, this route will delete the character no matter what\u003c/b\u003e \u003cbr\u003e It also deletes all content related to the character",
                 "tags": [
                     "characters"
                 ],
-                "summary": "Deletes given ID character",
+                "summary": "Deletes given character",
                 "parameters": [
                     {
                         "type": "string",
@@ -513,14 +513,14 @@ const docTemplate = `{
         },
         "/api/users": {
             "get": {
-                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eReads all users accounts data",
+                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eReads all users data",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "users"
                 ],
-                "summary": "Reads all users accounts data",
+                "summary": "Reads all users data",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -534,7 +534,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eCreates a user account with given informations",
+                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eCreates a user with arguments in body",
                 "consumes": [
                     "application/json"
                 ],
@@ -544,7 +544,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Creation of a user account",
+                "summary": "Creates a user",
                 "parameters": [
                     {
                         "description": "User related informations that will be later needed for the login process",
@@ -568,14 +568,14 @@ const docTemplate = `{
         },
         "/api/users/id": {
             "get": {
-                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eReads the given user's account data",
+                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eReads the given user data",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "users"
                 ],
-                "summary": "Reads given user account data",
+                "summary": "Reads given user data",
                 "parameters": [
                     {
                         "type": "string",
@@ -595,14 +595,14 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eUpdates the given user's account data",
+                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eUpdates given user with arguments in body",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
                     "users"
                 ],
-                "summary": "Updates given ID user with arguments in body",
+                "summary": "Updates given user",
                 "parameters": [
                     {
                         "type": "string",
@@ -628,11 +628,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eDeletes the given user's account\u003cbr\u003e \u003cb\u003eCareful, there is no turn back or check, once called, this route will delete the user no matter what\u003c/b\u003e \u003cbr\u003e It also deletes all content related to the user",
+                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eDeletes the given user\u003cbr\u003e \u003cb\u003eCareful, there is no turn back or check, once called, this route will delete the user no matter what\u003c/b\u003e \u003cbr\u003e It also deletes all content related to the user",
                 "tags": [
                     "users"
                 ],
-                "summary": "Deletes given ID user",
+                "summary": "Deletes given user",
                 "parameters": [
                     {
                         "type": "string",

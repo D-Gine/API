@@ -388,8 +388,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: ⚠️ Only accessible to admins ⚠️<br><br>Creates a character account
-        with given informations
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Creates a character with
+        arguments in body<br><br>Will return the id of created character
       parameters:
       - description: character related informations that will be later needed for
           the login process
@@ -405,14 +405,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/structs.PostResponse'
-      summary: Connection of a new character to a new account
+      summary: Creates a character
       tags:
       - characters
   /api/characters/id:
     delete:
-      description: Deletes the given character's data<br> <b>Careful, there is no
-        turn back or check, once called, this route will delete the character no matter
-        what</b> <br> It also deletes all content related to the character
+      description: Deletes the given character<br> <b>Careful, there is no turn back
+        or check, once called, this route will delete the character no matter what</b>
+        <br> It also deletes all content related to the character
       parameters:
       - description: id of the character to do the action on
         in: query
@@ -422,11 +422,11 @@ paths:
       responses:
         "200":
           description: OK
-      summary: Deletes given ID character
+      summary: Deletes given character
       tags:
       - characters
     get:
-      description: Reads the given id character data
+      description: Reads the given character data
       parameters:
       - description: id of the character to read
         in: query
@@ -440,14 +440,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/characters.RowReadResponse'
-      summary: Reads given ID character data
+      summary: Reads given character data
       tags:
       - characters
     put:
       consumes:
       - application/json
-      description: ⚠️ Only accessible to admins ⚠️<br><br>Updates the given character's
-        account data
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Updates given character
+        with arguments in body
       parameters:
       - description: id of the character to update
         in: query
@@ -463,7 +463,7 @@ paths:
       responses:
         "200":
           description: OK
-      summary: Updates given ID character with arguments in body
+      summary: Updates given character
       tags:
       - characters
   /api/health:
@@ -482,8 +482,7 @@ paths:
       - apidata
   /api/users:
     get:
-      description: ⚠️ Only accessible to admins ⚠️<br><br>Reads all users accounts
-        data
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Reads all users data
       produces:
       - application/json
       responses:
@@ -493,14 +492,14 @@ paths:
             items:
               $ref: '#/definitions/users.UserReadResponse'
             type: array
-      summary: Reads all users accounts data
+      summary: Reads all users data
       tags:
       - users
     post:
       consumes:
       - application/json
-      description: ⚠️ Only accessible to admins ⚠️<br><br>Creates a user account with
-        given informations
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Creates a user with arguments
+        in body
       parameters:
       - description: User related informations that will be later needed for the login
           process
@@ -516,15 +515,15 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/structs.PostResponse'
-      summary: Creation of a user account
+      summary: Creates a user
       tags:
       - users
   /api/users/id:
     delete:
-      description: ⚠️ Only accessible to admins ⚠️<br><br>Deletes the given user's
-        account<br> <b>Careful, there is no turn back or check, once called, this
-        route will delete the user no matter what</b> <br> It also deletes all content
-        related to the user
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Deletes the given user<br>
+        <b>Careful, there is no turn back or check, once called, this route will delete
+        the user no matter what</b> <br> It also deletes all content related to the
+        user
       parameters:
       - description: id of the user to do the action on
         in: query
@@ -534,12 +533,11 @@ paths:
       responses:
         "200":
           description: OK
-      summary: Deletes given ID user
+      summary: Deletes given user
       tags:
       - users
     get:
-      description: ⚠️ Only accessible to admins ⚠️<br><br>Reads the given user's account
-        data
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Reads the given user data
       parameters:
       - description: id of the user to do the action on
         in: query
@@ -553,14 +551,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/users.UserReadResponse'
-      summary: Reads given user account data
+      summary: Reads given user data
       tags:
       - users
     put:
       consumes:
       - application/json
-      description: ⚠️ Only accessible to admins ⚠️<br><br>Updates the given user's
-        account data
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Updates given user with
+        arguments in body
       parameters:
       - description: id of the user to do the action on
         in: query
@@ -576,7 +574,7 @@ paths:
       responses:
         "200":
           description: OK
-      summary: Updates given ID user with arguments in body
+      summary: Updates given user
       tags:
       - users
 swagger: "2.0"

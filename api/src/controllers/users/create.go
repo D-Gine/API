@@ -2,7 +2,7 @@
 ** D&GINE Project, 2026
 ** Backend
 ** File description:
-** auth/register.go
+** users/register.go
  */
 
 package users
@@ -27,9 +27,9 @@ type CreateUsersArgs struct {
 
 // @BasePath /api/users
 // Users godoc
-// @Summary Creation of a user account
+// @Summary Creates a user
 // @Schemes
-// @Description ⚠️ Only accessible to admins ⚠️<br><br>Creates a user account with given informations
+// @Description ⚠️ Only accessible to admins ⚠️<br><br>Creates a user with arguments in body
 // @Tags users
 // @Accept json
 // @Produce json

@@ -17,9 +17,9 @@ import (
 
 // @BasePath /api/characters
 // Characters godoc
-// @Summary Reads given ID character data
+// @Summary Reads given character data
 // @Schemes
-// @Description Reads the given id character data
+// @Description Reads the given character data
 // @Tags characters
 // @Param id query string true "id of the character to read"
 // @Produce json

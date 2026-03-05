@@ -24,9 +24,9 @@ type CreateArgs struct {
 
 // @BasePath /api/characters
 // Characters godoc
-// @Summary Connection of a new character to a new account
+// @Summary Creates a character
 // @Schemes
-// @Description ⚠️ Only accessible to admins ⚠️<br><br>Creates a character account with given informations
+// @Description ⚠️ Only accessible to admins ⚠️<br><br>Creates a character with arguments in body<br><br>Will return the id of created character
 // @Tags characters
 // @Accept json
 // @Produce json

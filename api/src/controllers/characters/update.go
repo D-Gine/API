@@ -2,7 +2,7 @@
 ** D&GINE Project, 2026
 ** Backend
 ** File description:
-** user/update.go
+** characters/update.go
  */
 
 package characters
@@ -21,9 +21,9 @@ type UpdateArgs struct {
 
 // @BasePath /api/characters
 // Characters godoc
-// @Summary Updates given ID character with arguments in body
+// @Summary Updates given character
 // @Schemes
-// @Description ⚠️ Only accessible to admins ⚠️<br><br>Updates the given character's account data
+// @Description ⚠️ Only accessible to admins ⚠️<br><br>Updates given character with arguments in body
 // @Tags characters
 // @Accept json
 // @Param id query string true "id of the character to update"

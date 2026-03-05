@@ -2,7 +2,7 @@
 ** D&GINE Project, 2026
 ** Backend
 ** File description:
-** user/read.go
+** users/read_id.go
  */
 
 package users
@@ -17,9 +17,9 @@ import (
 
 // @BasePath /api/users
 // Users godoc
-// @Summary Reads given user account data
+// @Summary Reads given user data
 // @Schemes
-// @Description ⚠️ Only accessible to admins ⚠️<br><br>Reads the given user's account data
+// @Description ⚠️ Only accessible to admins ⚠️<br><br>Reads the given user data
 // @Tags users
 // @Param id query string true "id of the user to do the action on"
 // @Produce json
