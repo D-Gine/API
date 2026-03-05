@@ -8,7 +8,7 @@
 package auth
 
 import (
-	"api/src/internal/domains"
+	"api/src/internal/config"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -23,6 +23,6 @@ import (
 // @Success 200
 // @Router /api/auth/logout [post]
 func Logout(c *gin.Context) {
-	c.SetCookie("token", "", -1, "/", domains.TokenDomain, false, true)
+	c.SetCookie("token", "", -1, "/", config.TokenDomain, false, true)
 	c.JSON(http.StatusOK, nil)
 }
