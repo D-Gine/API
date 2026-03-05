@@ -23,7 +23,7 @@ import (
 // @Description Deletes the given character's data<br> <b>Careful, there is no turn back or check, once called, this route will delete the character no matter what</b> <br> It also deletes all content related to the character
 // @Tags characters
 // @Success 200
-// @Router /api/characters [delete]
+// @Router /api/characters/id [delete]
 func DeleteCharacters(c *gin.Context) {
 	idQuery := c.Request.URL.Query().Get("id")
 	if idQuery == "" {

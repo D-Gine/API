@@ -17,7 +17,7 @@ import (
 
 // @BasePath /api/users
 // Users godoc
-// @Summary Reads given ID user data
+// @Summary Reads given user account data
 // @Schemes
 // @Description ⚠️ Only accessible to admins ⚠️<br><br>Reads the given user's account data
 // @Tags users
@@ -33,7 +33,7 @@ func ReadUsersId(c *gin.Context) {
 	}
 
 	var id, name, email, image, role sql.NullString
-	err := database.Db.QueryRow("SELECT id, name, email, image, role FROM services WHERE id=$1", idQuery).Scan(&id, &name, &email, &image, &role)
+	err := database.Db.QueryRow("SELECT id, name, email, image, role FROM accounts.users WHERE id=$1", idQuery).Scan(&id, &name, &email, &image, &role)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error : " + err.Error()})
 	}

@@ -31,7 +31,7 @@ type UpdateArgs struct {
 // @Param id query string true "id of the user to do the action on"
 // @Param data body UpdateArgs true "New arguments to be set in the user given, along with its id"
 // @Success 200
-// @Router /api/users [put]
+// @Router /api/users/id [put]
 func UpdateUsers(c *gin.Context) {
 	idQuery := c.Request.URL.Query().Get("id")
 	if idQuery == "" {

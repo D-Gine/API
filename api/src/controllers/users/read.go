@@ -17,7 +17,7 @@ import (
 
 // @BasePath /api/users
 // Users godoc
-// @Summary Reads all users data
+// @Summary Reads all users accounts data
 // @Schemes
 // @Description ⚠️ Only accessible to admins ⚠️<br><br>Reads all users accounts data
 // @Tags users

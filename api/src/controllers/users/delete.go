@@ -23,7 +23,7 @@ import (
 // @Description ⚠️ Only accessible to admins ⚠️<br><br>Deletes the given user's account<br> <b>Careful, there is no turn back or check, once called, this route will delete the user no matter what</b> <br> It also deletes all content related to the user
 // @Tags users
 // @Success 200
-// @Router /api/users [delete]
+// @Router /api/users/id [delete]
 func DeleteUsers(c *gin.Context) {
 	idQuery := c.Request.URL.Query().Get("id")
 	if idQuery == "" {

@@ -29,7 +29,7 @@ type UpdateArgs struct {
 // @Param id query string true "id of the character to update"
 // @Param data body UpdateArgs true "New arguments to be set in the character given"
 // @Success 200
-// @Router /api/characters [put]
+// @Router /api/characters/id [put]
 func UpdateCharacters(c *gin.Context) {
 	idQuery := c.Request.URL.Query().Get("id")
 	if idQuery == "" {
