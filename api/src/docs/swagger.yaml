@@ -1,4 +1,19 @@
 definitions:
+  CRUDTEMPLATE.CreateCRUDTEMPLATEsArgs:
+    properties:
+      name:
+        type: string
+    type: object
+  CRUDTEMPLATE.DbReadResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  CRUDTEMPLATE.UpdateArgs:
+    properties:
+      name:
+        type: string
+    type: object
   account.UpdateArgs:
     properties:
       email:
@@ -131,6 +146,105 @@ paths:
       summary: Gives informations about api
       tags:
       - apidata
+  /api/CRUDTEMPLATEs:
+    get:
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Reads all CRUDTEMPLATEs
+        data
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/CRUDTEMPLATE.DbReadResponse'
+            type: array
+      summary: Reads all CRUDTEMPLATEs data
+      tags:
+      - CRUDTEMPLATEs
+    post:
+      consumes:
+      - application/json
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Creates a CRUDTEMPLATE with
+        arguments in body<br><br>Will return the id of created CRUDTEMPLATE
+      parameters:
+      - description: CRUDTEMPLATE related informations that will be later needed for
+          the login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/CRUDTEMPLATE.CreateCRUDTEMPLATEsArgs'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structs.PostResponse'
+      summary: Creates a CRUDTEMPLATE
+      tags:
+      - CRUDTEMPLATEs
+  /api/CRUDTEMPLATEs/id:
+    delete:
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Deletes the given CRUDTEMPLATE<br>
+        <b>Careful, there is no turn back or check, once called, this route will delete
+        the CRUDTEMPLATE no matter what</b> <br> It also deletes all content related
+        to the CRUDTEMPLATE depending on the parameters of the database
+      parameters:
+      - description: id of the CRUDTEMPLATE to delete
+        in: query
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+      summary: Deletes given CRUDTEMPLATE
+      tags:
+      - CRUDTEMPLATEs
+    get:
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Reads the given CRUDTEMPLATE's
+        account data
+      parameters:
+      - description: id of the CRUDTEMPLATE to read
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/CRUDTEMPLATE.DbReadResponse'
+      summary: Reads given CRUDTEMPLATE data
+      tags:
+      - CRUDTEMPLATEs
+    put:
+      consumes:
+      - application/json
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Updates given CRUDTEMPLATE
+        with arguments in body
+      parameters:
+      - description: id of the CRUDTEMPLATE to update
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: New arguments to be set in the CRUDTEMPLATE given
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/CRUDTEMPLATE.UpdateArgs'
+      responses:
+        "200":
+          description: OK
+      summary: Updates given CRUDTEMPLATE
+      tags:
+      - CRUDTEMPLATEs
   /api/account:
     delete:
       description: <b>⚠️ The user must be logged in ⚠️</b><br><br>Deletes the user's
@@ -257,22 +371,6 @@ paths:
       tags:
       - auth
   /api/characters:
-    delete:
-      description: Deletes the given character's data<br> <b>Careful, there is no
-        turn back or check, once called, this route will delete the character no matter
-        what</b> <br> It also deletes all content related to the character
-      parameters:
-      - description: id of the character to do the action on
-        in: query
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-      summary: Deletes given ID character
-      tags:
-      - characters
     get:
       description: Reads all characters data
       produces:
@@ -310,6 +408,41 @@ paths:
       summary: Connection of a new character to a new account
       tags:
       - characters
+  /api/characters/id:
+    delete:
+      description: Deletes the given character's data<br> <b>Careful, there is no
+        turn back or check, once called, this route will delete the character no matter
+        what</b> <br> It also deletes all content related to the character
+      parameters:
+      - description: id of the character to do the action on
+        in: query
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+      summary: Deletes given ID character
+      tags:
+      - characters
+    get:
+      description: Reads the given id character data
+      parameters:
+      - description: id of the character to read
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/characters.RowReadResponse'
+      summary: Reads given ID character data
+      tags:
+      - characters
     put:
       consumes:
       - application/json
@@ -333,25 +466,6 @@ paths:
       summary: Updates given ID character with arguments in body
       tags:
       - characters
-  /api/characters/id:
-    get:
-      description: Reads the given id character data
-      parameters:
-      - description: id of the character to read
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/characters.RowReadResponse'
-      summary: Reads given ID character data
-      tags:
-      - characters
   /api/health:
     get:
       description: Healthcheck used (mainly by docker) to check if the api is up and
@@ -367,23 +481,6 @@ paths:
       tags:
       - apidata
   /api/users:
-    delete:
-      description: ⚠️ Only accessible to admins ⚠️<br><br>Deletes the given user's
-        account<br> <b>Careful, there is no turn back or check, once called, this
-        route will delete the user no matter what</b> <br> It also deletes all content
-        related to the user
-      parameters:
-      - description: id of the user to do the action on
-        in: query
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-      summary: Deletes given ID user
-      tags:
-      - users
     get:
       description: ⚠️ Only accessible to admins ⚠️<br><br>Reads all users accounts
         data
@@ -396,7 +493,7 @@ paths:
             items:
               $ref: '#/definitions/users.UserReadResponse'
             type: array
-      summary: Reads all users data
+      summary: Reads all users accounts data
       tags:
       - users
     post:
@@ -419,7 +516,44 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/structs.PostResponse'
-      summary: Connection of a new user to a new account
+      summary: Creation of a user account
+      tags:
+      - users
+  /api/users/id:
+    delete:
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Deletes the given user's
+        account<br> <b>Careful, there is no turn back or check, once called, this
+        route will delete the user no matter what</b> <br> It also deletes all content
+        related to the user
+      parameters:
+      - description: id of the user to do the action on
+        in: query
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+      summary: Deletes given ID user
+      tags:
+      - users
+    get:
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Reads the given user's account
+        data
+      parameters:
+      - description: id of the user to do the action on
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/users.UserReadResponse'
+      summary: Reads given user account data
       tags:
       - users
     put:
@@ -443,26 +577,6 @@ paths:
         "200":
           description: OK
       summary: Updates given ID user with arguments in body
-      tags:
-      - users
-  /api/users/id:
-    get:
-      description: ⚠️ Only accessible to admins ⚠️<br><br>Reads the given user's account
-        data
-      parameters:
-      - description: id of the user to do the action on
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/users.UserReadResponse'
-      summary: Reads given ID user data
       tags:
       - users
 swagger: "2.0"

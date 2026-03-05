@@ -38,6 +38,144 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/CRUDTEMPLATEs": {
+            "get": {
+                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eReads all CRUDTEMPLATEs data",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CRUDTEMPLATEs"
+                ],
+                "summary": "Reads all CRUDTEMPLATEs data",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/CRUDTEMPLATE.DbReadResponse"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eCreates a CRUDTEMPLATE with arguments in body\u003cbr\u003e\u003cbr\u003eWill return the id of created CRUDTEMPLATE",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CRUDTEMPLATEs"
+                ],
+                "summary": "Creates a CRUDTEMPLATE",
+                "parameters": [
+                    {
+                        "description": "CRUDTEMPLATE related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CRUDTEMPLATE.CreateCRUDTEMPLATEsArgs"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structs.PostResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/CRUDTEMPLATEs/id": {
+            "get": {
+                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eReads the given CRUDTEMPLATE's account data",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CRUDTEMPLATEs"
+                ],
+                "summary": "Reads given CRUDTEMPLATE data",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id of the CRUDTEMPLATE to read",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/CRUDTEMPLATE.DbReadResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eUpdates given CRUDTEMPLATE with arguments in body",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CRUDTEMPLATEs"
+                ],
+                "summary": "Updates given CRUDTEMPLATE",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id of the CRUDTEMPLATE to update",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "New arguments to be set in the CRUDTEMPLATE given",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CRUDTEMPLATE.UpdateArgs"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eDeletes the given CRUDTEMPLATE\u003cbr\u003e \u003cb\u003eCareful, there is no turn back or check, once called, this route will delete the CRUDTEMPLATE no matter what\u003c/b\u003e \u003cbr\u003e It also deletes all content related to the CRUDTEMPLATE depending on the parameters of the database",
+                "tags": [
+                    "CRUDTEMPLATEs"
+                ],
+                "summary": "Deletes given CRUDTEMPLATE",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id of the CRUDTEMPLATE to delete",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/api/account": {
             "get": {
                 "description": "\u003cb\u003e⚠️ The user must be logged in ⚠️\u003c/b\u003e\u003cbr\u003e\u003cbr\u003eReads the user's account data",
@@ -237,6 +375,67 @@ const docTemplate = `{
                     }
                 }
             },
+            "post": {
+                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eCreates a character account with given informations",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "characters"
+                ],
+                "summary": "Connection of a new character to a new account",
+                "parameters": [
+                    {
+                        "description": "character related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/characters.CreateArgs"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structs.PostResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/characters/id": {
+            "get": {
+                "description": "Reads the given id character data",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "characters"
+                ],
+                "summary": "Reads given ID character data",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id of the character to read",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/characters.RowReadResponse"
+                        }
+                    }
+                }
+            },
             "put": {
                 "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eUpdates the given character's account data",
                 "consumes": [
@@ -270,38 +469,6 @@ const docTemplate = `{
                     }
                 }
             },
-            "post": {
-                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eCreates a character account with given informations",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "characters"
-                ],
-                "summary": "Connection of a new character to a new account",
-                "parameters": [
-                    {
-                        "description": "character related informations that will be later needed for the login process",
-                        "name": "creds",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/characters.CreateArgs"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/structs.PostResponse"
-                        }
-                    }
-                }
-            },
             "delete": {
                 "description": "Deletes the given character's data\u003cbr\u003e \u003cb\u003eCareful, there is no turn back or check, once called, this route will delete the character no matter what\u003c/b\u003e \u003cbr\u003e It also deletes all content related to the character",
                 "tags": [
@@ -320,35 +487,6 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK"
-                    }
-                }
-            }
-        },
-        "/api/characters/id": {
-            "get": {
-                "description": "Reads the given id character data",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "characters"
-                ],
-                "summary": "Reads given ID character data",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id of the character to read",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/characters.RowReadResponse"
-                        }
                     }
                 }
             }
@@ -382,7 +520,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Reads all users data",
+                "summary": "Reads all users accounts data",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -391,6 +529,67 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/users.UserReadResponse"
                             }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eCreates a user account with given informations",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Creation of a user account",
+                "parameters": [
+                    {
+                        "description": "User related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/users.CreateUsersArgs"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structs.PostResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/id": {
+            "get": {
+                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eReads the given user's account data",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Reads given user account data",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id of the user to do the action on",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/users.UserReadResponse"
                         }
                     }
                 }
@@ -428,38 +627,6 @@ const docTemplate = `{
                     }
                 }
             },
-            "post": {
-                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eCreates a user account with given informations",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "users"
-                ],
-                "summary": "Connection of a new user to a new account",
-                "parameters": [
-                    {
-                        "description": "User related informations that will be later needed for the login process",
-                        "name": "creds",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/users.CreateUsersArgs"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/structs.PostResponse"
-                        }
-                    }
-                }
-            },
             "delete": {
                 "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eDeletes the given user's account\u003cbr\u003e \u003cb\u003eCareful, there is no turn back or check, once called, this route will delete the user no matter what\u003c/b\u003e \u003cbr\u003e It also deletes all content related to the user",
                 "tags": [
@@ -481,38 +648,33 @@ const docTemplate = `{
                     }
                 }
             }
-        },
-        "/api/users/id": {
-            "get": {
-                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eReads the given user's account data",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "users"
-                ],
-                "summary": "Reads given ID user data",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id of the user to do the action on",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/users.UserReadResponse"
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
+        "CRUDTEMPLATE.CreateCRUDTEMPLATEsArgs": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "CRUDTEMPLATE.DbReadResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "CRUDTEMPLATE.UpdateArgs": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "account.UpdateArgs": {
             "type": "object",
             "properties": {
