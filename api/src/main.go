@@ -10,11 +10,12 @@ package main
 import (
 	"api/src/controllers/account"
 	"api/src/controllers/auth"
+	"api/src/controllers/characters"
 	"api/src/controllers/users"
 	"api/src/database"
 	_ "api/src/docs"
-	"api/src/internal/domains"
-	"api/src/internal/endpoints"
+	"api/src/internal/apidata"
+	"api/src/internal/config"
 	"fmt"
 	"net/http"
 	"os"
@@ -26,7 +27,7 @@ import (
 
 func CORSMiddleware(c *gin.Context) {
 	origin := c.Request.Header.Get("Origin")
-	if domains.AllowedOrigins[origin] {
+	if config.AllowedOrigins[origin] {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, PATCH, DELETE")
@@ -44,18 +45,30 @@ func CORSMiddleware(c *gin.Context) {
 	c.Next()
 }
 
+func setTrustedProxies(r *gin.Engine) {
+	if len(config.Trustedproxies) > 0 {
+		r.SetTrustedProxies(config.Trustedproxies)
+	} else {
+		r.SetTrustedProxies(nil)
+	}
+}
+
 func main() {
 	port := ":" + os.Getenv("API_PORT")
-
-	r := gin.Default()
+	config.LoadConfig()
 	database.ConnectDatabase()
+
+	r := gin.New()
+	r.Use(gin.Logger())   // Logs all requests
+	r.Use(gin.Recovery()) // Catches any panics and returns a 500 error instead of crashing
 	r.Use(CORSMiddleware)
+	setTrustedProxies(r)
 
 	{
-		r.GET("/about.json", endpoints.GetAbout)
+		r.GET("/about.json", apidata.GetAbout)
 
 		api := r.Group("/api", CORSMiddleware)
-		api.GET("/health", endpoints.GetHealthCheck)
+		api.GET("/health", apidata.GetHealthCheck)
 
 		authGroup := api.Group("/auth")
 		{
@@ -80,8 +93,16 @@ func main() {
 			usersGroup.DELETE("", users.DeleteUsers)
 			usersGroup.GET("/id", users.ReadUsersId)
 		}
-	}
 
+		charactersGroup := api.Group("/characters", auth.AuthenticateMiddleware, auth.AdminMiddleware)
+		{
+			charactersGroup.POST("", characters.CreateCharacters)
+			charactersGroup.GET("", characters.ReadCharacters)
+			charactersGroup.PUT("", characters.UpdateCharacters)
+			charactersGroup.DELETE("", characters.DeleteCharacters)
+			charactersGroup.GET("/id", characters.ReadCharactersId)
+		}
+	}
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler, ginSwagger.DefaultModelsExpandDepth(-1)))
 	fmt.Println("Listening and serving HTTP on " + port)
 	r.Run(port)

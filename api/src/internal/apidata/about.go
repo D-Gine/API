@@ -2,10 +2,10 @@
 ** D&GINE Project, 2026
 ** Backend
 ** File description:
-** internal/endpoints/about.go
+** internal/apidata/about.go
  */
 
-package endpoints
+package apidata
 
 import (
 	"net/http"
@@ -17,12 +17,12 @@ type About struct {
 	Status string `json:"status"`
 }
 
-// About godoc
+// Apidata godoc
 // @BasePath /about.json
 // @Summary Gives informations about api
 // @Schemes
 // @Description Gives informations about api
-// @Tags about.json
+// @Tags apidata
 // @Accept json
 // @Produce json
 // @Success 200 {object} About

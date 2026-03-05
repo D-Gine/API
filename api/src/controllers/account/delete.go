@@ -10,7 +10,7 @@ package account
 import (
 	"api/src/controllers/auth"
 	"api/src/database"
-	"api/src/internal/domains"
+	"api/src/internal/config"
 	"fmt"
 	"net/http"
 
@@ -38,6 +38,6 @@ func DeleteAccount(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
 		return
 	}
-	c.SetCookie("token", "", -1, "/", domains.TokenDomain, false, true)
+	c.SetCookie("token", "", -1, "/", config.TokenDomain, false, true)
 	c.JSON(http.StatusOK, nil)
 }
