@@ -1,15 +1,15 @@
 # D&Gine API
 
 ## Prerequisites
-To run the API using the docker-compose, you need to have an existing external network with the database connected, i.e. launched [THIS PROJECT](https://github.com/D-Gine/Database)
-
+To run the API using the docker-compose, you need to have an existing external network with the database connected
+<br>i.e. launched [THIS PROJECT](https://github.com/D-Gine/Database)
 
 ## Build and Run with
 For this project you need the following environment variables:
 ```
 # DATABASE
 DB_HOST=dengine-db
-DB_PORT=[DB_PORT : int]
+DB_PORT=5432
 DB_USER=[DB_USER : string]
 DB_PWD=[DB_PWD : string]
 DB_NAME=dengine
@@ -25,3 +25,7 @@ TRUSTED_PROXIES=127.0.0.1
 # NETWORKS
 BACK_NETWORK=dengine-back-net
 ```
+
+## Doc
+You have access to routes documentations via Swagger, it must be and shall be updated with each new feature on the API
+<br>To access the swagger, go to [THIS LINK](http://localhost:8080/swagger/index.html#/) once you started the API on your computer
