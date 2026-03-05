@@ -1,6 +1,6 @@
 /*
 ** D&GINE Project, 2026
-** Backend
+** API
 ** File description:
 ** user/delete.go
  */
