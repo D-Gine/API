@@ -15,6 +15,7 @@ DB_PWD=[DB_PWD : string]
 DB_NAME=dengine
 
 # API
+VERSION=1.2.3
 API_PORT=[API_PORT : int]
 GIN_MODE=debug
 TOKEN_KEY=[TOKEN_KEY : string]
