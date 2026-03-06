@@ -1,6 +1,6 @@
 /*
 ** D&GINE Project, 2026
-** Backend
+** API
 ** File description:
 ** account/delete.go
  */
@@ -13,6 +13,7 @@ import (
 	"api/src/internal/config"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,7 +24,7 @@ import (
 // @Schemes
 // @Description <b>⚠️ The user must be logged in ⚠️</b><br><br>Deletes the user's account from database, the user will also be logged out<br> <b>Careful, there is no turn back or check, once called, this route will delete the user no matter what</b> <br> It also deletes all content related to the user
 // @Tags account
-// @Success 200
+// @Success 204
 // @Router /api/account [delete]
 func DeleteAccount(c *gin.Context) {
 	// Recuperation du user depuis le token
@@ -38,6 +39,9 @@ func DeleteAccount(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
 		return
 	}
+	if err := os.Remove(user.Image); err != nil && !os.IsNotExist(err) {
+		fmt.Println("Failed to delete user image:", err)
+	}
 	c.SetCookie("token", "", -1, "/", config.TokenDomain, false, true)
-	c.JSON(http.StatusOK, nil)
+	c.JSON(http.StatusNoContent, nil)
 }

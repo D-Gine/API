@@ -2,11 +2,11 @@
 ** D&GINE Project, 2026
 ** API
 ** File description:
-** internal/structs/structs.go
+** user/shared.go
  */
 
-package structs
+package CRUDTEMPLATE
 
-type PostResponse struct {
+type DbReadResponse struct {
 	Id string `json:"id"`
 }

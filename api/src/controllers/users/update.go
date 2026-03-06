@@ -1,8 +1,8 @@
 /*
 ** D&GINE Project, 2026
-** Backend
+** API
 ** File description:
-** user/update.go
+** users/update.go
  */
 
 package users
@@ -23,15 +23,15 @@ type UpdateArgs struct {
 
 // @BasePath /api/users
 // Users godoc
-// @Summary Updates given ID user with arguments in body
+// @Summary Updates given user
 // @Schemes
-// @Description ⚠️ Only accessible to admins ⚠️<br><br>Updates the given user's account data
+// @Description ⚠️ Only accessible to admins ⚠️<br><br>Updates given user with arguments in body
 // @Tags users
 // @Accept json
 // @Param id query string true "id of the user to do the action on"
 // @Param data body UpdateArgs true "New arguments to be set in the user given, along with its id"
 // @Success 200
-// @Router /api/users [put]
+// @Router /api/users/id [put]
 func UpdateUsers(c *gin.Context) {
 	idQuery := c.Request.URL.Query().Get("id")
 	if idQuery == "" {

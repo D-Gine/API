@@ -1,8 +1,8 @@
 /*
 ** D&GINE Project, 2026
-** Backend
+** API
 ** File description:
-** auth/register.go
+** users/register.go
  */
 
 package users
@@ -27,14 +27,14 @@ type CreateUsersArgs struct {
 
 // @BasePath /api/users
 // Users godoc
-// @Summary Connection of a new user to a new account
+// @Summary Creates a user
 // @Schemes
-// @Description ⚠️ Only accessible to admins ⚠️<br><br>Creates a user account with given informations
+// @Description ⚠️ Only accessible to admins ⚠️<br><br>Creates a user with arguments in body
 // @Tags users
 // @Accept json
 // @Produce json
 // @Param creds body CreateUsersArgs true "User related informations that will be later needed for the login process"
-// @Success 200 {object} structs.PostResponse
+// @Success 201 {object} structs.PostResponse
 // @Router /api/users [post]
 func CreateUsers(c *gin.Context) {
 	var args CreateUsersArgs
@@ -72,5 +72,5 @@ func CreateUsers(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, structs.PostResponse{Id: id.String})
+	c.JSON(http.StatusCreated, structs.PostResponse{Id: id.String})
 }

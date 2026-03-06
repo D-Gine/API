@@ -1,6 +1,6 @@
 /*
 ** D&GINE Project, 2026
-** Backend
+** API
 ** File description:
 ** main.go
  */
@@ -11,6 +11,7 @@ import (
 	"api/src/controllers/account"
 	"api/src/controllers/auth"
 	"api/src/controllers/characters"
+	"api/src/controllers/fileserver"
 	"api/src/controllers/users"
 	"api/src/database"
 	_ "api/src/docs"
@@ -75,7 +76,6 @@ func main() {
 			authGroup.POST("/login", auth.Login)
 			authGroup.POST("/register", auth.Register)
 			authGroup.POST("/logout", auth.Logout)
-			authGroup.POST("/oauth", auth.OAuthLogin)
 		}
 
 		accountGroup := api.Group("/account", auth.AuthenticateMiddleware)
@@ -89,8 +89,8 @@ func main() {
 		{
 			usersGroup.POST("", users.CreateUsers)
 			usersGroup.GET("", users.ReadUsers)
-			usersGroup.PUT("", users.UpdateUsers)
-			usersGroup.DELETE("", users.DeleteUsers)
+			usersGroup.PUT("/id", users.UpdateUsers)
+			usersGroup.DELETE("/id", users.DeleteUsers)
 			usersGroup.GET("/id", users.ReadUsersId)
 		}
 
@@ -98,12 +98,16 @@ func main() {
 		{
 			charactersGroup.POST("", characters.CreateCharacters)
 			charactersGroup.GET("", characters.ReadCharacters)
-			charactersGroup.PUT("", characters.UpdateCharacters)
-			charactersGroup.DELETE("", characters.DeleteCharacters)
+			charactersGroup.PUT("/id", characters.UpdateCharacters)
+			charactersGroup.DELETE("/id", characters.DeleteCharacters)
 			charactersGroup.GET("/id", characters.ReadCharactersId)
 		}
 	}
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler, ginSwagger.DefaultModelsExpandDepth(-1)))
+
+	img := r.Group("/img", CORSMiddleware)
+	img.GET("/*filepath", fileserver.GetImage)
+
 	fmt.Println("Listening and serving HTTP on " + port)
 	r.Run(port)
 }

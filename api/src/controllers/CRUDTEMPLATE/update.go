@@ -2,10 +2,10 @@
 ** D&GINE Project, 2026
 ** API
 ** File description:
-** characters/update.go
+** CRUDTEMPLATE/update.go
  */
 
-package characters
+package CRUDTEMPLATE
 
 import (
 	"api/src/database"
@@ -15,22 +15,21 @@ import (
 )
 
 type UpdateArgs struct {
-	PlayerId string `json:"player_id"`
-	Name     string `json:"name"`
+	Name string `json:"name"`
 }
 
-// @BasePath /api/characters
-// Characters godoc
-// @Summary Updates given character
+// @BasePath /api/CRUDTEMPLATEs
+// CRUDTEMPLATEs godoc
+// @Summary Updates given CRUDTEMPLATE
 // @Schemes
-// @Description ⚠️ Only accessible to admins ⚠️<br><br>Updates given character with arguments in body
-// @Tags characters
+// @Description ⚠️ Only accessible to admins ⚠️<br><br>Updates given CRUDTEMPLATE with arguments in body
+// @Tags CRUDTEMPLATEs
 // @Accept json
-// @Param id query string true "id of the character to update"
-// @Param data body UpdateArgs true "New arguments to be set in the character given"
+// @Param id query string true "id of the CRUDTEMPLATE to update"
+// @Param data body UpdateArgs true "New arguments to be set in the CRUDTEMPLATE given"
 // @Success 200
-// @Router /api/characters/id [put]
-func UpdateCharacters(c *gin.Context) {
+// @Router /api/CRUDTEMPLATEs/id [put]
+func UpdateCRUDTEMPLATEs(c *gin.Context) {
 	idQuery := c.Request.URL.Query().Get("id")
 	if idQuery == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Wrong parameters"})
@@ -46,11 +45,7 @@ func UpdateCharacters(c *gin.Context) {
 		return
 	}
 
-	_, err = database.Db.Exec(
-		`UPDATE games.characters
-		SET player_id=$2, name=$3
-		WHERE id=$1`,
-		idQuery, args.PlayerId, args.Name)
+	_, err = database.Db.Exec("UPDATE CRUDTEMPLATEs SET name=$2 WHERE id=$1", idQuery, args.Name)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error " + err.Error()})
 		return

@@ -1,6 +1,6 @@
 /*
 ** D&GINE Project, 2026
-** Backend
+** API
 ** File description:
 ** auth/login.go
  */
@@ -44,8 +44,9 @@ func Login(c *gin.Context) {
 	}
 
 	// Checking db if email + password combination matches
-	var id, email, username, role, hashedPassword sql.NullString
-	err = database.Db.QueryRow("SELECT id, email, name, role, password FROM accounts.users WHERE email=$1", creds.Email).Scan(&id, &email, &username, &role, &hashedPassword)
+	var id, email, username, image, role, hashedPassword sql.NullString
+	err = database.Db.QueryRow("SELECT id, email, name, image, role, password FROM accounts.users WHERE email=$1",
+		creds.Email).Scan(&id, &email, &username, &image, &role, &hashedPassword)
 	if err == sql.ErrNoRows {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
 		return
@@ -63,7 +64,7 @@ func Login(c *gin.Context) {
 	// Generating token
 	var result PostLoginResponse
 	result.Id = id.String
-	result.Token, err = BuildToken(c, UserData{id.String, email.String, username.String, role.String})
+	result.Token, err = BuildToken(c, UserData{id.String, email.String, username.String, image.String, role.String})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
 	} else {

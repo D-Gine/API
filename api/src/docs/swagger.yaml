@@ -1,7 +1,26 @@
 definitions:
+  CRUDTEMPLATE.CreateCRUDTEMPLATEsArgs:
+    properties:
+      name:
+        type: string
+    type: object
+  CRUDTEMPLATE.DbReadResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  CRUDTEMPLATE.UpdateArgs:
+    properties:
+      name:
+        type: string
+    type: object
   account.UpdateArgs:
     properties:
       email:
+        type: string
+      image:
+        type: string
+      password:
         type: string
       username:
         type: string
@@ -9,6 +28,10 @@ definitions:
   account.UserReadResponse:
     properties:
       email:
+        type: string
+      id:
+        type: string
+      image:
         type: string
       name:
         type: string
@@ -27,13 +50,6 @@ definitions:
       password:
         type: string
     type: object
-  auth.OauthArgs:
-    properties:
-      code:
-        type: string
-      service_name:
-        type: string
-    type: object
   auth.PostLoginResponse:
     properties:
       id:
@@ -44,6 +60,8 @@ definitions:
   auth.RegisterArgs:
     properties:
       email:
+        type: string
+      image:
         type: string
       password:
         type: string
@@ -131,6 +149,105 @@ paths:
       summary: Gives informations about api
       tags:
       - apidata
+  /api/CRUDTEMPLATEs:
+    get:
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Reads all CRUDTEMPLATEs
+        data
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/CRUDTEMPLATE.DbReadResponse'
+            type: array
+      summary: Reads all CRUDTEMPLATEs data
+      tags:
+      - CRUDTEMPLATEs
+    post:
+      consumes:
+      - application/json
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Creates a CRUDTEMPLATE with
+        arguments in body<br><br>Will return the id of created CRUDTEMPLATE
+      parameters:
+      - description: CRUDTEMPLATE related informations that will be later needed for
+          the login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/CRUDTEMPLATE.CreateCRUDTEMPLATEsArgs'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/structs.PostResponse'
+      summary: Creates a CRUDTEMPLATE
+      tags:
+      - CRUDTEMPLATEs
+  /api/CRUDTEMPLATEs/id:
+    delete:
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Deletes the given CRUDTEMPLATE<br>
+        <b>Careful, there is no turn back or check, once called, this route will delete
+        the CRUDTEMPLATE no matter what</b> <br> It also deletes all content related
+        to the CRUDTEMPLATE depending on the parameters of the database
+      parameters:
+      - description: id of the CRUDTEMPLATE to delete
+        in: query
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+      summary: Deletes given CRUDTEMPLATE
+      tags:
+      - CRUDTEMPLATEs
+    get:
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Reads the given CRUDTEMPLATE's
+        account data
+      parameters:
+      - description: id of the CRUDTEMPLATE to read
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/CRUDTEMPLATE.DbReadResponse'
+      summary: Reads given CRUDTEMPLATE data
+      tags:
+      - CRUDTEMPLATEs
+    put:
+      consumes:
+      - application/json
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Updates given CRUDTEMPLATE
+        with arguments in body
+      parameters:
+      - description: id of the CRUDTEMPLATE to update
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: New arguments to be set in the CRUDTEMPLATE given
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/CRUDTEMPLATE.UpdateArgs'
+      responses:
+        "200":
+          description: OK
+      summary: Updates given CRUDTEMPLATE
+      tags:
+      - CRUDTEMPLATEs
   /api/account:
     delete:
       description: <b>⚠️ The user must be logged in ⚠️</b><br><br>Deletes the user's
@@ -138,14 +255,15 @@ paths:
         is no turn back or check, once called, this route will delete the user no
         matter what</b> <br> It also deletes all content related to the user
       responses:
-        "200":
-          description: OK
+        "204":
+          description: No Content
       summary: Deletes the user's account
       tags:
       - account
     get:
       description: <b>⚠️ The user must be logged in ⚠️</b><br><br>Reads the user's
-        account data
+        account data<br><br>The image is a HTTP path to the user's profile picture
+        using the same host:port as the API
       produces:
       - application/json
       responses:
@@ -159,8 +277,10 @@ paths:
     put:
       consumes:
       - application/json
-      description: <b>⚠️ The user must be logged in ⚠️</b><br><br>Updates the user's
-        account
+      description: '<b>⚠️ The user must be logged in ⚠️</b><br><br>Updates the user''s
+        account<br><br>The image must be base64 encoded and must contain the file
+        type in the header (ex: data:image/png;base64,...)<br><br>All fields are optionals,
+        if a field is empty or not provided, it will not be updated'
       parameters:
       - description: New arguments to be set in the user
         in: body
@@ -209,35 +329,13 @@ paths:
       summary: Disconnection of the user
       tags:
       - auth
-  /api/auth/oauth:
-    post:
-      consumes:
-      - application/json
-      description: Connection of a user using an OAuth <br>Token will be set in cookies
-        if the arguments combination is valid
-      parameters:
-      - description: Code + Service combination of the corresponding OAuth
-        in: body
-        name: creds
-        required: true
-        schema:
-          $ref: '#/definitions/auth.OauthArgs'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/structs.PostResponse'
-      summary: Connection of a user
-      tags:
-      - auth
   /api/auth/register:
     post:
       consumes:
       - application/json
-      description: Connection of a new user to a new account<br>Token will be set
-        in cookies if the arguments combination is valid
+      description: 'Connection of a new user to a new account<br>Token will be set
+        in cookies if the username or email is not already taken<br><br>The image
+        must be base64 encoded and must contain the file type in the header (ex: data:image/png;base64,...)'
       parameters:
       - description: User related informations that will be later needed for the login
           process
@@ -249,30 +347,14 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/auth.PostLoginResponse'
       summary: Connection of a new user to a new account
       tags:
       - auth
   /api/characters:
-    delete:
-      description: Deletes the given character's data<br> <b>Careful, there is no
-        turn back or check, once called, this route will delete the character no matter
-        what</b> <br> It also deletes all content related to the character
-      parameters:
-      - description: id of the character to do the action on
-        in: query
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-      summary: Deletes given ID character
-      tags:
-      - characters
     get:
       description: Reads all characters data
       produces:
@@ -290,8 +372,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: ⚠️ Only accessible to admins ⚠️<br><br>Creates a character account
-        with given informations
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Creates a character with
+        arguments in body<br><br>Will return the id of created character
       parameters:
       - description: character related informations that will be later needed for
           the login process
@@ -303,18 +385,53 @@ paths:
       produces:
       - application/json
       responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/structs.PostResponse'
+      summary: Creates a character
+      tags:
+      - characters
+  /api/characters/id:
+    delete:
+      description: Deletes the given character<br> <b>Careful, there is no turn back
+        or check, once called, this route will delete the character no matter what</b>
+        <br> It also deletes all content related to the character
+      parameters:
+      - description: id of the character to do the action on
+        in: query
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+      summary: Deletes given character
+      tags:
+      - characters
+    get:
+      description: Reads the given character data
+      parameters:
+      - description: id of the character to read
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structs.PostResponse'
-      summary: Connection of a new character to a new account
+            $ref: '#/definitions/characters.RowReadResponse'
+      summary: Reads given character data
       tags:
       - characters
     put:
       consumes:
       - application/json
-      description: ⚠️ Only accessible to admins ⚠️<br><br>Updates the given character's
-        account data
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Updates given character
+        with arguments in body
       parameters:
       - description: id of the character to update
         in: query
@@ -330,26 +447,7 @@ paths:
       responses:
         "200":
           description: OK
-      summary: Updates given ID character with arguments in body
-      tags:
-      - characters
-  /api/characters/id:
-    get:
-      description: Reads the given id character data
-      parameters:
-      - description: id of the character to read
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/characters.RowReadResponse'
-      summary: Reads given ID character data
+      summary: Updates given character
       tags:
       - characters
   /api/health:
@@ -367,26 +465,8 @@ paths:
       tags:
       - apidata
   /api/users:
-    delete:
-      description: ⚠️ Only accessible to admins ⚠️<br><br>Deletes the given user's
-        account<br> <b>Careful, there is no turn back or check, once called, this
-        route will delete the user no matter what</b> <br> It also deletes all content
-        related to the user
-      parameters:
-      - description: id of the user to do the action on
-        in: query
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-      summary: Deletes given ID user
-      tags:
-      - users
     get:
-      description: ⚠️ Only accessible to admins ⚠️<br><br>Reads all users accounts
-        data
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Reads all users data
       produces:
       - application/json
       responses:
@@ -402,8 +482,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: ⚠️ Only accessible to admins ⚠️<br><br>Creates a user account with
-        given informations
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Creates a user with arguments
+        in body
       parameters:
       - description: User related informations that will be later needed for the login
           process
@@ -415,18 +495,54 @@ paths:
       produces:
       - application/json
       responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/structs.PostResponse'
+      summary: Creates a user
+      tags:
+      - users
+  /api/users/id:
+    delete:
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Deletes the given user<br>
+        <b>Careful, there is no turn back or check, once called, this route will delete
+        the user no matter what</b> <br> It also deletes all content related to the
+        user
+      parameters:
+      - description: id of the user to do the action on
+        in: query
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+      summary: Deletes given user
+      tags:
+      - users
+    get:
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Reads the given user data
+      parameters:
+      - description: id of the user to do the action on
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structs.PostResponse'
-      summary: Connection of a new user to a new account
+            $ref: '#/definitions/users.UserReadResponse'
+      summary: Reads given user data
       tags:
       - users
     put:
       consumes:
       - application/json
-      description: ⚠️ Only accessible to admins ⚠️<br><br>Updates the given user's
-        account data
+      description: ⚠️ Only accessible to admins ⚠️<br><br>Updates given user with
+        arguments in body
       parameters:
       - description: id of the user to do the action on
         in: query
@@ -442,27 +558,18 @@ paths:
       responses:
         "200":
           description: OK
-      summary: Updates given ID user with arguments in body
+      summary: Updates given user
       tags:
       - users
-  /api/users/id:
+  '/img/:filepath:':
     get:
-      description: ⚠️ Only accessible to admins ⚠️<br><br>Reads the given user's account
-        data
-      parameters:
-      - description: id of the user to do the action on
-        in: query
-        name: id
-        required: true
-        type: string
+      description: Reads an image file
       produces:
-      - application/json
+      - image/png
       responses:
         "200":
           description: OK
-          schema:
-            $ref: '#/definitions/users.UserReadResponse'
-      summary: Reads given ID user data
+      summary: Reads an image file
       tags:
-      - users
+      - img
 swagger: "2.0"

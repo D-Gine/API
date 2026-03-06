@@ -1,6 +1,6 @@
 /*
 ** D&GINE Project, 2026
-** Backend
+** API
 ** File description:
 ** account/read.go
  */
@@ -15,8 +15,10 @@ import (
 )
 
 type UserReadResponse struct {
+	Id    string `json:"id"`
 	Name  string `json:"name"`
 	Email string `json:"email"`
+	Image string `json:"image"`
 	Role  string `json:"role"`
 }
 
@@ -24,7 +26,7 @@ type UserReadResponse struct {
 // Account godoc
 // @Summary Reads the user's account data
 // @Schemes
-// @Description <b>⚠️ The user must be logged in ⚠️</b><br><br>Reads the user's account data
+// @Description <b>⚠️ The user must be logged in ⚠️</b><br><br>Reads the user's account data<br><br>The image is a HTTP path to the user's profile picture using the same host:port as the API
 // @Tags account
 // @Produce json
 // @Success 200 {object} UserReadResponse
@@ -36,5 +38,11 @@ func ReadAccount(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, UserReadResponse{user.Name, user.Email, user.Role})
+	c.JSON(http.StatusOK, UserReadResponse{
+		Id:    user.Id,
+		Name:  user.Name,
+		Email: user.Email,
+		Image: user.Image,
+		Role:  user.Role,
+	})
 }

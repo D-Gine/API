@@ -1,6 +1,6 @@
 /*
 ** D&GINE Project, 2026
-** Backend
+** API
 ** File description:
 ** auth/register.go
  */
@@ -24,14 +24,14 @@ type CreateArgs struct {
 
 // @BasePath /api/characters
 // Characters godoc
-// @Summary Connection of a new character to a new account
+// @Summary Creates a character
 // @Schemes
-// @Description ⚠️ Only accessible to admins ⚠️<br><br>Creates a character account with given informations
+// @Description ⚠️ Only accessible to admins ⚠️<br><br>Creates a character with arguments in body<br><br>Will return the id of created character
 // @Tags characters
 // @Accept json
 // @Produce json
 // @Param creds body CreateArgs true "character related informations that will be later needed for the login process"
-// @Success 200 {object} structs.PostResponse
+// @Success 201 {object} structs.PostResponse
 // @Router /api/characters [post]
 func CreateCharacters(c *gin.Context) {
 	var args CreateArgs
@@ -49,5 +49,5 @@ func CreateCharacters(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, structs.PostResponse{Id: id.String})
+	c.JSON(http.StatusCreated, structs.PostResponse{Id: id.String})
 }
