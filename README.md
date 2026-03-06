@@ -30,8 +30,8 @@ BACK_NETWORK=dengine-back-net
 API_VOLUME=dengine-api-volume
 
 # FILESERVER
-IMAGES_PATH=./img
-USERS_IMAGES_PATH=./img/users/
+IMAGES_PATH=/img
+USERS_IMAGES_PATH=/img/users/
 
 ```
 
