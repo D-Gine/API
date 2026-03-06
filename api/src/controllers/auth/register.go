@@ -73,13 +73,12 @@ func Register(c *gin.Context) {
 		imgBase64 := args.Image
 
 		if idx := strings.Index(imgBase64, ","); idx != -1 {
-			prefix := imgBase64[:idx]     // "data:image/jpeg;base64"
-			imgBase64 = imgBase64[idx+1:] // strip prefix from b64 payload
+			prefix := imgBase64[:idx]
+			imgBase64 = imgBase64[idx+1:]
 
-			// Extract extension from "data:image/<ext>;base64"
 			if start := strings.Index(prefix, "/"); start != -1 {
 				if end := strings.Index(prefix, ";"); end != -1 {
-					imgExt = prefix[start+1 : end] // "jpeg", "png", "gif", ...
+					imgExt = prefix[start+1 : end]
 				}
 			}
 		}
