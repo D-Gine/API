@@ -123,7 +123,11 @@ func main() {
 		}
 
 	}
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler, ginSwagger.DefaultModelsExpandDepth(-1), ginSwagger.DocExpansion("none")))
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(
+		swaggerfiles.Handler,
+		ginSwagger.DefaultModelsExpandDepth(-1),
+		ginSwagger.DocExpansion("none"),
+	))
 
 	img := r.Group("/img", CORSMiddleware)
 	img.GET("/*filepath", fileserver.GetImage)
