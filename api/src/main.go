@@ -11,6 +11,7 @@ import (
 	"api/src/controllers/account"
 	"api/src/controllers/auth"
 	"api/src/controllers/characters"
+	charactersCreate "api/src/controllers/characters/create"
 	"api/src/controllers/fileserver"
 	"api/src/controllers/rulesets"
 	"api/src/controllers/users"
@@ -98,11 +99,17 @@ func main() {
 		// charactersGroup := api.Group("/characters", auth.AuthenticateMiddleware, auth.AdminMiddleware)
 		charactersGroup := api.Group("/characters")
 		{
-			charactersGroup.POST("", characters.CreateCharacters)
 			charactersGroup.GET("", characters.ReadCharacters)
 			charactersGroup.PUT("/id", characters.UpdateCharacters)
 			charactersGroup.DELETE("/id", characters.DeleteCharacters)
 			charactersGroup.GET("/id", characters.ReadCharactersId)
+
+			charactersCreationGroup := charactersGroup.Group("/create")
+			{
+				charactersCreationGroup.GET("/firstnode", charactersCreate.CharacterFirstNode)
+				charactersCreationGroup.GET("/nextnode", charactersCreate.CharacterNextNode)
+				charactersCreationGroup.POST("/submit", charactersCreate.SubmitCharacter)
+			}
 		}
 
 		// rulesetsGroup := api.Group("/rulesets", auth.AuthenticateMiddleware, auth.AdminMiddleware)
@@ -116,7 +123,7 @@ func main() {
 		}
 
 	}
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler, ginSwagger.DefaultModelsExpandDepth(-1)))
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler, ginSwagger.DefaultModelsExpandDepth(-1), ginSwagger.DocExpansion("none")))
 
 	img := r.Group("/img", CORSMiddleware)
 	img.GET("/*filepath", fileserver.GetImage)

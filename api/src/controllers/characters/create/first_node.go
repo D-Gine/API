@@ -5,7 +5,7 @@
 ** auth/register.go
  */
 
-package characters
+package charactersCreate
 
 import (
 	"database/sql"
@@ -16,7 +16,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type CreateArgs struct {
+type FirstNodeArgs struct {
 	RulesetId string `json:"ruleset_id"`
 }
 
@@ -27,19 +27,19 @@ type RulesetFirstNode struct {
 	Metadata string `json:"metadata"`
 }
 
-// @BasePath /api/characters
+// @BasePath /api/characters/create/firstnode
 // Characters godoc
-// @Summary Creates a character
+// @Summary Returns the first node of the given ruleset
 // @Schemes
-// @Description ⚠️ Only accessible to admins ⚠️<br><br>Creates a character with arguments in body<br><br>Will return the id of created character
-// @Tags characters
+// @Description Returns the first node of the given ruleset character creation tree
+// @Tags characters creation
 // @Accept json
 // @Produce json
-// @Param creds body CreateArgs true "character related informations that will be later needed for the login process"
+// @Param creds body FirstNodeArgs true "character related informations that will be later needed for the login process"
 // @Success 201 {object} RulesetFirstNode
-// @Router /api/characters [post]
-func CreateCharacters(c *gin.Context) {
-	var args CreateArgs
+// @Router /api/characters/create/firstnode [get]
+func CharacterFirstNode(c *gin.Context) {
+	var args FirstNodeArgs
 
 	// Body Json parsing
 	if err := c.ShouldBindJSON(&args); err != nil {

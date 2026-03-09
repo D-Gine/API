@@ -68,11 +68,6 @@ definitions:
       username:
         type: string
     type: object
-  characters.CreateArgs:
-    properties:
-      ruleset_id:
-        type: string
-    type: object
   characters.RowReadResponse:
     properties:
       id:
@@ -82,7 +77,29 @@ definitions:
       player_id:
         type: string
     type: object
-  characters.RulesetFirstNode:
+  characters.UpdateArgs:
+    properties:
+      name:
+        type: string
+      player_id:
+        type: string
+    type: object
+  charactersCreate.CreateArgs:
+    properties:
+      ruleset_id:
+        type: string
+    type: object
+  charactersCreate.FirstNodeArgs:
+    properties:
+      ruleset_id:
+        type: string
+    type: object
+  charactersCreate.NextNodeArgs:
+    properties:
+      node_id:
+        type: string
+    type: object
+  charactersCreate.RulesetFirstNode:
     properties:
       id:
         type: string
@@ -91,13 +108,6 @@ definitions:
       name:
         type: string
       type:
-        type: string
-    type: object
-  characters.UpdateArgs:
-    properties:
-      name:
-        type: string
-      player_id:
         type: string
     type: object
   rulesets.CreateRulesetsArgs:
@@ -395,11 +405,12 @@ paths:
       summary: Reads all characters data
       tags:
       - characters
-    post:
+  /api/characters/create/firstnode:
+    get:
       consumes:
       - application/json
-      description: ⚠️ Only accessible to admins ⚠️<br><br>Creates a character with
-        arguments in body<br><br>Will return the id of created character
+      description: Returns the first node of the given ruleset character creation
+        tree
       parameters:
       - description: character related informations that will be later needed for
           the login process
@@ -407,17 +418,63 @@ paths:
         name: creds
         required: true
         schema:
-          $ref: '#/definitions/characters.CreateArgs'
+          $ref: '#/definitions/charactersCreate.FirstNodeArgs'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/characters.RulesetFirstNode'
-      summary: Creates a character
+            $ref: '#/definitions/charactersCreate.RulesetFirstNode'
+      summary: Returns the first node of the given ruleset
       tags:
-      - characters
+      - characters creation
+  /api/characters/create/nextnode:
+    get:
+      consumes:
+      - application/json
+      description: Returns the next node of the given node depending on the ruleset
+        character creation tree
+      parameters:
+      - description: character related informations that will be later needed for
+          the login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/charactersCreate.NextNodeArgs'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      summary: Returns the next node
+      tags:
+      - characters creation
+  /api/characters/create/submit:
+    post:
+      consumes:
+      - application/json
+      description: Submits a character list of components and creates the character
+        in database<br><br>Will return the id of created character
+      parameters:
+      - description: character related informations that will be later needed for
+          the login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/charactersCreate.CreateArgs'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/charactersCreate.RulesetFirstNode'
+      summary: Submits a character list of components
+      tags:
+      - characters creation
   /api/characters/id:
     delete:
       description: Deletes the given character<br> <b>Careful, there is no turn back

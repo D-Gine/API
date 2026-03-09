@@ -340,9 +340,11 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "post": {
-                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eCreates a character with arguments in body\u003cbr\u003e\u003cbr\u003eWill return the id of created character",
+            }
+        },
+        "/api/characters/create/firstnode": {
+            "get": {
+                "description": "Returns the first node of the given ruleset character creation tree",
                 "consumes": [
                     "application/json"
                 ],
@@ -350,9 +352,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "characters"
+                    "characters creation"
                 ],
-                "summary": "Creates a character",
+                "summary": "Returns the first node of the given ruleset",
                 "parameters": [
                     {
                         "description": "character related informations that will be later needed for the login process",
@@ -360,7 +362,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/characters.CreateArgs"
+                            "$ref": "#/definitions/charactersCreate.FirstNodeArgs"
                         }
                     }
                 ],
@@ -368,7 +370,72 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/characters.RulesetFirstNode"
+                            "$ref": "#/definitions/charactersCreate.RulesetFirstNode"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/characters/create/nextnode": {
+            "get": {
+                "description": "Returns the next node of the given node depending on the ruleset character creation tree",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "characters creation"
+                ],
+                "summary": "Returns the next node",
+                "parameters": [
+                    {
+                        "description": "character related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/charactersCreate.NextNodeArgs"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    }
+                }
+            }
+        },
+        "/api/characters/create/submit": {
+            "post": {
+                "description": "Submits a character list of components and creates the character in database\u003cbr\u003e\u003cbr\u003eWill return the id of created character",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "characters creation"
+                ],
+                "summary": "Submits a character list of components",
+                "parameters": [
+                    {
+                        "description": "character related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/charactersCreate.CreateArgs"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/charactersCreate.RulesetFirstNode"
                         }
                     }
                 }
@@ -880,14 +947,6 @@ const docTemplate = `{
                 }
             }
         },
-        "characters.CreateArgs": {
-            "type": "object",
-            "properties": {
-                "ruleset_id": {
-                    "type": "string"
-                }
-            }
-        },
         "characters.RowReadResponse": {
             "type": "object",
             "properties": {
@@ -902,7 +961,42 @@ const docTemplate = `{
                 }
             }
         },
-        "characters.RulesetFirstNode": {
+        "characters.UpdateArgs": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "player_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "charactersCreate.CreateArgs": {
+            "type": "object",
+            "properties": {
+                "ruleset_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "charactersCreate.FirstNodeArgs": {
+            "type": "object",
+            "properties": {
+                "ruleset_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "charactersCreate.NextNodeArgs": {
+            "type": "object",
+            "properties": {
+                "node_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "charactersCreate.RulesetFirstNode": {
             "type": "object",
             "properties": {
                 "id": {
@@ -915,17 +1009,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "type": {
-                    "type": "string"
-                }
-            }
-        },
-        "characters.UpdateArgs": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "player_id": {
                     "type": "string"
                 }
             }
