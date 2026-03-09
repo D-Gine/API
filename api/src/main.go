@@ -105,7 +105,8 @@ func main() {
 			charactersGroup.GET("/id", characters.ReadCharactersId)
 		}
 
-		rulesetsGroup := api.Group("/rulesets", auth.AuthenticateMiddleware, auth.AdminMiddleware)
+		// rulesetsGroup := api.Group("/rulesets", auth.AuthenticateMiddleware, auth.AdminMiddleware)
+		rulesetsGroup := api.Group("/rulesets")
 		{
 			rulesetsGroup.POST("", rulesets.CreateRulesets)
 			rulesetsGroup.GET("", rulesets.ReadRulesets)
