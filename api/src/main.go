@@ -95,7 +95,8 @@ func main() {
 			usersGroup.GET("/id", users.ReadUsersId)
 		}
 
-		charactersGroup := api.Group("/characters", auth.AuthenticateMiddleware, auth.AdminMiddleware)
+		// charactersGroup := api.Group("/characters", auth.AuthenticateMiddleware, auth.AdminMiddleware)
+		charactersGroup := api.Group("/characters")
 		{
 			charactersGroup.POST("", characters.CreateCharacters)
 			charactersGroup.GET("", characters.ReadCharacters)
