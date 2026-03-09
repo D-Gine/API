@@ -368,7 +368,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/structs.PostResponse"
+                            "$ref": "#/definitions/characters.RulesetFirstNode"
                         }
                     }
                 }
@@ -883,10 +883,7 @@ const docTemplate = `{
         "characters.CreateArgs": {
             "type": "object",
             "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "player_id": {
+                "ruleset_id": {
                     "type": "string"
                 }
             }
@@ -901,6 +898,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "player_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "characters.RulesetFirstNode": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
                     "type": "string"
                 }
             }

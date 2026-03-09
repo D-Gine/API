@@ -357,7 +357,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/structs.PostResponse"
+                            "$ref": "#/definitions/characters.RulesetFirstNode"
                         }
                     }
                 }
@@ -872,10 +872,7 @@
         "characters.CreateArgs": {
             "type": "object",
             "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "player_id": {
+                "ruleset_id": {
                     "type": "string"
                 }
             }
@@ -890,6 +887,23 @@
                     "type": "string"
                 },
                 "player_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "characters.RulesetFirstNode": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
                     "type": "string"
                 }
             }

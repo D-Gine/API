@@ -70,9 +70,7 @@ definitions:
     type: object
   characters.CreateArgs:
     properties:
-      name:
-        type: string
-      player_id:
+      ruleset_id:
         type: string
     type: object
   characters.RowReadResponse:
@@ -82,6 +80,17 @@ definitions:
       name:
         type: string
       player_id:
+        type: string
+    type: object
+  characters.RulesetFirstNode:
+    properties:
+      id:
+        type: string
+      metadata:
+        type: string
+      name:
+        type: string
+      type:
         type: string
     type: object
   characters.UpdateArgs:
@@ -405,7 +414,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/structs.PostResponse'
+            $ref: '#/definitions/characters.RulesetFirstNode'
       summary: Creates a character
       tags:
       - characters
