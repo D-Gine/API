@@ -91,6 +91,23 @@ definitions:
       player_id:
         type: string
     type: object
+  rulesets.CreateRulesetsArgs:
+    properties:
+      name:
+        type: string
+    type: object
+  rulesets.DbReadResponse:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  rulesets.UpdateArgs:
+    properties:
+      name:
+        type: string
+    type: object
   structs.PostResponse:
     properties:
       id:
@@ -464,6 +481,102 @@ paths:
       summary: Healthcheck for the api
       tags:
       - apidata
+  /api/rulesets:
+    get:
+      description: Reads all rulesets data
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/rulesets.DbReadResponse'
+            type: array
+      summary: Reads all rulesets data
+      tags:
+      - rulesets
+    post:
+      consumes:
+      - application/json
+      description: Creates a ruleset with arguments in body<br><br>Will return the
+        id of created ruleset
+      parameters:
+      - description: ruleset related informations that will be later needed for the
+          login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/rulesets.CreateRulesetsArgs'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/structs.PostResponse'
+      summary: Creates a ruleset
+      tags:
+      - rulesets
+  /api/rulesets/id:
+    delete:
+      description: Deletes the given ruleset<br> <b>Careful, there is no turn back
+        or check, once called, this route will delete the ruleset no matter what</b>
+        <br> It also deletes all content related to the ruleset depending on the parameters
+        of the database
+      parameters:
+      - description: id of the ruleset to delete
+        in: query
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+      summary: Deletes given ruleset
+      tags:
+      - rulesets
+    get:
+      description: Reads the given ruleset's account data
+      parameters:
+      - description: id of the ruleset to read
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rulesets.DbReadResponse'
+      summary: Reads given ruleset data
+      tags:
+      - rulesets
+    put:
+      consumes:
+      - application/json
+      description: Updates given ruleset with arguments in body
+      parameters:
+      - description: id of the ruleset to update
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: New arguments to be set in the ruleset given
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/rulesets.UpdateArgs'
+      responses:
+        "200":
+          description: OK
+      summary: Updates given ruleset
+      tags:
+      - rulesets
   /api/users:
     get:
       description: ⚠️ Only accessible to admins ⚠️<br><br>Reads all users data

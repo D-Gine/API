@@ -12,6 +12,7 @@ import (
 	"api/src/controllers/auth"
 	"api/src/controllers/characters"
 	"api/src/controllers/fileserver"
+	"api/src/controllers/rulesets"
 	"api/src/controllers/users"
 	"api/src/database"
 	_ "api/src/docs"
@@ -102,6 +103,16 @@ func main() {
 			charactersGroup.DELETE("/id", characters.DeleteCharacters)
 			charactersGroup.GET("/id", characters.ReadCharactersId)
 		}
+
+		rulesetsGroup := api.Group("/rulesets", auth.AuthenticateMiddleware, auth.AdminMiddleware)
+		{
+			rulesetsGroup.POST("", rulesets.CreateRulesets)
+			rulesetsGroup.GET("", rulesets.ReadRulesets)
+			rulesetsGroup.PUT("/id", rulesets.UpdateRulesets)
+			rulesetsGroup.DELETE("/id", rulesets.DeleteRulesets)
+			rulesetsGroup.GET("/id", rulesets.ReadRulesetId)
+		}
+
 	}
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler, ginSwagger.DefaultModelsExpandDepth(-1)))
 
