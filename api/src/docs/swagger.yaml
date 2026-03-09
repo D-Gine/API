@@ -97,6 +97,22 @@ definitions:
   charactersCreate.NextNodeArgs:
     properties:
       node_id:
+        description: actual node id
+        type: string
+      type:
+        type: string
+      value:
+        type: string
+    type: object
+  charactersCreate.NextNodeResponse:
+    properties:
+      id:
+        type: string
+      metadata:
+        type: string
+      name:
+        type: string
+      type:
         type: string
     type: object
   charactersCreate.RulesetFirstNode:
@@ -434,10 +450,13 @@ paths:
       consumes:
       - application/json
       description: Returns the next node of the given node depending on the ruleset
-        character creation tree
+        character creation tree<br><br>This will check for the tree for all childs
+        of the given node, and return the one(s) that match the condition with the
+        given value<br><br>If no child matches the condition, it means that the character
+        creation process is finished, and the frontend can send the character creation
+        submission request
       parameters:
-      - description: character related informations that will be later needed for
-          the login process
+      - description: Actual node id, along with the value and type of the component
         in: body
         name: creds
         required: true
@@ -446,8 +465,12 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/charactersCreate.NextNodeResponse'
+            type: array
       summary: Returns the next node
       tags:
       - characters creation

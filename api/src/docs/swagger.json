@@ -367,7 +367,7 @@
         },
         "/api/characters/create/nextnode": {
             "get": {
-                "description": "Returns the next node of the given node depending on the ruleset character creation tree",
+                "description": "Returns the next node of the given node depending on the ruleset character creation tree\u003cbr\u003e\u003cbr\u003eThis will check for the tree for all childs of the given node, and return the one(s) that match the condition with the given value\u003cbr\u003e\u003cbr\u003eIf no child matches the condition, it means that the character creation process is finished, and the frontend can send the character creation submission request",
                 "consumes": [
                     "application/json"
                 ],
@@ -380,7 +380,7 @@
                 "summary": "Returns the next node",
                 "parameters": [
                     {
-                        "description": "character related informations that will be later needed for the login process",
+                        "description": "Actual node id, along with the value and type of the component",
                         "name": "creds",
                         "in": "body",
                         "required": true,
@@ -390,8 +390,14 @@
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created"
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/charactersCreate.NextNodeResponse"
+                            }
+                        }
                     }
                 }
             }
@@ -981,6 +987,30 @@
             "type": "object",
             "properties": {
                 "node_id": {
+                    "description": "actual node id",
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "charactersCreate.NextNodeResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
                     "type": "string"
                 }
             }
