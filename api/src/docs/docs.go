@@ -368,7 +368,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/structs.PostResponse"
+                            "$ref": "#/definitions/characters.RulesetFirstNode"
                         }
                     }
                 }
@@ -473,6 +473,144 @@ const docTemplate = `{
                         "schema": {
                             "type": "string"
                         }
+                    }
+                }
+            }
+        },
+        "/api/rulesets": {
+            "get": {
+                "description": "Reads all rulesets data",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "rulesets"
+                ],
+                "summary": "Reads all rulesets data",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/rulesets.DbReadResponse"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Creates a ruleset with arguments in body\u003cbr\u003e\u003cbr\u003eWill return the id of created ruleset",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "rulesets"
+                ],
+                "summary": "Creates a ruleset",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/rulesets.CreateRulesetsArgs"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/structs.PostResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/rulesets/id": {
+            "get": {
+                "description": "Reads the given ruleset's account data",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "rulesets"
+                ],
+                "summary": "Reads given ruleset data",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id of the ruleset to read",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rulesets.DbReadResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Updates given ruleset with arguments in body",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "rulesets"
+                ],
+                "summary": "Updates given ruleset",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id of the ruleset to update",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "New arguments to be set in the ruleset given",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/rulesets.UpdateArgs"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes the given ruleset\u003cbr\u003e \u003cb\u003eCareful, there is no turn back or check, once called, this route will delete the ruleset no matter what\u003c/b\u003e \u003cbr\u003e It also deletes all content related to the ruleset depending on the parameters of the database",
+                "tags": [
+                    "rulesets"
+                ],
+                "summary": "Deletes given ruleset",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id of the ruleset to delete",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
                     }
                 }
             }
@@ -745,10 +883,7 @@ const docTemplate = `{
         "characters.CreateArgs": {
             "type": "object",
             "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "player_id": {
+                "ruleset_id": {
                     "type": "string"
                 }
             }
@@ -767,6 +902,23 @@ const docTemplate = `{
                 }
             }
         },
+        "characters.RulesetFirstNode": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "characters.UpdateArgs": {
             "type": "object",
             "properties": {
@@ -774,6 +926,33 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "player_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "rulesets.CreateRulesetsArgs": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "rulesets.DbReadResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "rulesets.UpdateArgs": {
+            "type": "object",
+            "properties": {
+                "name": {
                     "type": "string"
                 }
             }

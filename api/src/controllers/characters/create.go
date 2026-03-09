@@ -12,14 +12,19 @@ import (
 	"net/http"
 
 	"api/src/database"
-	"api/src/internal/structs"
 
 	"github.com/gin-gonic/gin"
 )
 
 type CreateArgs struct {
-	PlayerId string `json:"player_id"`
+	RulesetId string `json:"ruleset_id"`
+}
+
+type RulesetFirstNode struct {
+	Id       string `json:"id"`
 	Name     string `json:"name"`
+	Type     string `json:"type"`
+	Metadata string `json:"metadata"`
 }
 
 // @BasePath /api/characters
@@ -31,7 +36,7 @@ type CreateArgs struct {
 // @Accept json
 // @Produce json
 // @Param creds body CreateArgs true "character related informations that will be later needed for the login process"
-// @Success 201 {object} structs.PostResponse
+// @Success 201 {object} RulesetFirstNode
 // @Router /api/characters [post]
 func CreateCharacters(c *gin.Context) {
 	var args CreateArgs
@@ -42,12 +47,29 @@ func CreateCharacters(c *gin.Context) {
 		return
 	}
 
-	var id sql.NullString
-	err := database.Db.QueryRow("INSERT INTO games.characters (player_id, name) VALUES ($1, $2) RETURNING id", args.PlayerId, args.Name).Scan(&id)
+	var id, name, valType, metadata sql.NullString
+	err := database.Db.QueryRow(`
+	SELECT
+		ctemp.id, ctemp.name, ctype.type, ctype.metadata
+	FROM games.components_templates ctemp
+	INNER JOIN games.first_nodes fn
+		ON ctemp.id=fn.first_node
+	INNER JOIN games.component_type ctype
+		ON ctemp.type=ctype.id
+	WHERE fn.ruleset_id=$1`, args.RulesetId).Scan(&id, &name, &valType, &metadata)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to register user"})
+		if err == sql.ErrNoRows {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Given ruleset has no first node set"})
+			return
+		}
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error : " + err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusCreated, structs.PostResponse{Id: id.String})
+	c.JSON(http.StatusCreated, RulesetFirstNode{
+		Id:       id.String,
+		Name:     name.String,
+		Type:     valType.String,
+		Metadata: metadata.String,
+	})
 }

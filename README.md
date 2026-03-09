@@ -5,6 +5,7 @@ To run the API using the docker-compose, you need to have an existing external n
 <br>i.e. launched [THIS PROJECT](https://github.com/D-Gine/Database)
 
 ## Build and Run with
+### Env
 For this project you need the following environment variables:
 ```
 # DATABASE
@@ -32,9 +33,29 @@ API_VOLUME=dengine-api-volume
 # FILESERVER
 IMAGES_PATH=/img
 USERS_IMAGES_PATH=/img/users/
+```
 
+### Launch
+#### Development
+```
+docker compose up --build -d
 ```
 
 ## Doc
 You have access to routes documentations via Swagger, it must be and shall be updated with each new feature on the API
-<br>To access the swagger, go to [THIS LINK](http://localhost:8080/swagger/index.html#/) once you started the API on your computer
+<br>To access the swagger, go to [THIS LINK](http://localhost:8080/swagger/index.html) once you started the API on your computer
+
+## Participate
+You can add features whenever you feel like, but keep in mind to document them (in the swagger if they are routes)
+
+## Useful knowledge for devs
+### Swagger
+init path
+```
+export PATH=$(go env GOPATH)/bin:$PATH
+```
+
+set docs files
+```
+swag init -g <main.go file> -o <doc folder dest>
+```
