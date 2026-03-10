@@ -26,6 +26,7 @@ TRUSTED_PROXIES=127.0.0.1
 
 # NETWORKS
 BACK_NETWORK=dengine-back-net
+FRONT_NETWORK=dengine-front-net
 
 # VOLUMES
 API_VOLUME=dengine-api-volume
