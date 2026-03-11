@@ -39,10 +39,8 @@ type RulesetFirstNode struct {
 // @Success 201 {object} RulesetFirstNode
 // @Router /api/characters/create/firstnode [get]
 func CharacterFirstNode(c *gin.Context) {
-	var args FirstNodeArgs
-
-	// Body Json parsing
-	if err := c.ShouldBindJSON(&args); err != nil {
+	ruleset_id, ok := c.GetQuery("ruleset_id")
+	if !ok {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
@@ -56,7 +54,7 @@ func CharacterFirstNode(c *gin.Context) {
 		ON ctemp.id=fn.first_node
 	INNER JOIN games.component_type ctype
 		ON ctemp.type=ctype.id
-	WHERE fn.ruleset_id=$1`, args.RulesetId).Scan(&id, &name, &valType, &metadata)
+	WHERE fn.ruleset_id=$1`, ruleset_id).Scan(&id, &name, &valType, &metadata)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Given ruleset has no first node set"})
