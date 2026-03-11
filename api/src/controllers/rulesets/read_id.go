@@ -26,12 +26,7 @@ import (
 // @Success 200 {object} DbReadResponse
 // @Router /api/rulesets/id [get]
 func ReadRulesetId(c *gin.Context) {
-	idQuery := c.Request.URL.Query().Get("id")
-	if idQuery == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Wrong parameters"})
-		return
-	}
-
+	idQuery := c.Param("id")
 	var id, name sql.NullString
 	err := database.Db.QueryRow("SELECT id, name FROM games.rulesets WHERE id=$1", idQuery).Scan(&id, &name)
 	if err != nil {
