@@ -38,6 +38,7 @@ USERS_IMAGES_PATH=/img/users/
 
 ### Launch
 #### Development
+You need to have the **environment variables** set in `.env` file at the same place as the `compose.yaml`
 ```
 docker compose up --build -d
 ```
