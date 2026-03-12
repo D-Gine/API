@@ -126,6 +126,29 @@ definitions:
       type:
         type: string
     type: object
+  dev.CallEngineArgs:
+    properties:
+      body:
+        additionalProperties:
+          type: string
+        type: object
+      headers:
+        additionalProperties:
+          type: string
+        type: object
+      method:
+        type: string
+      uri:
+        type: string
+    type: object
+  dev.Response:
+    properties:
+      code:
+        type: integer
+      data:
+        additionalProperties: {}
+        type: object
+    type: object
   rulesets.CreateRulesetsArgs:
     properties:
       name:
@@ -556,6 +579,27 @@ paths:
       summary: Updates given character
       tags:
       - characters
+  /api/dev/callengine:
+    post:
+      description: Makes a HTTP call to whatever URI given using the method, headers
+        and body given in argument, and returns the response of the call
+      parameters:
+      - description: address of the address to call
+        in: body
+        name: address
+        required: true
+        schema:
+          $ref: '#/definitions/dev.CallEngineArgs'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dev.Response'
+      summary: Transmit a request via API
+      tags:
+      - dev
   /api/health:
     get:
       description: Healthcheck used (mainly by docker) to check if the api is up and

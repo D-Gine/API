@@ -88,15 +88,15 @@ func httpRequest(method string, uri string, headers map[string]string, body map[
 }
 
 // @BasePath /api/dev/callengine
-// CRUDTEMPLATE godoc
-// @Summary Reads given CRUDTEMPLATE data
+// dev godoc
+// @Summary Transmit a request via API
 // @Schemes
-// @Description ⚠️ Only accessible to admins ⚠️<br><br>Reads the given CRUDTEMPLATE's account data
-// @Tags CRUDTEMPLATEs
-// @Param id query string true "id of the CRUDTEMPLATE to read"
+// @Description Makes a HTTP call to whatever URI given using the method, headers and body given in argument, and returns the response of the call
+// @Tags dev
+// @Param address body CallEngineArgs true "address of the address to call"
 // @Produce json
-// @Success 200 {object} DbReadResponse
-// @Router /api/CRUDTEMPLATEs/id [get]
+// @Success 200 {object} Response
+// @Router /api/dev/callengine [post]
 func CallEngine(c *gin.Context) {
 	var args CallEngineArgs
 
