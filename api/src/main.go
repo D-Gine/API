@@ -12,6 +12,7 @@ import (
 	"api/src/controllers/auth"
 	"api/src/controllers/characters"
 	charactersCreate "api/src/controllers/characters/create"
+	"api/src/controllers/dev"
 	"api/src/controllers/fileserver"
 	"api/src/controllers/rulesets"
 	"api/src/controllers/users"
@@ -78,6 +79,11 @@ func main() {
 			authGroup.POST("/login", auth.Login)
 			authGroup.POST("/register", auth.Register)
 			authGroup.POST("/logout", auth.Logout)
+		}
+
+		devGroup := api.Group("/dev")
+		{
+			devGroup.POST("/callengine", dev.CallEngine)
 		}
 
 		accountGroup := api.Group("/account", auth.AuthenticateMiddleware)
