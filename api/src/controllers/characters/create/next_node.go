@@ -14,6 +14,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/lib/pq"
 )
 
 type ValuePair struct {
@@ -190,6 +191,8 @@ func getNodeTemplates(nodeId string) ([]ComponentTemplate, error) {
 						possibleValues, err := getPossibleValuesByTags(tags)
 						if err == nil {
 							template.Metadata["possible_values"] = possibleValues
+						} else {
+							template.Metadata["possible_values"] = []PossibleValue{}
 						}
 					}
 				}
@@ -224,7 +227,7 @@ func getPossibleValuesByTags(tags []interface{}) ([]PossibleValue, error) {
 		WHERE t.name = ANY($1)
 	`
 
-	rows, err := database.Db.Query(query, tagNames)
+	rows, err := database.Db.Query(query, pq.Array(tagNames))
 	if err != nil {
 		return nil, err
 	}

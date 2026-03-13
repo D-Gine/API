@@ -2,13 +2,13 @@
 ** D&GINE Project, 2026
 ** API
 ** File description:
-** auth/register.go
+** characters/creation/first_node.go
  */
 
 package charactersCreate
 
 import (
-	"encoding/json"
+	"database/sql"
 	"net/http"
 
 	"api/src/database"
@@ -16,95 +16,72 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type ComponentType struct {
-	Name     string          `json:"name"`
-	Type     string          `json:"type"`
-	Metadata json.RawMessage `json:"metadata"`
-}
-
-type RulesetFirstNode struct {
-	NodeId         string          `json:"node_id"`
-	ComponentId    string          `json:"component_id"`
-	Name           string          `json:"name"`
-	Last           bool            `json:"last"`
-	ComponentTypes []ComponentType `json:"component_types"`
+type FirstNodeResponse struct {
+	NodeId         string              `json:"node_id"`
+	Name           string              `json:"name"`
+	Last           bool                `json:"last"`
+	ComponentTypes []ComponentTemplate `json:"component_types"`
 }
 
 // @BasePath /api/characters/create/firstnode
 // Characters godoc
 // @Summary Returns the first node of the given ruleset
 // @Schemes
-// @Description Returns the first node of the given ruleset character creation tree
+// @Description Returns the first node of the given ruleset character creation tree with enriched metadata for enum_tag types
 // @Tags characters creation
 // @Accept json
 // @Produce json
-// @Param creds body FirstNodeArgs true "character related informations that will be later needed for the login process"
-// @Success 200 {object} RulesetFirstNode
+// @Param ruleset_id query string true "Ruleset ID"
+// @Success 200 {object} FirstNodeResponse
 // @Router /api/characters/create/firstnode [get]
 func CharacterFirstNode(c *gin.Context) {
-	ruleset_id, ok := c.GetQuery("ruleset_id")
+	rulesetId, ok := c.GetQuery("ruleset_id")
 	if !ok {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request: ruleset_id is required"})
 		return
 	}
 
-	var nodeId, componentId, name string
+	// Find the first node (components_creations with no parent)
+	var nodeId string
 	err := database.Db.QueryRow(`
-	SELECT
-		cc.id, ctemp.id, ctemp.name
-	FROM games.components_creations cc
-	INNER JOIN games.creations_links cl
-		ON cl.node_id = cc.id
-	INNER JOIN games.creations_templates ct
-		ON ct.creation_id = cc.id
-	INNER JOIN games.components_templates ctemp
-		ON ctemp.id = ct.template_id
-	WHERE cc.ruleset_id = $1
-		AND cl.parent_id IS NULL`, ruleset_id).Scan(&nodeId, &componentId, &name)
+		SELECT DISTINCT cc.id
+		FROM games.components_creations cc
+		INNER JOIN games.creations_links cl ON cl.node_id = cc.id
+		WHERE cc.ruleset_id = $1
+		AND cl.parent_id IS NULL
+		LIMIT 1
+	`, rulesetId).Scan(&nodeId)
+
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Given ruleset has no first node set"})
-		return
-	}
-
-	var childExists bool
-	_ = database.Db.QueryRow(`
-	SELECT EXISTS(
-		SELECT 1 FROM games.creations_links
-		WHERE parent_id = $1
-	)`, nodeId).Scan(&childExists)
-
-	rows, err := database.Db.Query(`
-	SELECT
-		ctype.name, ctype.type, ctype.metadata
-	FROM games.creations_templates ct
-	INNER JOIN games.components_templates ctemp
-		ON ctemp.id = ct.template_id
-	INNER JOIN games.components_types ctype
-		ON ctemp.type = ctype.id
-	WHERE ct.creation_id = $1`, nodeId)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error: " + err.Error()})
-		return
-	}
-	defer rows.Close()
-
-	var componentTypes []ComponentType
-	for rows.Next() {
-		var ct ComponentType
-		var metadata []byte
-		if err := rows.Scan(&ct.Name, &ct.Type, &metadata); err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error: " + err.Error()})
+		if err == sql.ErrNoRows {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Given ruleset has no first node set"})
 			return
 		}
-		ct.Metadata = json.RawMessage(metadata)
-		componentTypes = append(componentTypes, ct)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error: " + err.Error()})
+		return
 	}
 
-	c.JSON(http.StatusOK, RulesetFirstNode{
+	// Get templates with enriched metadata (automatically adds possible_values for enum_tag)
+	templates, err := getNodeTemplates(nodeId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get node templates: " + err.Error()})
+		return
+	}
+
+	// Check if this node has children
+	hasChild, err := hasChildren(nodeId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check children: " + err.Error()})
+		return
+	}
+
+	// Return response
+	response := FirstNodeResponse{
 		NodeId:         nodeId,
-		ComponentId:    componentId,
-		Name:           name,
-		Last:           !childExists,
-		ComponentTypes: componentTypes,
-	})
+		Name:           "Character Creation",
+		Last:           !hasChild,
+		ComponentTypes: templates,
+	}
+
+	c.JSON(http.StatusOK, response)
 }
