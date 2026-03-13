@@ -108,12 +108,12 @@ func main() {
 			charactersGroup.GET("", characters.ReadCharacters)
 			charactersGroup.PUT("/id", characters.UpdateCharacters)
 			charactersGroup.DELETE("/id", characters.DeleteCharacters)
-			charactersGroup.GET("/id", characters.ReadCharactersId)
+			charactersGroup.GET("/:id", characters.ReadCharactersId)
 
 			charactersCreationGroup := charactersGroup.Group("/create")
 			{
 				charactersCreationGroup.GET("/firstnode", charactersCreate.CharacterFirstNode)
-				charactersCreationGroup.GET("/nextnode", charactersCreate.CharacterNextNode)
+				charactersCreationGroup.POST("/nextnode", charactersCreate.CharacterNextNode)
 				charactersCreationGroup.POST("/submit", charactersCreate.SubmitCharacter)
 			}
 		}
