@@ -18,7 +18,7 @@ import (
 )
 
 type ComponentValue struct {
-	Key      string                 `json:"key"`      // template_id
+	Key      string                 `json:"keyname"`  // template_id
 	Type     string                 `json:"type"`     // type enum (number, string, enum_tag, etc.)
 	Metadata map[string]interface{} `json:"metadata"` // type metadata
 	Value    interface{}            `json:"value"`    // actual value from component
