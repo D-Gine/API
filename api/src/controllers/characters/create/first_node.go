@@ -8,7 +8,7 @@
 package charactersCreate
 
 import (
-	"database/sql"
+	"encoding/json"
 	"net/http"
 
 	"api/src/database"
@@ -16,15 +16,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type FirstNodeArgs struct {
-	RulesetId string `json:"ruleset_id"`
+type ComponentType struct {
+	Name     string          `json:"name"`
+	Type     string          `json:"type"`
+	Metadata json.RawMessage `json:"metadata"`
 }
 
 type RulesetFirstNode struct {
-	Id       string `json:"id"`
-	Name     string `json:"name"`
-	Type     string `json:"type"`
-	Metadata string `json:"metadata"`
+	NodeId         string          `json:"node_id"`
+	ComponentId    string          `json:"component_id"`
+	Name           string          `json:"name"`
+	Last           bool            `json:"last"`
+	ComponentTypes []ComponentType `json:"component_types"`
 }
 
 // @BasePath /api/characters/create/firstnode
@@ -36,7 +39,7 @@ type RulesetFirstNode struct {
 // @Accept json
 // @Produce json
 // @Param creds body FirstNodeArgs true "character related informations that will be later needed for the login process"
-// @Success 201 {object} RulesetFirstNode
+// @Success 200 {object} RulesetFirstNode
 // @Router /api/characters/create/firstnode [get]
 func CharacterFirstNode(c *gin.Context) {
 	ruleset_id, ok := c.GetQuery("ruleset_id")
@@ -45,29 +48,63 @@ func CharacterFirstNode(c *gin.Context) {
 		return
 	}
 
-	var id, name, valType, metadata sql.NullString
+	var nodeId, componentId, name string
 	err := database.Db.QueryRow(`
 	SELECT
-		ctemp.id, ctemp.name, ctype.type, ctype.metadata
-	FROM games.components_templates ctemp
-	INNER JOIN games.first_nodes fn
-		ON ctemp.id=fn.first_node
-	INNER JOIN games.component_type ctype
-		ON ctemp.type=ctype.id
-	WHERE fn.ruleset_id=$1`, ruleset_id).Scan(&id, &name, &valType, &metadata)
+		cc.id, ctemp.id, ctemp.name
+	FROM games.components_creations cc
+	INNER JOIN games.creations_links cl
+		ON cl.node_id = cc.id
+	INNER JOIN games.creations_templates ct
+		ON ct.creation_id = cc.id
+	INNER JOIN games.components_templates ctemp
+		ON ctemp.id = ct.template_id
+	WHERE cc.ruleset_id = $1
+		AND cl.parent_id IS NULL`, ruleset_id).Scan(&nodeId, &componentId, &name)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Given ruleset has no first node set"})
-			return
-		}
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error : " + err.Error()})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Given ruleset has no first node set"})
 		return
 	}
 
-	c.JSON(http.StatusCreated, RulesetFirstNode{
-		Id:       id.String,
-		Name:     name.String,
-		Type:     valType.String,
-		Metadata: metadata.String,
+	var childExists bool
+	_ = database.Db.QueryRow(`
+	SELECT EXISTS(
+		SELECT 1 FROM games.creations_links
+		WHERE parent_id = $1
+	)`, nodeId).Scan(&childExists)
+
+	rows, err := database.Db.Query(`
+	SELECT
+		ctype.name, ctype.type, ctype.metadata
+	FROM games.creations_templates ct
+	INNER JOIN games.components_templates ctemp
+		ON ctemp.id = ct.template_id
+	INNER JOIN games.components_types ctype
+		ON ctemp.type = ctype.id
+	WHERE ct.creation_id = $1`, nodeId)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error: " + err.Error()})
+		return
+	}
+	defer rows.Close()
+
+	var componentTypes []ComponentType
+	for rows.Next() {
+		var ct ComponentType
+		var metadata []byte
+		if err := rows.Scan(&ct.Name, &ct.Type, &metadata); err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error: " + err.Error()})
+			return
+		}
+		ct.Metadata = json.RawMessage(metadata)
+		componentTypes = append(componentTypes, ct)
+	}
+
+	c.JSON(http.StatusOK, RulesetFirstNode{
+		NodeId:         nodeId,
+		ComponentId:    componentId,
+		Name:           name,
+		Last:           !childExists,
+		ComponentTypes: componentTypes,
 	})
 }
