@@ -10,178 +10,312 @@ package charactersCreate
 import (
 	"api/src/database"
 	"database/sql"
+	"encoding/json"
 	"net/http"
-	"strconv"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
-type NextNodeArgs struct {
-	NodeId string `json:"node_id"` // actual node id
-	Type   string `json:"type"`
-	Value  string `json:"value"`
+type ValuePair struct {
+	Key   string      `json:"key"`
+	Value interface{} `json:"value"`
 }
 
-type row struct {
-	ChildId    string `json:"child_id"`
-	Name       string `json:"name"`
-	Expression string `json:"expression"`
-	Type       string `json:"type"`
-	Metadata   string `json:"metadata"`
+type NextNodeArgs struct {
+	CurrentNodeId string      `json:"current_node_id"`
+	Values        []ValuePair `json:"values"`
+}
+
+type ComponentTemplate struct {
+	TemplateId string                 `json:"template_id"`
+	Name       string                 `json:"name"`
+	Type       string                 `json:"type"`
+	Metadata   map[string]interface{} `json:"metadata"`
 }
 
 type NextNodeResponse struct {
-	Id       string `json:"id"`
-	Name     string `json:"name"`
-	Type     string `json:"type"`
-	Metadata string `json:"metadata"`
+	NodeId         string              `json:"node_id"`
+	Name           string              `json:"name"`
+	Last           bool                `json:"last"`
+	ComponentTypes []ComponentTemplate `json:"component_types"`
 }
 
-func valueMatchCondition(value string, valType string, expression string, expType string) bool {
-	if valType != expType {
+type Condition struct {
+	Operator string `json:"operator"`
+	Value    string `json:"value"`
+}
+
+type PossibleValue struct {
+	Id   string `json:"id"`
+	Name string `json:"name"`
+}
+
+func evaluateCondition(condition Condition, value interface{}) bool {
+	if condition.Operator == "" {
+		return true
+	}
+
+	valueStr, ok := value.(string)
+	if !ok {
 		return false
 	}
 
-	var operator, operand string
-	for _, op := range []string{"<=", ">=", "!=", "<", ">", "=="} {
-		if strings.HasPrefix(expression, op) {
-			operator = op
-			operand = strings.TrimSpace(expression[len(op):])
-			break
-		}
+	switch condition.Operator {
+	case "==":
+		return valueStr == condition.Value
+	case "!=":
+		return valueStr != condition.Value
+	default:
+		return false
 	}
-	if operator == "" {
-		return false // no operator ? or return true maybe @Jands
+}
+
+func findMatchingChild(currentNodeId string, values []ValuePair) (string, error) {
+	rows, err := database.Db.Query(`
+		SELECT DISTINCT child_id
+		FROM games.creations_links
+		WHERE parent_id = $1 AND child_id IS NOT NULL
+	`, currentNodeId)
+
+	if err != nil {
+		return "", err
 	}
+	defer rows.Close()
 
-	switch valType { // modify with enums of types set in database script @Jands
-	case "int":
-		v, err1 := strconv.Atoi(value)
-		e, err2 := strconv.Atoi(operand)
-		if err1 != nil || err2 != nil {
-			return false
+	var childIds []string
+	for rows.Next() {
+		var childId string
+		if err := rows.Scan(&childId); err != nil {
+			return "", err
 		}
-		switch operator {
-		case "<":
-			return v < e
-		case "<=":
-			return v <= e
-		case ">":
-			return v > e
-		case ">=":
-			return v >= e
-		case "==":
-			return v == e
-		case "!=":
-			return v != e
-		}
-
-	case "float":
-		v, err1 := strconv.ParseFloat(value, 64)
-		e, err2 := strconv.ParseFloat(operand, 64)
-		if err1 != nil || err2 != nil {
-			return false
-		}
-		switch operator {
-		case "<":
-			return v < e
-		case "<=":
-			return v <= e
-		case ">":
-			return v > e
-		case ">=":
-			return v >= e
-		case "==":
-			return v == e
-		case "!=":
-			return v != e
-		}
-
-	case "string":
-		switch operator {
-		case "==":
-			return value == operand
-		case "!=":
-			return value != operand
-		default:
-			return false // ordering not supported for strings
-		}
+		childIds = append(childIds, childId)
 	}
 
-	return false
+	if len(childIds) == 0 {
+		return "", sql.ErrNoRows
+	}
+
+	for _, childId := range childIds {
+		var conditionJson sql.NullString
+		err := database.Db.QueryRow(`
+			SELECT condition
+			FROM games.components_creations
+			WHERE id = $1
+		`, childId).Scan(&conditionJson)
+
+		if err != nil {
+			continue
+		}
+		if !conditionJson.Valid || conditionJson.String == "{}" || conditionJson.String == "" {
+			continue
+		}
+		var condition Condition
+		if err := json.Unmarshal([]byte(conditionJson.String), &condition); err != nil {
+			continue
+		}
+		var templateId string
+		err = database.Db.QueryRow(`
+			SELECT template_id
+			FROM games.creations_templates
+			WHERE creation_id = $1
+			LIMIT 1
+		`, currentNodeId).Scan(&templateId)
+
+		if err != nil {
+			continue
+		}
+		for _, valuePair := range values {
+			if valuePair.Key == templateId {
+				if evaluateCondition(condition, valuePair.Value) {
+					return childId, nil
+				}
+				break
+			}
+		}
+	}
+	for _, childId := range childIds {
+		var conditionJson sql.NullString
+		err := database.Db.QueryRow(`
+			SELECT condition
+			FROM games.components_creations
+			WHERE id = $1
+		`, childId).Scan(&conditionJson)
+
+		if err == nil && (!conditionJson.Valid || conditionJson.String == "{}" || conditionJson.String == "") {
+			return childId, nil
+		}
+	}
+
+	return "", sql.ErrNoRows
+}
+
+func getNodeTemplates(nodeId string) ([]ComponentTemplate, error) {
+	rows, err := database.Db.Query(`
+		SELECT
+			ct.id,
+			ct.name,
+			ctype.type,
+			ctype.metadata
+		FROM games.creations_templates crt
+		INNER JOIN games.components_templates ct ON crt.template_id = ct.id
+		INNER JOIN games.components_types ctype ON ct.type = ctype.id
+		WHERE crt.creation_id = $1
+	`, nodeId)
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var templates []ComponentTemplate
+	for rows.Next() {
+		var templateId, name, typeStr string
+		var metadataJson sql.NullString
+
+		if err := rows.Scan(&templateId, &name, &typeStr, &metadataJson); err != nil {
+			return nil, err
+		}
+
+		template := ComponentTemplate{
+			TemplateId: templateId,
+			Name:       name,
+			Type:       typeStr,
+			Metadata:   make(map[string]interface{}),
+		}
+
+		if metadataJson.Valid && metadataJson.String != "" {
+			if err := json.Unmarshal([]byte(metadataJson.String), &template.Metadata); err == nil {
+				if typeStr == "enum_tag" {
+					if tags, ok := template.Metadata["tags"].([]interface{}); ok {
+						possibleValues, err := getPossibleValuesByTags(tags)
+						if err == nil {
+							template.Metadata["possible_values"] = possibleValues
+						}
+					}
+				}
+			}
+		}
+
+		templates = append(templates, template)
+	}
+
+	return templates, nil
+}
+
+func getPossibleValuesByTags(tags []interface{}) ([]PossibleValue, error) {
+	if len(tags) == 0 {
+		return []PossibleValue{}, nil
+	}
+	tagNames := make([]string, 0, len(tags))
+	for _, tag := range tags {
+		if tagStr, ok := tag.(string); ok {
+			tagNames = append(tagNames, tagStr)
+		}
+	}
+
+	if len(tagNames) == 0 {
+		return []PossibleValue{}, nil
+	}
+	query := `
+		SELECT DISTINCT i.id, i.name
+		FROM games.items i
+		INNER JOIN games.items_tags it ON i.id = it.item_id
+		INNER JOIN games.tags t ON it.tag_id = t.id
+		WHERE t.name = ANY($1)
+	`
+
+	rows, err := database.Db.Query(query, tagNames)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var possibleValues []PossibleValue
+	for rows.Next() {
+		var id, name string
+		if err := rows.Scan(&id, &name); err != nil {
+			continue
+		}
+		possibleValues = append(possibleValues, PossibleValue{
+			Id:   id,
+			Name: name,
+		})
+	}
+
+	return possibleValues, nil
+}
+
+func hasChildren(nodeId string) (bool, error) {
+	var count int
+	err := database.Db.QueryRow(`
+		SELECT COUNT(*)
+		FROM games.creations_links
+		WHERE parent_id = $1 AND child_id IS NOT NULL
+	`, nodeId).Scan(&count)
+
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
 }
 
 // @BasePath /api/characters/create/nextnode
 // Characters godoc
 // @Summary Returns the next node
 // @Schemes
-// @Description Returns the next node of the given node depending on the ruleset character creation tree<br><br>This will check for the tree for all childs of the given node, and return the one(s) that match the condition with the given value<br><br>If no child matches the condition, it means that the character creation process is finished, and the frontend can send the character creation submission request
+// @Description Returns the next node of the given node depending on the ruleset character creation tree<br><br>This will check for the tree for all children of the given node, and return the one that matches the condition with the given values<br><br>If no child matches the condition, it means that the character creation process is finished
 // @Tags characters creation
 // @Accept json
 // @Produce json
-// @Param creds body NextNodeArgs true "Actual node id, along with the value and type of the component"
-// @Success 200 {array} NextNodeResponse
-// @Router /api/characters/create/nextnode [get]
+// @Param creds body NextNodeArgs true "Current node id and values for templates"
+// @Success 200 {object} NextNodeResponse
+// @Router /api/characters/create/nextnode [post]
 func CharacterNextNode(c *gin.Context) {
 	var args NextNodeArgs
 
-	result := []NextNodeResponse{}
-	// Body Json parsing
 	if err := c.ShouldBindJSON(&args); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
 
-	childs := []row{}
-	rows, err := database.Db.Query(
-		`SELECT
-			cn.child_id, ct.name, ct.expression, ctype.type, ctype.metadata
-		FROM games.creation_nodes cn
-		INNER JOIN games.components_templates ct
-			ON cn.child_id=ct.id
-		INNER JOIN games.component_type ctype
-				ON ct.type=ctype.id
-		WHERE cn.parent_id=$1;`, args.NodeId)
+	nextNodeId, err := findMatchingChild(args.CurrentNodeId, args.Values)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			c.AbortWithStatusJSON(http.StatusOK, result) // the node was the last
+			c.JSON(http.StatusOK, NextNodeResponse{
+				NodeId:         args.CurrentNodeId,
+				Name:           "",
+				Last:           true,
+				ComponentTypes: []ComponentTemplate{},
+			})
 			return
 		}
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error : " + err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error: " + err.Error()})
 		return
 	}
 
-	defer rows.Close()
-	for rows.Next() {
-		var childId, name, expression, valType, metadata sql.NullString
-		rows.Scan(&childId, &name, &expression, &valType, &metadata)
-		childs = append(childs, row{
-			ChildId:    childId.String,
-			Name:       name.String,
-			Expression: expression.String,
-			Type:       valType.String,
-			Metadata:   metadata.String,
-		})
+	templates, err := getNodeTemplates(nextNodeId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get node templates: " + err.Error()})
+		return
+	}
+	hasChild, err := hasChildren(nextNodeId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check children: " + err.Error()})
+		return
 	}
 
-	for row := range childs {
-		if childs[row].Expression == "" { // no expression, we add all childs @Jands
-			result = append(result, NextNodeResponse{
-				Id:       childs[row].ChildId,
-				Name:     childs[row].Name,
-				Type:     childs[row].Type,
-				Metadata: childs[row].Metadata,
-			})
-		} else if valueMatchCondition(args.Value, args.Type, childs[row].Expression, childs[row].Type) {
-			result = append(result, NextNodeResponse{
-				Id:       childs[row].ChildId,
-				Name:     childs[row].Name,
-				Type:     childs[row].Type,
-				Metadata: childs[row].Metadata,
-			})
-		}
+	nodeName := ""
+	if len(templates) > 0 {
+		nodeName = "Node " + nextNodeId[:8]
 	}
 
-	c.JSON(http.StatusOK, result)
+	response := NextNodeResponse{
+		NodeId:         nextNodeId,
+		Name:           nodeName,
+		Last:           !hasChild,
+		ComponentTypes: templates,
+	}
+
+	c.JSON(http.StatusOK, response)
 }
