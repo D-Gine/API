@@ -117,9 +117,9 @@ func main() {
 		{
 			rulesetsGroup.POST("", rulesets.CreateRulesets)
 			rulesetsGroup.GET("", rulesets.ReadRulesets)
-			rulesetsGroup.PUT("/id", rulesets.UpdateRulesets)
-			rulesetsGroup.DELETE("/id", rulesets.DeleteRulesets)
-			rulesetsGroup.GET("/id", rulesets.ReadRulesetId)
+			rulesetsGroup.PUT("/:id", rulesets.UpdateRulesets)
+			rulesetsGroup.DELETE("/:id", rulesets.DeleteRulesets)
+			rulesetsGroup.GET("/:id", rulesets.ReadRulesetId)
 		}
 
 	}
