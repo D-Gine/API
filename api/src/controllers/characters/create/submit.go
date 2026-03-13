@@ -21,9 +21,8 @@ type CreateArgs struct {
 	RulesetId  string `json:"ruleset_id"`
 	Name       string `json:"name"`
 	Components []struct {
-		CreationId string `json:"comp id"`
-		Values     []struct {
-			TemplateId string `json:"key"`
+		Values []struct {
+			TemplateId string `json:"template_id"`
 			Value      any    `json:"value"`
 		} `json:"values"`
 	} `json:"components"`
