@@ -3,7 +3,6 @@ package nodes
 import (
 	"api/src/database"
 	"database/sql"
-	"encoding/json"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -26,13 +25,13 @@ func ReadRulesetFirstNode(c *gin.Context) {
 		return
 	}
 
-	var nodeID sql.NullString
-	var typeJSON []byte
+	var payload []byte
 
 	err := database.Db.QueryRow(`
-		SELECT
-			fn.node_id::text,
-			COALESCE(get_base_type_json(sct.type_id), '{}'::jsonb)::text
+		SELECT jsonb_build_object(
+			'node_id', fn.node_id::text,
+			'type', COALESCE(get_base_type_json(sct.type_id), '{}'::jsonb)
+		)::text
 		FROM public.first_nodes fn
 		INNER JOIN public.nodes n
 			ON n.id = fn.node_id
@@ -41,7 +40,7 @@ func ReadRulesetFirstNode(c *gin.Context) {
 			ON sct.id = n.template_id
 		WHERE fn.ruleset_id = $1
 		LIMIT 1
-	`, rulesetID).Scan(&nodeID, &typeJSON)
+	`, rulesetID).Scan(&payload)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -52,17 +51,5 @@ func ReadRulesetFirstNode(c *gin.Context) {
 		return
 	}
 
-	var nodeType NodeTypeResponse
-	if len(typeJSON) == 0 {
-		typeJSON = []byte(`{}`)
-	}
-	if err := json.Unmarshal(typeJSON, &nodeType); err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Invalid type payload from database"})
-		return
-	}
-
-	c.JSON(http.StatusOK, FirstNodeResponse{
-		NodeId: nodeID.String,
-		Type:   nodeType,
-	})
+	c.Data(http.StatusOK, "application/json; charset=utf-8", payload)
 }
