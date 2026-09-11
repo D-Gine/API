@@ -119,6 +119,8 @@ func main() {
 		nodesGroup := api.Group("/nodes")
 		{
 			nodesGroup.GET("/:ruleset_id/first_node", nodes.ReadRulesetFirstNode)
+			nodesGroup.POST("/:ruleset_id/get_next_node/:target_node", nodes.GetNextNode)
+
 		}
 
 	}
