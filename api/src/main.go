@@ -14,6 +14,7 @@ import (
 	charactersCreate "api/src/controllers/characters/create"
 	"api/src/controllers/dev"
 	"api/src/controllers/fileserver"
+	"api/src/controllers/nodes"
 	"api/src/controllers/rulesets"
 	"api/src/controllers/users"
 	"api/src/database"
@@ -126,6 +127,11 @@ func main() {
 			rulesetsGroup.PUT("/:id", rulesets.UpdateRulesets)
 			rulesetsGroup.DELETE("/:id", rulesets.DeleteRulesets)
 			rulesetsGroup.GET("/:id", rulesets.ReadRulesetId)
+		}
+
+		nodesGroup := api.Group("/nodes")
+		{
+			nodesGroup.GET("/:ruleset_id/first_node", nodes.ReadRulesetFirstNode)
 		}
 
 	}
