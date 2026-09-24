@@ -77,3 +77,23 @@ func ValidateNode(c *gin.Context) {
 	}
 	c.JSON(code, error_list)
 }
+
+func ValidateNodes(c *gin.Context) {
+	var body MultipleNodeValidation
+	if err := c.ShouldBindBodyWithJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request: Invalid body"})
+		return
+	}
+
+	err, error_list := ValidateNodesTypes(&body.NodeList, body.NodeIds, c.Param("ruleset_id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	code := http.StatusOK
+	if len(error_list) != 0 {
+		code = http.StatusUnauthorized
+	}
+	c.JSON(code, error_list)
+}

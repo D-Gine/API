@@ -124,6 +124,7 @@ func main() {
 			nodeGroup := rulesetGroup.Group("/node")
 			{
 				nodeGroup.POST("/:id/validate", validate.ValidateNode)
+				nodeGroup.POST("/validate", validate.ValidateNodes)
 			}
 		}
 
