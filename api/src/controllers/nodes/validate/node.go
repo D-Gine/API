@@ -58,6 +58,18 @@ func ValidateNodesTypes(nodeList *NodeList, nodeIds []string, rulesetId string) 
 	return nil, errors_map
 }
 
+// @BasePath api/:ruleset_id/node/:id/validate
+// Nodes godoc
+// @Summary validate one node
+// @Schemes
+// @Description validate the node present the query<br><br>Will return a json object with one key (the node_id) and the error message as value, empty json object if success
+// @Tags nodes
+// @Accept json
+// @Produce json
+// @Param creds body CreateRulesetsArgs true "ruleset related informations that will be later needed for the login process"
+// @Success 200 {object} structs.PostResponse
+// @Router api/:ruleset_id/node/validate [post]
+
 func ValidateNode(c *gin.Context) {
 	var body NodeList
 	if err := c.ShouldBindBodyWithJSON(&body); err != nil {
@@ -78,6 +90,17 @@ func ValidateNode(c *gin.Context) {
 	c.JSON(code, error_list)
 }
 
+// @BasePath api/:ruleset_id/node/validate
+// Nodes godoc
+// @Summary validate multiple nodes
+// @Schemes
+// @Description validate the nodes present in the "node_ids" array in the body<br><br>Will return a json object with every key the invalid nodes and value the error output, empty json object if success
+// @Tags nodes
+// @Accept json
+// @Produce json
+// @Param creds body CreateRulesetsArgs true "ruleset related informations that will be later needed for the login process"
+// @Success 200 {object} structs.PostResponse
+// @Router api/:ruleset_id/node/:id/validate [post]
 func ValidateNodes(c *gin.Context) {
 	var body MultipleNodeValidation
 	if err := c.ShouldBindBodyWithJSON(&body); err != nil {
