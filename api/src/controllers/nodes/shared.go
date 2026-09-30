@@ -7,6 +7,8 @@
 
 package nodes
 
+import "database/sql"
+
 type NodeTypeResponse struct {
 	Id           string         `json:"id"`
 	Base         string         `json:"base"`
@@ -37,4 +39,11 @@ type NextNodeResponse struct {
 
 type GetNextNodeResponse struct {
 	Next *NextNodeResponse `json:"next"`
+}
+
+type DbNodeData struct {
+	NodeID       string
+	NextScriptID sql.NullString
+	Script       sql.NullString
+	Type         NodeTypeResponse
 }
