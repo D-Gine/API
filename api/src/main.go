@@ -12,6 +12,7 @@ import (
 	"api/src/controllers/auth"
 	"api/src/controllers/characters"
 	charactersCreate "api/src/controllers/characters/create"
+	characterValidate "api/src/controllers/characters/validate"
 	"api/src/controllers/dev"
 	"api/src/controllers/fileserver"
 	"api/src/controllers/nodes/validate"
@@ -121,6 +122,10 @@ func main() {
 
 		rulesetGroup := api.Group("/:ruleset_id")
 		{
+			characters_group := rulesetGroup.Group("/character")
+			{
+				characters_group.POST("/:id/validate", characterValidate.ValidateCharacter)
+			}
 			nodeGroup := rulesetGroup.Group("/node")
 			{
 				nodeGroup.POST("/:id/validate", validate.ValidateNode)
