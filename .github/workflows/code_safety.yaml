@@ -3,8 +3,6 @@ name: Go
 on:
   pull_request:
     branches: ['main', 'dev']
-  push:
-    branches-ignore: ['main', 'dev']
 
 jobs:
   check_vulnerability:
