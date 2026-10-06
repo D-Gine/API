@@ -10,6 +10,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// @BasePath api/:ruleset_id/character/:id/validate
+// Nodes godoc
+// @Summary validate an entity
+// @Schemes
+// @Description Validate an entity stored in the database by checking every component
+// @Tags nodes
+// @Accept json
+// @Produce json
+// @Param creds body CreateRulesetsArgs true "ruleset related informations that will be later needed for the login process"
+// @Success 200 {object} structs.PostResponse
+// @Router api/:ruleset_id/character/:id/validate [post]
 func ValidateCharacter(c *gin.Context) {
 	id := c.Param("id")
 	var rawJSON []byte
