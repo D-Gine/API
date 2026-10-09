@@ -15,6 +15,7 @@ import (
 	characterValidate "api/src/controllers/characters/validate"
 	"api/src/controllers/dev"
 	"api/src/controllers/fileserver"
+	"api/src/controllers/nodes"
 	"api/src/controllers/nodes/validate"
 	"api/src/controllers/rulesets"
 	"api/src/controllers/users"
@@ -141,6 +142,11 @@ func main() {
 			rulesetsGroup.PUT("/:id", rulesets.UpdateRulesets)
 			rulesetsGroup.DELETE("/:id", rulesets.DeleteRulesets)
 			rulesetsGroup.GET("/:id", rulesets.ReadRulesetId)
+		}
+
+		nodesGroup := api.Group("/nodes")
+		{
+			nodesGroup.GET("/:ruleset_id/first_node", nodes.ReadRulesetFirstNode)
 		}
 
 	}
