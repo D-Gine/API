@@ -11,8 +11,12 @@ import (
 	"api/src/controllers/account"
 	"api/src/controllers/auth"
 	"api/src/controllers/characters"
+	charactersCreate "api/src/controllers/characters/create"
+	characterValidate "api/src/controllers/characters/validate"
+	"api/src/controllers/dev"
 	"api/src/controllers/fileserver"
 	"api/src/controllers/nodes"
+	"api/src/controllers/nodes/validate"
 	"api/src/controllers/rulesets"
 	"api/src/controllers/users"
 	"api/src/database"
@@ -80,6 +84,11 @@ func main() {
 			authGroup.POST("/logout", auth.Logout)
 		}
 
+		devGroup := api.Group("/dev")
+		{
+			devGroup.POST("/callengine", dev.CallEngine)
+		}
+
 		accountGroup := api.Group("/account", auth.AuthenticateMiddleware)
 		{
 			accountGroup.GET("", account.ReadAccount)
@@ -99,11 +108,30 @@ func main() {
 		// charactersGroup := api.Group("/characters", auth.AuthenticateMiddleware, auth.AdminMiddleware)
 		charactersGroup := api.Group("/characters")
 		{
-			charactersGroup.POST("", characters.CreateCharacters)
 			charactersGroup.GET("", characters.ReadCharacters)
 			charactersGroup.PUT("/id", characters.UpdateCharacters)
 			charactersGroup.DELETE("/id", characters.DeleteCharacters)
-			charactersGroup.GET("/id", characters.ReadCharactersId)
+			charactersGroup.GET("/:id", characters.ReadCharactersId)
+
+			charactersCreationGroup := charactersGroup.Group("/create")
+			{
+				charactersCreationGroup.GET("/firstnode", charactersCreate.CharacterFirstNode)
+				charactersCreationGroup.POST("/nextnode", charactersCreate.CharacterNextNode)
+				charactersCreationGroup.POST("/submit", charactersCreate.SubmitCharacter)
+			}
+		}
+
+		rulesetGroup := api.Group("/:ruleset_id")
+		{
+			characters_group := rulesetGroup.Group("/character")
+			{
+				characters_group.POST("/:id/validate", characterValidate.ValidateCharacter)
+			}
+			nodeGroup := rulesetGroup.Group("/node")
+			{
+				nodeGroup.POST("/:id/validate", validate.ValidateNode)
+				nodeGroup.POST("/validate", validate.ValidateNodes)
+			}
 		}
 
 		// rulesetsGroup := api.Group("/rulesets", auth.AuthenticateMiddleware, auth.AdminMiddleware)
@@ -111,9 +139,9 @@ func main() {
 		{
 			rulesetsGroup.POST("", rulesets.CreateRulesets)
 			rulesetsGroup.GET("", rulesets.ReadRulesets)
-			rulesetsGroup.PUT("/id", rulesets.UpdateRulesets)
-			rulesetsGroup.DELETE("/id", rulesets.DeleteRulesets)
-			rulesetsGroup.GET("/id", rulesets.ReadRulesetId)
+			rulesetsGroup.PUT("/:id", rulesets.UpdateRulesets)
+			rulesetsGroup.DELETE("/:id", rulesets.DeleteRulesets)
+			rulesetsGroup.GET("/:id", rulesets.ReadRulesetId)
 		}
 
 		nodesGroup := api.Group("/nodes")
@@ -122,7 +150,11 @@ func main() {
 		}
 
 	}
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler, ginSwagger.DefaultModelsExpandDepth(-1)))
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(
+		swaggerfiles.Handler,
+		ginSwagger.DefaultModelsExpandDepth(-1),
+		ginSwagger.DocExpansion("none"),
+	))
 
 	img := r.Group("/img", CORSMiddleware)
 	img.GET("/*filepath", fileserver.GetImage)

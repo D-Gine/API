@@ -26,6 +26,7 @@ TRUSTED_PROXIES=127.0.0.1
 
 # NETWORKS
 BACK_NETWORK=dengine-back-net
+FRONT_NETWORK=dengine-front-net
 
 # VOLUMES
 API_VOLUME=dengine-api-volume
@@ -37,6 +38,7 @@ USERS_IMAGES_PATH=/img/users/
 
 ### Launch
 #### Development
+You need to have the **environment variables** set in `.env` file at the same place as the `compose.yaml`
 ```
 docker compose up --build -d
 ```
