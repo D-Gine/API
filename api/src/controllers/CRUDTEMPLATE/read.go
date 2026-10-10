@@ -15,6 +15,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func MyFunction() int {
+	return 1
+}
+
 // @BasePath /api/CRUDTEMPLATEs
 // CRUDTEMPLATEs godoc
 // @Summary Reads all CRUDTEMPLATEs data
