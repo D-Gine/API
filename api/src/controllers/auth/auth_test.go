@@ -57,7 +57,7 @@ func newTestContext(req *http.Request) (*gin.Context, *httptest.ResponseRecorder
 
 // CREATETOKEN
 
-func TestCreateToken(t *testing.T) {
+func Test_CreateToken(t *testing.T) {
 	setTestKey(t)
 
 	tokenString, err := CreateToken(testUser)
@@ -189,7 +189,7 @@ func Test_ExtractFromToken(t *testing.T) {
 
 // VERIFYTOKEN
 
-func TestVerifyToken(t *testing.T) {
+func Test_VerifyToken(t *testing.T) {
 	setTestKey(t)
 
 	valid := signClaims(t, validClaims(), jwtKey)
@@ -226,7 +226,7 @@ func TestVerifyToken(t *testing.T) {
 
 // BUILDTOKEN
 
-func TestBuildToken(t *testing.T) {
+func Test_BuildToken(t *testing.T) {
 	setTestKey(t)
 
 	c, w := newTestContext(httptest.NewRequest(http.MethodPost, "/login", nil))
@@ -266,7 +266,7 @@ func TestBuildToken(t *testing.T) {
 
 // GETUSERFROMTOKEN
 
-func TestGetUserFromToken(t *testing.T) {
+func Test_GetUserFromToken(t *testing.T) {
 	setTestKey(t)
 
 	valid, _ := CreateToken(testUser)
