@@ -34,7 +34,7 @@ jobs:
           version: latest
           install-mode: goinstall
 
-  run_tests:
+  run_unit_tests:
     runs-on: ubuntu-latest
     needs: ['check_vulnerability']
     permissions:
@@ -61,3 +61,48 @@ jobs:
         with:
           name: ./api/Go-results
           path: ./api/TestResults.json
+
+  automated-api-tests:
+    runs-on: ubuntu-latest
+    env:
+      DB_PORT: 5432
+      DB_NAME: dengine
+      DB_USER: test
+      DB_PWD: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Start Database
+        run: |
+          docker pull ghcr.io/D-Gine/dengine-db:latest
+          docker run -d --name dengine-db \
+            -e PGPORT=$DB_PORT \
+            -e POSTGRES_DB=$DB_NAME \
+            -e POSTGRES_USER=$DB_USER \
+            -e POSTGRES_PASSWORD=$DB_PWD \
+            -p $DB_PORT:$DB_PORT \
+            --health-cmd="pg_isready -U $DB_USER -d $DB_NAME" \
+            --health-interval=2s --health-timeout=5s --health-retries=30 \
+            ghcr.io/D-Gine/dengine-db:latest
+
+      - name: Wait for DB to be healthy
+        run: |
+          for i in $(seq 1 60); do
+            status=$(docker inspect -f '{{.State.Health.Status}}' dengine-db)
+            [ "$status" = "healthy" ] && exit 0
+            sleep 2
+          done
+          docker logs dengine-db
+          exit 1
+
+      - name: Install Postman CLI
+        run: |
+          curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
+      - name: Login to Postman CLI
+        run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
+      - name: Run API tests
+        run: |
+          postman collection run "58711414-51d416b8-5719-40a3-8141-d0f6e60af21f"
