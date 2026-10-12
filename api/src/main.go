@@ -12,8 +12,11 @@ import (
 	"api/src/controllers/auth"
 	"api/src/controllers/characters"
 	charactersCreate "api/src/controllers/characters/create"
+	characterValidate "api/src/controllers/characters/validate"
 	"api/src/controllers/dev"
 	"api/src/controllers/fileserver"
+	"api/src/controllers/nodes"
+	"api/src/controllers/nodes/validate"
 	"api/src/controllers/rulesets"
 	"api/src/controllers/users"
 	"api/src/database"
@@ -118,6 +121,19 @@ func main() {
 			}
 		}
 
+		rulesetGroup := api.Group("/:ruleset_id")
+		{
+			characters_group := rulesetGroup.Group("/character")
+			{
+				characters_group.POST("/:id/validate", characterValidate.ValidateCharacter)
+			}
+			nodeGroup := rulesetGroup.Group("/node")
+			{
+				nodeGroup.POST("/:id/validate", validate.ValidateNode)
+				nodeGroup.POST("/validate", validate.ValidateNodes)
+			}
+		}
+
 		// rulesetsGroup := api.Group("/rulesets", auth.AuthenticateMiddleware, auth.AdminMiddleware)
 		rulesetsGroup := api.Group("/rulesets")
 		{
@@ -126,6 +142,11 @@ func main() {
 			rulesetsGroup.PUT("/:id", rulesets.UpdateRulesets)
 			rulesetsGroup.DELETE("/:id", rulesets.DeleteRulesets)
 			rulesetsGroup.GET("/:id", rulesets.ReadRulesetId)
+		}
+
+		nodesGroup := api.Group("/nodes")
+		{
+			nodesGroup.GET("/:ruleset_id/first_node", nodes.ReadRulesetFirstNode)
 		}
 
 	}
