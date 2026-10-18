@@ -185,10 +185,10 @@ func loadNodeData(rulesetID string, nodeID string) (DbNodeData, error) {
 
 	err := database.Db.QueryRow(`
 		SELECT
-			n.id::text,
-			n.next_script_id::text,
-			ns.script,
-			COALESCE(get_base_type_json(sct.type_id), '{}'::jsonb)::text
+			n.id::text AS node_id,
+			n.next_script_id::text AS next_script_id,
+			ns.script AS script,
+			COALESCE(get_base_type_json(sct.type_id), '{}'::jsonb)::text AS type_json
 		FROM public.nodes n
 		INNER JOIN public.static_components_templates sct
 			ON sct.id = n.template_id
