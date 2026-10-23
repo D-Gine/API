@@ -5,16 +5,18 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
 )
 
 type listRestrictions struct {
+	BaseRestrictions
 	Type      string `json:"type"`
 	MinLength *int   `json:"min_length,omitempty"`
 	MaxLength *int   `json:"max_length,omitempty"`
 }
 
-func VerifyList(componentList *ComponentMap, value []json.RawMessage, restrictions listRestrictions) error {
+func VerifyList(ctx *gin.Context, componentList *ComponentMap, value []json.RawMessage, restrictions listRestrictions) error {
 	var verification TypeVerifications
 	err := database.Db.QueryRow(`
 		SELECT * FROM get_verifications($1)`, pq.Array([]string{restrictions.Type})).Scan(
@@ -33,7 +35,7 @@ func VerifyList(componentList *ComponentMap, value []json.RawMessage, restrictio
 		return fmt.Errorf("too short, min lenght is %d, current len is %d", *restrictions.MinLength, len(value))
 	}
 	for i, elem := range value {
-		if err = VerifyType(componentList, elem, verification); err != nil {
+		if err = VerifyType(ctx, componentList, elem, verification); err != nil {
 			return fmt.Errorf("error at element : %d, %w", i, err)
 		}
 	}
