@@ -2,6 +2,8 @@ package scripting
 
 import "context"
 
+var ScriptEngine Engine = NewStarlarkEngine()
+
 type Engine interface {
 	// executes function from a script and returns a Go value converted result
 	Eval(ctx context.Context, script string, function string, args []any, kwargs map[string]any) (any, error)

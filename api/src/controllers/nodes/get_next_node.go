@@ -12,8 +12,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var scriptEngine scripting.Engine = scripting.NewStarlarkEngine()
-
 const maxNextNodeDepth = 67000
 
 // @BasePath /api/nodes
@@ -124,7 +122,7 @@ func resolveNextChain(
 		return nil, errDepthExceeded
 	}
 
-	rawResult, err := scriptEngine.Eval(
+	rawResult, err := scripting.ScriptEngine.Eval(
 		c.Request.Context(),
 		current.Script.String,
 		"get_next_node",

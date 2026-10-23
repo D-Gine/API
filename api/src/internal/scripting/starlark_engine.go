@@ -2,9 +2,12 @@ package scripting
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"reflect"
 
+	starlarkjson "go.starlark.net/lib/json"
 	"go.starlark.net/starlark"
 	"go.starlark.net/syntax"
 )
@@ -194,13 +197,14 @@ func starlarkToGo(v starlark.Value) (any, error) {
 //
 // Mapping:
 //
-//	nil                          -> None
-//	string, bool                 -> string, bool
-//	int*, uint*                  -> int
-//	float32, float64             -> float
-//	map[string]any, []any        -> dict, list (converted recursively)
-//	any map with string keys     -> dict   (via reflection)
-//	any slice or array           -> list   (via reflection)
+//		nil                          -> None
+//		string, bool                 -> string, bool
+//		int*, uint*                  -> int
+//		float32, float64             -> float
+//		map[string]any, []any        -> dict, list (converted recursively)
+//	 map[string]json.RawMessage   -> dict raw json
+//		any map with string keys     -> dict   (via reflection)
+//		any slice or array           -> list   (via reflection)
 //
 // Structs, pointers and maps with non-string keys are NOT supported and return
 // an error; convert them to a map[string]any first.
@@ -260,6 +264,30 @@ func goToStarlark(v any) (starlark.Value, error) {
 			items = append(items, sv)
 		}
 		return starlark.NewList(items), nil
+	case map[string]json.RawMessage:
+		jsonBytes, err := json.Marshal(x)
+		if err != nil {
+			return nil, fmt.Errorf("Error marshaling map: %s", err)
+		}
+		jsonString := string(jsonBytes)
+
+		thread := &starlark.Thread{Name: "main"}
+		decodeFn, ok := starlarkjson.Module.Members["decode"].(starlark.Callable)
+		if !ok {
+			return nil, errors.New("failed to find starlark json decode function")
+		}
+		starlarkVal, err := starlark.Call(thread, decodeFn, starlark.Tuple{starlark.String(jsonString)}, nil)
+		return starlarkVal, err
+	case json.RawMessage:
+		jsonString := x.String()
+		thread := &starlark.Thread{Name: "main"}
+		decodeFn, ok := starlarkjson.Module.Members["decode"].(starlark.Callable)
+		if !ok {
+			return nil, errors.New("failed to find starlark json decode function")
+		}
+		starlarkVal, err := starlark.Call(thread, decodeFn, starlark.Tuple{starlark.String(jsonString)}, nil)
+		return starlarkVal, err
+
 	}
 
 	rv := reflect.ValueOf(v)
