@@ -5,6 +5,17 @@ on:
     branches: ['main', 'dev']
 
 jobs:
+  install_go:
+    runs-on: self-hosted
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v6
+      - name: Install go tool
+        run: |
+          sudo apt-get update
+          sudo apt-get install go
   check_vulnerability:
     # runs-on: ubuntu-latest
     runs-on: self-hosted
