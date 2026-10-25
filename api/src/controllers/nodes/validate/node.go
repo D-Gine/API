@@ -17,20 +17,20 @@ func runValidateScript(value json.RawMessage, script string, restrictions json.R
 	return nil // IMPLEMENT SCRIPTING CALLING
 }
 
-func ValidateNodesTypes(nodeList *NodeList, nodeIds []string, rulesetId string) (error, map[string]string) {
+func ValidateNodesTypes(nodeList *NodeList, nodeIds []string, rulesetId string) (map[string]string, error) {
 	nodeKeys := slices.Collect(maps.Keys(nodeList.NodeValues))
 	nodeRows, err := database.Db.Query(`
 		SELECT id, template_id FROM nodes WHERE id = ANY($1)
 	`, pq.Array(nodeKeys))
 	if err != nil {
-		return err, nil
+		return nil, err
 	}
-	defer nodeRows.Close()
+	defer func() { _ = nodeRows.Close() }()
 	componentList := make(ComponentMap)
 	for nodeRows.Next() {
 		var nodeId, compId string
 		if err := nodeRows.Scan(&nodeId, &compId); err != nil {
-			return err, nil
+			return nil, err
 		}
 		if val, exists := nodeList.NodeValues[nodeId]; exists {
 			fmt.Println(compId)
@@ -38,27 +38,27 @@ func ValidateNodesTypes(nodeList *NodeList, nodeIds []string, rulesetId string) 
 		}
 	}
 	if err := nodeRows.Err(); err != nil {
-		return err, nil
+		return nil, err
 	}
 
 	verifyRows, err := database.Db.Query(`
 		SELECT * FROM get_nodes_verifications($1, $2::uuid)
 	`, pq.Array(nodeIds), rulesetId)
 	if err != nil {
-		return err, nil
+		return nil, err
 	}
-	defer verifyRows.Close()
+	defer func() { _ = verifyRows.Close() }()
 
-	err, errorMap, count := ValidateRowTypes(&componentList, verifyRows)
+	errorMap, count, err := ValidateRowTypes(&componentList, verifyRows)
 	if err != nil {
-		return err, errorMap
+		return errorMap, err
 	}
 
 	if count != len(nodeIds) {
-		return errors.New("some sent nodes are invalid, cannot compute"), nil
+		return nil, errors.New("some sent nodes are invalid, cannot compute")
 	}
 
-	return nil, errorMap
+	return errorMap, nil
 }
 
 // @BasePath api/:ruleset_id/node/:id/validate
@@ -79,7 +79,7 @@ func ValidateNode(c *gin.Context) {
 		return
 	}
 
-	err, error_list := ValidateNodesTypes(&body, []string{c.Param("id")}, c.Param("ruleset_id"))
+	error_list, err := ValidateNodesTypes(&body, []string{c.Param("id")}, c.Param("ruleset_id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -110,7 +110,7 @@ func ValidateNodes(c *gin.Context) {
 		return
 	}
 
-	err, error_list := ValidateNodesTypes(&body.NodeList, body.NodeIds, c.Param("ruleset_id"))
+	error_list, err := ValidateNodesTypes(&body.NodeList, body.NodeIds, c.Param("ruleset_id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

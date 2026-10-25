@@ -28,7 +28,7 @@ func VerifyDictionary(componentList *ComponentMap, value map[string]json.RawMess
 		if err != nil {
 			return fmt.Errorf("error fetching interfaces types, please recheck validity of you interface, %w", err)
 		}
-		defer rows.Close()
+		defer func() { _ = rows.Close() }()
 		verificationMap := make(map[string]TypeVerifications)
 		for rows.Next() {
 			var verification TypeVerifications
