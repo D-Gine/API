@@ -1,0 +1,168 @@
+{
+  "v": 12,
+  "id": "cmvhz5u5w0wtpea1jzui03s24",
+  "name": "D-Gine API",
+  "folders": [
+    {
+      "v": 12,
+      "id": "cmvnjfx901wesea1jvtujhwup",
+      "name": "entity creation",
+      "folders": [
+        {
+          "v": 12,
+          "id": "cmvnjg2401wetea1je16o0wnl",
+          "name": "validate",
+          "folders": [
+            {
+              "v": 12,
+              "id": "cmvnjgata27hxj91jf6ztjf1i",
+              "name": "validate one node",
+              "folders": [],
+              "requests": [
+                {
+                  "v": "17",
+                  "auth": {
+                    "authType": "inherit",
+                    "authActive": true
+                  },
+                  "body": {
+                    "body": "{\n    \"node_values\": {\n        \"3e4ea0d2-1270-4816-bd30-e9f2108db35d\": 10,\n        \"5add1a83-bd43-4385-b04a-c3797138d684\": \"barbarian\",\n        \"4fbb7e27-8e26-47dd-bea1-f687cc4a98db\": {\n            \"dex\": 10,\n            \"cha\": 10,\n            \"int\": 10,\n            \"str\": 10,\n            \"wis\": 10,\n            \"con\": 10\n        }\n    }\n}",
+                    "contentType": "application/json"
+                  },
+                  "name": "success",
+                  "method": "POST",
+                  "params": [],
+                  "headers": [],
+                  "endpoint": "<<host>>/api/<<ruleset_id>>/node/<<stats_pool_node_id>>/validate",
+                  "responses": {},
+                  "testScript": "\n\n// Check status code is 200\npw.test(\"Status code is 200\", ()=> {\n  pw.expect(pw.response.status).toBe(200);\n});\n\n\n\nhopp.test(\"Response body should be empty object\", () => {\n  console.log(pw.response.body)\n  hopp.expect(pw.response.body).toBe(\"{}\");\n});",
+                  "description": null,
+                  "preRequestScript": "",
+                  "requestVariables": [],
+                  "id": "cmvhz5xhe0wtqea1jj6remrbh"
+                }
+              ],
+              "auth": {
+                "authType": "inherit",
+                "authActive": true
+              },
+              "headers": [],
+              "variables": [],
+              "description": null,
+              "preRequestScript": "",
+              "testScript": ""
+            }
+          ],
+          "requests": [],
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "headers": [],
+          "variables": [],
+          "description": null,
+          "preRequestScript": "",
+          "testScript": ""
+        },
+        {
+          "v": 12,
+          "id": "cmvnnyop51wgcea1j5wi1nlfa",
+          "name": "create",
+          "folders": [],
+          "requests": [
+            {
+              "v": "17",
+              "auth": {
+                "authType": "inherit",
+                "authActive": true
+              },
+              "body": {
+                "body": "{\n  \"name\": \"Freebird Freeman\",\n  \"description\": \"il ne savais pas que c'etait impossible ducoup il s'est assis 20 ans\"\n}",
+                "contentType": "application/json"
+              },
+              "name": "create character",
+              "method": "POST",
+              "params": [],
+              "headers": [],
+              "endpoint": "<<host>>/api/<<ruleset_id>>/character/create",
+              "responses": {},
+              "testScript": "hopp.test(\"Extract id and save to environment\", () => {\n  const responseData = hopp.response.body.asJSON();\n  \n  const id = responseData.characharacte_id; \n\n  hopp.env.set(\"character_id\", id);\n});",
+              "description": null,
+              "preRequestScript": "",
+              "requestVariables": [],
+              "id": "cmvnnzar5281mj91j5mb540om"
+            }
+          ],
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "headers": [],
+          "variables": [],
+          "description": null,
+          "preRequestScript": "",
+          "testScript": ""
+        },
+        {
+          "v": 12,
+          "id": "cmvno7bn3281pj91jbp3ow58f",
+          "name": "delete",
+          "folders": [],
+          "requests": [
+            {
+              "v": "17",
+              "auth": {
+                "authType": "inherit",
+                "authActive": true
+              },
+              "body": {
+                "body": null,
+                "contentType": null
+              },
+              "name": "delete character",
+              "method": "DELETE",
+              "params": [],
+              "headers": [],
+              "endpoint": "<<host>>/api/<<ruleset_id>>/character/<<character_id>>",
+              "responses": {},
+              "testScript": "",
+              "description": null,
+              "preRequestScript": "",
+              "requestVariables": [],
+              "id": "cmvno7k2v281qj91jdh2hji8y"
+            }
+          ],
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "headers": [],
+          "variables": [],
+          "description": null,
+          "preRequestScript": "",
+          "testScript": ""
+        }
+      ],
+      "requests": [],
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "headers": [],
+      "variables": [],
+      "description": null,
+      "preRequestScript": "",
+      "testScript": ""
+    }
+  ],
+  "requests": [],
+  "auth": {
+    "authType": "inherit",
+    "authActive": true
+  },
+  "headers": [],
+  "variables": [],
+  "description": null,
+  "preRequestScript": "",
+  "testScript": ""
+}

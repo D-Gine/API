@@ -92,6 +92,8 @@ jobs:
       USERS_IMAGES_PATH: /tmp/images/users/
       IMAGES_PATH: /tmp/images/
       GIN_MODE: release
+      HOPPSCOTCH_COLLECTION: 'tests/Hoppscotch/D-Gine API.json'
+      HOPPSCOTCH_ENV: 'tests/Hoppscotch/dengine api.json'
     steps:
       - uses: actions/checkout@v4
 
@@ -155,9 +157,7 @@ jobs:
         run: npm i -g @hoppscotch/cli
 
       - name: Run Hoppscotch tests
-        run: npx -y @hoppscotch/cli test cmvhz5u5w0wtpea1jzui03s24 -e cmvnipzf51weoea1j9plp0nx7 --token $HOPPSCOTCH_PERSONAL_ACCESS_TOKEN
-        env:
-          HOPPSCOTCH_PERSONAL_ACCESS_TOKEN: ${{ secrets.HOPPSCOTCH_PERSONAL_ACCESS_TOKEN }}
+        run: npx -y @hoppscotch/cli@latest test $HOPPSCOTCH_COLLECTION -e $HOPPSCOTCH_ENV
 
       - name: Show API logs
         if: always()
