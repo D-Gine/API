@@ -12,6 +12,7 @@ import (
 	"api/src/controllers/auth"
 	charactrerCreate "api/src/controllers/characters/create"
 	charactrerDelete "api/src/controllers/characters/delete"
+	characterSave "api/src/controllers/characters/save"
 	characterValidate "api/src/controllers/characters/validate"
 
 	"api/src/controllers/dev"
@@ -113,6 +114,7 @@ func main() {
 				characters_group.POST("/:id/validate", characterValidate.ValidateCharacter)
 				characters_group.POST("/create", charactrerCreate.CreateCharater)
 				characters_group.DELETE(":id", charactrerDelete.DeleteCharater)
+				characters_group.PUT(":id/save", characterSave.SaveCharacter)
 			}
 			nodeGroup := rulesetGroup.Group("/node")
 			{
