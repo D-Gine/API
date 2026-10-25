@@ -157,7 +157,7 @@ jobs:
         run: npm i -g @hoppscotch/cli
 
       - name: Run Hoppscotch tests
-        run: npx -y @hoppscotch/cli@latest test $HOPPSCOTCH_COLLECTION -e $HOPPSCOTCH_ENV
+        run: npx -y @hoppscotch/cli@latest test "$HOPPSCOTCH_COLLECTION" -e "$HOPPSCOTCH_ENV"
 
       - name: Show API logs
         if: always()
