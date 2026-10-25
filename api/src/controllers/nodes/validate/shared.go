@@ -42,3 +42,11 @@ func (n ComponentVerification) GetBase() BaseVerifications {
 func (t TypeVerifications) GetBase() BaseVerifications {
 	return t.BaseVerifications
 }
+
+type BaseRestrictions struct {
+	OptionalBool *bool `json:"optional,omitempty"`
+}
+
+func (b BaseRestrictions) GetBaseRestrictions() BaseRestrictions {
+	return b
+}

@@ -8,14 +8,16 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
 )
 
 type dictionaryRestrictions struct {
+	BaseRestrictions
 	Interface *map[string]string `json:"interface,omitempty"`
 }
 
-func VerifyDictionary(componentList *ComponentMap, value map[string]json.RawMessage, restrictions dictionaryRestrictions) error {
+func VerifyDictionary(ctx *gin.Context, componentList *ComponentMap, value map[string]json.RawMessage, restrictions dictionaryRestrictions) error {
 	if restrictions.Interface != nil {
 		// getting verifications data
 		type_set := make(map[string]struct{})
@@ -51,7 +53,7 @@ func VerifyDictionary(componentList *ComponentMap, value map[string]json.RawMess
 			if !ok {
 				return fmt.Errorf(`unknow key "%s"`, key)
 			}
-			err := VerifyType(componentList, elem, verificationMap[typeId])
+			err := VerifyType(ctx, componentList, elem, verificationMap[typeId])
 			if err != nil {
 				return fmt.Errorf(`error at key "%s", %w`, key, err)
 			}
