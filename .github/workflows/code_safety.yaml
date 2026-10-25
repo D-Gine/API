@@ -75,6 +75,9 @@ jobs:
   automated-api-tests:
     runs-on: ubuntu-latest
     needs: ['run_unit_tests']
+    permissions:
+      contents: read
+      packages: read
     env:
       DB_HOST: 127.0.0.1
       DB_PORT: 55432
