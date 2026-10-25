@@ -6,7 +6,7 @@ on:
 
 jobs:
   check_vulnerability:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     permissions:
       contents: read
 
@@ -32,10 +32,10 @@ jobs:
         uses: golangci/golangci-lint-action@v8
         with:
           version: latest
-          install-mode: goinstall
+          working-directory: api
 
   run_unit_tests:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: ['check_vulnerability']
     permissions:
       contents: read
@@ -63,7 +63,7 @@ jobs:
           path: ./api/TestResults.json
 
   automated-api-tests:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: ['run_unit_tests']
     env:
       DB_HOST: 127.0.0.1
