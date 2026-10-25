@@ -32,7 +32,7 @@ jobs:
         uses: golangci/golangci-lint-action@v8
         with:
           version: latest
-          install-mode: goinstall
+          working-directory: api
 
   run_unit_tests:
     runs-on: self-hosted
