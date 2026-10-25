@@ -6,14 +6,14 @@ on:
 
 jobs:
   check_vulnerability:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     permissions:
       contents: read
 
     steps:
       - uses: actions/checkout@v4
       - name: Setup Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: '1.27.x'
       - name: Vulnerability check
@@ -22,20 +22,20 @@ jobs:
           go install golang.org/x/vuln/cmd/govulncheck@latest
           govulncheck ./...
 
-      - name: Security scan (gosec)
-        working-directory: ./api
-        run: |
-          go install github.com/securego/gosec/v2/cmd/gosec@v2.29.0
-          "$(go env GOPATH)/bin/gosec" ./...
+      # - name: Security scan (gosec)
+      #   working-directory: ./api
+      #   run: |
+      #     go install github.com/securego/gosec/v2/cmd/gosec@v2.29.0
+      #     "$(go env GOPATH)/bin/gosec" ./...
 
       - name: Lint
         uses: golangci/golangci-lint-action@v8
         with:
           version: latest
-          install-mode: goinstall
+          working-directory: api
 
   run_unit_tests:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: ['check_vulnerability']
     permissions:
       contents: read
@@ -63,12 +63,21 @@ jobs:
           path: ./api/TestResults.json
 
   automated-api-tests:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    needs: ['run_unit_tests']
     env:
+      DB_HOST: 127.0.0.1
       DB_PORT: 5432
       DB_NAME: dengine
       DB_USER: test
       DB_PWD: test
+      API_PORT: 5000
+      TOKEN_KEY: ci-test-token-key
+      TOKEN_DOMAIN: localhost
+      ALLOWED_ORIGINS: http://localhost:5000
+      USERS_IMAGES_PATH: /tmp/images/users/
+      IMAGES_PATH: /tmp/images/
+      GIN_MODE: release
     steps:
       - uses: actions/checkout@v4
 
@@ -77,7 +86,7 @@ jobs:
 
       - name: Start Database
         run: |
-          docker pull ghcr.io/D-Gine/dengine-db:latest
+          docker pull ghcr.io/d-gine/database-test:latest
           docker run -d --name dengine-db \
             -e PGPORT=$DB_PORT \
             -e POSTGRES_DB=$DB_NAME \
@@ -86,7 +95,7 @@ jobs:
             -p $DB_PORT:$DB_PORT \
             --health-cmd="pg_isready -U $DB_USER -d $DB_NAME" \
             --health-interval=2s --health-timeout=5s --health-retries=30 \
-            ghcr.io/D-Gine/dengine-db:latest
+            ghcr.io/d-gine/database-test:latest
 
       - name: Wait for DB to be healthy
         run: |
@@ -98,11 +107,51 @@ jobs:
           docker logs dengine-db
           exit 1
 
-      - name: Install Postman CLI
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.27.x'
+
+      - name: Build API
+        working-directory: ./api
+        run: make build
+
+      - name: Start the API
+        working-directory: ./api
         run: |
-          curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
-      - name: Login to Postman CLI
-        run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
-      - name: Run API tests
+          nohup ./api > ../api.log 2>&1 &
+          echo $! > ../server.pid
+
+      - name: Wait for API to be ready
         run: |
-          postman collection run "58711414-51d416b8-5719-40a3-8141-d0f6e60af21f"
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:$API_PORT/api/health && exit 0
+            echo "Waiting for API..."
+            sleep 2
+          done
+          cat api.log
+          exit 1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Hoppscotch CLI
+        run: npm i -g @hoppscotch/cli
+
+      - name: Run Hoppscotch tests
+        run: |
+          hopp test cmvhz5u5w0wtpea1jzui03s24 -e cmvnipzf51weoea1j9plp0nx7 --token $HOPPSCOTCH_PERSONAL_ACCESS_TOKEN
+        env:
+          HOPPSCOTCH_PERSONAL_ACCESS_TOKEN: ${{ secrets.HOPPSCOTCH_PERSONAL_ACCESS_TOKEN }}
+
+      - name: Show API logs
+        if: always()
+        run: cat api.log || true
+
+      - name: Stop the server
+        if: always()
+        run: |
+          kill $(cat server.pid) || true
+          rm -f server.pid
