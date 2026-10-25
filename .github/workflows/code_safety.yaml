@@ -6,7 +6,8 @@ on:
 
 jobs:
   check_vulnerability:
-    runs-on: ubuntu-latest
+    # runs-on: ubuntu-latest
+    runs-on: self-hosted
     permissions:
       contents: read
 
