@@ -74,6 +74,7 @@ jobs:
 
   automated-api-tests:
     runs-on: self-hosted
+    container: ubuntu-latest
     needs: ['run_unit_tests']
     env:
       DB_HOST: 127.0.0.1
