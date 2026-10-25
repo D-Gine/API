@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 func GetAllowedFields(v any) string {
@@ -29,15 +31,16 @@ func GetAllowedFields(v any) string {
 	return strings.Join(fields, "\n  ")
 }
 
-func InitBaseTypeVerification[Value any, Restrictions any](
+func InitBaseTypeVerification[Value any, Restrictions interface{ GetBaseRestrictions() BaseRestrictions }](
+	ctx *gin.Context,
 	nodeList *ComponentMap,
 	name string,
 	valueJson json.RawMessage,
 	restrictionsJson json.RawMessage,
-	verifyFunc func(*ComponentMap, Value, Restrictions) error) error {
+	verifyFunc func(*gin.Context, *ComponentMap, Value, Restrictions) error) error {
 
 	var restrictions Restrictions
-	var value Value
+	var value *Value
 
 	if err := json.Unmarshal(valueJson, &value); err != nil {
 		return fmt.Errorf(`invalid value for "%s": %w`, name, err)
@@ -47,25 +50,33 @@ func InitBaseTypeVerification[Value any, Restrictions any](
 			Allowed fields:
 			%s`, name, err, GetAllowedFields(restrictions))
 	}
+	if value == nil {
+		opt := restrictions.GetBaseRestrictions().OptionalBool
+		if opt != nil && *opt {
+			return nil
+		} else {
+			return fmt.Errorf("invalid %s: can't be null", name)
+		}
+	}
 
-	if err := verifyFunc(nodeList, value, restrictions); err != nil {
+	if err := verifyFunc(ctx, nodeList, *value, restrictions); err != nil {
 		return fmt.Errorf("invalid %s: %w", name, err)
 	}
 	return nil
 }
 
-func ValidateBaseType(nodeList *ComponentMap, valueJson json.RawMessage, name string, restrictionsJson json.RawMessage) error {
+func ValidateBaseType(ctx *gin.Context, nodeList *ComponentMap, valueJson json.RawMessage, name string, restrictionsJson json.RawMessage) error {
 	switch name {
 	case "number":
-		return InitBaseTypeVerification(nodeList, name, valueJson, restrictionsJson, VerifyNumber)
+		return InitBaseTypeVerification(ctx, nodeList, name, valueJson, restrictionsJson, VerifyNumber)
 	case "string":
-		return InitBaseTypeVerification(nodeList, name, valueJson, restrictionsJson, VerifyString)
+		return InitBaseTypeVerification(ctx, nodeList, name, valueJson, restrictionsJson, VerifyString)
 	case "enum":
-		return InitBaseTypeVerification(nodeList, name, valueJson, restrictionsJson, VerifyEnum)
+		return InitBaseTypeVerification(ctx, nodeList, name, valueJson, restrictionsJson, VerifyEnum)
 	case "list":
-		return InitBaseTypeVerification(nodeList, name, valueJson, restrictionsJson, VerifyList)
+		return InitBaseTypeVerification(ctx, nodeList, name, valueJson, restrictionsJson, VerifyList)
 	case "dictionary":
-		return InitBaseTypeVerification(nodeList, name, valueJson, restrictionsJson, VerifyDictionary)
+		return InitBaseTypeVerification(ctx, nodeList, name, valueJson, restrictionsJson, VerifyDictionary)
 	}
 
 	return nil

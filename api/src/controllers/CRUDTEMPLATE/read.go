@@ -29,11 +29,15 @@ func ReadCRUDTEMPLATEs(c *gin.Context) {
 	rows, err := database.Db.Query("SELECT id FROM CRUDTEMPLATEs")
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		return
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	for rows.Next() {
 		var id sql.NullString
-		rows.Scan(&id)
+		if err := rows.Scan(&id); err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+			return
+		}
 		result = append(result, DbReadResponse{
 			Id: id.String,
 		})

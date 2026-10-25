@@ -48,9 +48,9 @@ func ValidateCharacter(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	defer verifyRows.Close()
+	defer func() { _ = verifyRows.Close() }()
 
-	valErr, error_map, _ := validate.ValidateRowTypes(&componentList, verifyRows)
+	error_map, _, valErr := validate.ValidateRowTypes(c, &componentList, verifyRows)
 	if valErr != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": valErr.Error()})
 		return

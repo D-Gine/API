@@ -53,10 +53,13 @@ func CORSMiddleware(c *gin.Context) {
 }
 
 func setTrustedProxies(r *gin.Engine) {
-	if len(config.Trustedproxies) > 0 {
-		r.SetTrustedProxies(config.Trustedproxies)
-	} else {
-		r.SetTrustedProxies(nil)
+	proxies := config.Trustedproxies
+	if len(proxies) == 0 {
+		proxies = nil
+	}
+	if err := r.SetTrustedProxies(proxies); err != nil {
+		fmt.Println("Invalid trusted proxies configuration:", err)
+		os.Exit(1)
 	}
 }
 
@@ -147,6 +150,8 @@ func main() {
 		nodesGroup := api.Group("/nodes")
 		{
 			nodesGroup.GET("/:ruleset_id/first_node", nodes.ReadRulesetFirstNode)
+			nodesGroup.POST("/:ruleset_id/get_next_node/:target_node", nodes.GetNextNode)
+
 		}
 
 	}
@@ -160,5 +165,8 @@ func main() {
 	img.GET("/*filepath", fileserver.GetImage)
 
 	fmt.Println("Listening and serving HTTP on " + port)
-	r.Run(port)
+	if err := r.Run(port); err != nil {
+		fmt.Println("Failed to start server:", err)
+		os.Exit(1)
+	}
 }
