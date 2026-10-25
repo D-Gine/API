@@ -113,14 +113,12 @@ jobs:
 
       - name: Wait for DB to be healthy
         run: |
-          docker image ls
-          docker ps
           for i in $(seq 1 60); do
-            status=$(docker inspect -f '{{.State.Health.Status}}' database-test)
+            status=$(docker inspect -f '{{.State.Health.Status}}' "$DB_CONTAINER" || true)
             [ "$status" = "healthy" ] && exit 0
             sleep 2
           done
-          docker logs database-test
+          docker logs "$DB_CONTAINER"
           exit 1
 
       - name: Setup Go
@@ -158,7 +156,8 @@ jobs:
 
       - name: Run Hoppscotch tests
         run: npx -y @hoppscotch/cli test cmvhz5u5w0wtpea1jzui03s24 -e cmvnipzf51weoea1j9plp0nx7 --token $HOPPSCOTCH_PERSONAL_ACCESS_TOKEN
-
+        env:
+          HOPPSCOTCH_PERSONAL_ACCESS_TOKEN: ${{ secrets.HOPPSCOTCH_PERSONAL_ACCESS_TOKEN }}
 
       - name: Show API logs
         if: always()
