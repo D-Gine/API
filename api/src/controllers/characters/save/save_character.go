@@ -4,10 +4,22 @@ import (
 	"api/src/controllers/nodes/validate"
 	"api/src/database"
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
+
+func WriteCharacterInDb(character_id string, nodes validate.NodeList) (int, error) {
+	jsonValues, parseErr := json.Marshal(nodes.NodeValues)
+	if parseErr != nil {
+		return http.StatusBadRequest, errors.New("Failed to parse node values")
+	}
+	if _, err := database.Db.Exec(`SELECT save_character($1, $2::JSONB)`, character_id, jsonValues); err != nil {
+		return http.StatusInternalServerError, err
+	}
+	return http.StatusCreated, nil
+}
 
 // // @BasePath api/:ruleset_id/character/:id/save
 // // Nodes godoc
@@ -28,16 +40,10 @@ func SaveCharacter(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON body"})
 		return
 	}
-	jsonValues, parseErr := json.Marshal(body.NodeValues)
-	if parseErr != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to parse node values"})
-		return
-	}
-
-	_, err := database.Db.Exec(`SELECT save_character($1, $2::JSONB)`, id, jsonValues)
+	code, err := WriteCharacterInDb(id, body)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		c.JSON(code, gin.H{"error": err.Error()})
+	} else {
+		c.JSON(code, gin.H{})
 	}
-	c.JSON(http.StatusCreated, gin.H{})
 }
