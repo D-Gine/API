@@ -29,7 +29,7 @@ func VerifyType(ctx *gin.Context, componentList *ComponentMap, valueJson json.Ra
 	return nil
 }
 
-func ValidateRowTypes(ctx *gin.Context, componentList *ComponentMap, rows *sql.Rows) (err error, errors_map map[string]string, count int) {
+func ValidateRowTypes(ctx *gin.Context, componentList *ComponentMap, rows *sql.Rows) (errors_map map[string]string, count int, err error) {
 	errors_map = make(map[string]string)
 	var result ComponentVerification
 	for count = 0; rows.Next(); count++ {
