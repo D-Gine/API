@@ -42,39 +42,47 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
           go-version: '1.27.x'
+
       - name: Install dependencies
         working-directory: ./api
-        run: |
-            ls -l
-            pwd
-            go get .
+        run: go mod download
+
       - name: Build
         working-directory: ./api
         run: go build -v ./...
 
       - name: Test with the Go CLI
         working-directory: ./api
-        run: go test -json ./... > TestResults.json
+        shell: bash
+        run: |
+          set -o pipefail
+          go test -json ./... | tee TestResults.json
+
+
       - name: Upload Go test results
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ./api/Go-results
+          name: Go-results
           path: ./api/TestResults.json
+
 
   automated-api-tests:
     runs-on: self-hosted
     needs: ['run_unit_tests']
     env:
       DB_HOST: 127.0.0.1
-      DB_PORT: 5432
+      DB_PORT: 55432
       DB_NAME: dengine
       DB_USER: test
       DB_PWD: test
       API_PORT: 5000
+      DB_CONTAINER: dengine-db-${{ github.run_id }}
       TOKEN_KEY: ci-test-token-key
       TOKEN_DOMAIN: localhost
       ALLOWED_ORIGINS: http://localhost:5000
@@ -90,7 +98,7 @@ jobs:
       - name: Start Database
         run: |
           docker pull ghcr.io/d-gine/database-test:latest
-          docker run -d --name dengine-db \
+          docker run -d --name $DB_CONTAINER \
             -e PGPORT=$DB_PORT \
             -e POSTGRES_DB=$DB_NAME \
             -e POSTGRES_USER=$DB_USER \
@@ -144,17 +152,16 @@ jobs:
         run: npm i -g @hoppscotch/cli
 
       - name: Run Hoppscotch tests
-        run: |
-          hopp test cmvhz5u5w0wtpea1jzui03s24 -e cmvnipzf51weoea1j9plp0nx7 --token $HOPPSCOTCH_PERSONAL_ACCESS_TOKEN
-        env:
-          HOPPSCOTCH_PERSONAL_ACCESS_TOKEN: ${{ secrets.HOPPSCOTCH_PERSONAL_ACCESS_TOKEN }}
+        run: npx -y @hoppscotch/cli test cmvhz5u5w0wtpea1jzui03s24 -e cmvnipzf51weoea1j9plp0nx7 --token $HOPPSCOTCH_PERSONAL_ACCESS_TOKEN
+
 
       - name: Show API logs
         if: always()
         run: cat api.log || true
 
-      - name: Stop the server
+      - name: Cleanup
         if: always()
         run: |
-          kill $(cat server.pid) || true
-          rm -f server.pid
+          [ -f server.pid ] && kill $(cat server.pid) || true
+          rm -f server.pid api.log
+          docker rm -f $DB_CONTAINER || true
