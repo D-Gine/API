@@ -1,20 +1,14 @@
 package validate
 
 import (
+	"api/src/controllers"
 	"fmt"
 	"regexp"
 
 	"github.com/gin-gonic/gin"
 )
 
-type stringRestrictions struct {
-	BaseRestrictions
-	MinLength       *int    `json:"min_length,omitempty"`
-	MaxLength       *int    `json:"max_length,omitempty"`
-	RegexExpression *string `json:"regex_expression,omitempty"`
-}
-
-func VerifyString(ctx *gin.Context, componentList *ComponentMap, value string, restrictions stringRestrictions) error {
+func VerifyString(ctx *gin.Context, componentList *controllers.ComponentMap, value string, restrictions controllers.StringRestrictions) error {
 	if restrictions.MaxLength != nil && len(value) > *restrictions.MaxLength {
 		return fmt.Errorf("too long, max lenght is %d, current len is %d", *restrictions.MaxLength, len(value))
 	}

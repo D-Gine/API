@@ -1,6 +1,7 @@
 package validate
 
 import (
+	"api/src/controllers"
 	"api/src/database"
 	"encoding/json"
 	"fmt"
@@ -9,14 +10,7 @@ import (
 	"github.com/lib/pq"
 )
 
-type listRestrictions struct {
-	BaseRestrictions
-	Type      string `json:"type"`
-	MinLength *int   `json:"min_length,omitempty"`
-	MaxLength *int   `json:"max_length,omitempty"`
-}
-
-func VerifyList(ctx *gin.Context, componentList *ComponentMap, value []json.RawMessage, restrictions listRestrictions) error {
+func VerifyList(ctx *gin.Context, componentList *controllers.ComponentMap, value []json.RawMessage, restrictions controllers.ListRestrictions) error {
 	var verification TypeVerifications
 	err := database.Db.QueryRow(`
 		SELECT * FROM get_verifications($1)`, pq.Array([]string{restrictions.Type})).Scan(

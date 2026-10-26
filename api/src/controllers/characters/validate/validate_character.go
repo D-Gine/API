@@ -1,6 +1,7 @@
 package validate
 
 import (
+	"api/src/controllers"
 	"api/src/controllers/nodes/validate"
 	"api/src/database"
 	"database/sql"
@@ -21,7 +22,7 @@ func ValidateDbCharacter(c *gin.Context, id string) (int, error, map[string]stri
 	if err != nil && err != sql.ErrNoRows {
 		return http.StatusInternalServerError, err, nil
 	}
-	componentList := make(validate.ComponentMap)
+	componentList := make(controllers.ComponentMap)
 	if len(rawJSON) > 0 {
 		if err := json.Unmarshal(rawJSON, &componentList); err != nil {
 			return http.StatusInternalServerError, fmt.Errorf("Failed to parse components: %w", err), nil

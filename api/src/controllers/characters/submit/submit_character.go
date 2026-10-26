@@ -1,11 +1,12 @@
 package submit
 
 import (
+	"api/src/controllers"
 	"api/src/controllers/characters/save"
 	nodeValidate "api/src/controllers/nodes/validate"
+	typegeneration "api/src/controllers/type_generation"
 	"api/src/database"
 	"encoding/json"
-	"fmt"
 	"maps"
 	"net/http"
 	"slices"
@@ -14,12 +15,8 @@ import (
 )
 
 type GenerateDynamicInfos struct {
-	StaticValues nodeValidate.ComponentMap `json:"static_values"`
-	ToGenerate   map[string]struct {
-		Script       *string         `json:"script,omitempty"`
-		TypeName     string          `json:"type_name"`
-		Restrictions json.RawMessage `json:"restrictions"`
-	} `json:"to_generate"`
+	StaticValues controllers.ComponentMap                  `json:"static_values"`
+	ToGenerate   map[string]typegeneration.GenerationInfos `json:"to_generate"`
 }
 
 // // @BasePath api/:ruleset_id/character/:id/submit
@@ -68,6 +65,25 @@ func SumbitCharacter(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	dynamic_map := make(controllers.ComponentMap)
+	for id, infos := range res.ToGenerate {
+		value, code, err := typegeneration.GenerateKnownedType(c, res.StaticValues, infos)
+		if err != nil {
+			c.JSON(code, gin.H{"error": err.Error()})
+			return
+		}
+		dynamic_map[id] = value
+	}
+	jsonComponents, err := json.Marshal(dynamic_map)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
-	fmt.Println(*res.ToGenerate["2bb88ea8-9fe1-4b7b-85ca-bc15aa7201d0"].Script)
+	_, err = database.Db.Exec(`SELECT update_dynamic_components($1, $2)`, id, jsonComponents)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusCreated, gin.H{})
 }
