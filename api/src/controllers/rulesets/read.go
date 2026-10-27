@@ -26,7 +26,7 @@ import (
 // @Router /api/rulesets [get]
 func ReadRulesets(c *gin.Context) {
 	result := []DbReadResponse{}
-	rows, err := database.Db.Query("SELECT id, name FROM games.rulesets")
+	rows, err := database.Db.Query("SELECT id, name FROM rulesets")
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
 		return

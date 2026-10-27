@@ -42,7 +42,7 @@ func CreateRulesets(c *gin.Context) {
 	}
 
 	// Checking db if ruleset already exists
-	rows, err := database.Db.Query("SELECT name FROM games.rulesets WHERE name=$1", args.Name)
+	rows, err := database.Db.Query("SELECT name FROM rulesets WHERE name=$1", args.Name)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
 		return
