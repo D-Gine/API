@@ -11,7 +11,7 @@ import (
 // Nodes godoc
 // @Summary Delete a character in the db
 // @Schemes
-// @Description Delete an empty character, returning his ID
+// @Description Delete an empty character
 // @Tags character
 // @Accept json
 // @Produce json
