@@ -24,10 +24,12 @@ func BaseTypeGeneration(ctx *gin.Context, staticValues controllers.ComponentMap,
 		}
 		return generateString(r)
 	case "enum":
+		fmt.Println(infos.Restrictions.String())
 		r, err := controllers.ParseRestriction[controllers.EnumRestrictions](infos.TypeName, infos.Restrictions)
 		if err != nil {
 			return nil, http.StatusUnauthorized, err
 		}
+		fmt.Println(r.Tags)
 		return generateEnum(r)
 	case "list":
 		r, err := controllers.ParseRestriction[controllers.ListRestrictions](infos.TypeName, infos.Restrictions)

@@ -32,7 +32,7 @@ type StringRestrictions struct {
 
 type EnumRestrictions struct {
 	BaseRestrictions
-	Tags *[]string `json:"tags,omitempty"`
+	Tags []string `json:"tags,omitempty"`
 }
 
 type ListRestrictions struct {
