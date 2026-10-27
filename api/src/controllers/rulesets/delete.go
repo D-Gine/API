@@ -31,7 +31,7 @@ func DeleteRulesets(c *gin.Context) {
 		return
 	}
 
-	_, err := database.Db.Exec("DELETE FROM games.rulesets WHERE id=$1", idQuery)
+	_, err := database.Db.Exec("DELETE FROM rulesets WHERE id=$1", idQuery)
 	if err != nil {
 		fmt.Println(err)
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error" + err.Error()})

@@ -45,7 +45,7 @@ func UpdateRulesets(c *gin.Context) {
 		return
 	}
 
-	_, err = database.Db.Exec("UPDATE games.rulesets SET name=$2 WHERE id=$1", idQuery, args.Name)
+	_, err = database.Db.Exec("UPDATE rulesets SET name=$2 WHERE id=$1", idQuery, args.Name)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error " + err.Error()})
 		return

@@ -33,7 +33,7 @@ func ReadRulesetId(c *gin.Context) {
 	}
 
 	var id, name sql.NullString
-	err := database.Db.QueryRow("SELECT id, name FROM games.rulesets WHERE id=$1", idQuery).Scan(&id, &name)
+	err := database.Db.QueryRow("SELECT id, name FROM rulesets WHERE id=$1", idQuery).Scan(&id, &name)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error : " + err.Error()})
 		return
