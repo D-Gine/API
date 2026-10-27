@@ -1,6 +1,7 @@
 package validate
 
 import (
+	"api/src/controllers"
 	"api/src/database"
 	"api/src/internal/scripting"
 	"encoding/json"
@@ -14,7 +15,7 @@ import (
 	"github.com/lib/pq"
 )
 
-func runValidateScript(ctx *gin.Context, value json.RawMessage, script string, restrictions json.RawMessage, componentList *ComponentMap) error {
+func runValidateScript(ctx *gin.Context, value json.RawMessage, script string, restrictions json.RawMessage, componentList *controllers.ComponentMap) error {
 	rawResult, err := scripting.ScriptEngine.Eval(
 		ctx.Request.Context(),
 		script,
@@ -43,8 +44,13 @@ func ValidateNodesTypes(ctx *gin.Context, nodeList *NodeList, nodeIds []string, 
 	if err != nil {
 		return nil, err
 	}
+<<<<<<< HEAD
 	defer func() { _ = nodeRows.Close() }()
 	componentList := make(ComponentMap)
+=======
+	defer nodeRows.Close()
+	componentList := make(controllers.ComponentMap)
+>>>>>>> 17a628e6f0efddbe36d3b5002720e19996b76ab3
 	nodeRecoverMap := make(map[string]string)
 	for nodeRows.Next() {
 		var nodeId, compId string

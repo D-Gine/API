@@ -1,6 +1,7 @@
 package validate
 
 import (
+	"api/src/controllers"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -9,7 +10,7 @@ import (
 	"github.com/lib/pq"
 )
 
-func VerifyType(ctx *gin.Context, componentList *ComponentMap, valueJson json.RawMessage, baseVerification Verification) error {
+func VerifyType(ctx *gin.Context, componentList *controllers.ComponentMap, valueJson json.RawMessage, baseVerification Verification) error {
 	verification := baseVerification.GetBase()
 	if err := ValidateBaseType(ctx, componentList, valueJson, verification.BaseName, verification.Restrictions); err != nil {
 		return fmt.Errorf("error validation base type: %w", err)

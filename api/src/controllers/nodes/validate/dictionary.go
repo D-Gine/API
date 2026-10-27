@@ -1,6 +1,7 @@
 package validate
 
 import (
+	"api/src/controllers"
 	"api/src/database"
 	"encoding/json"
 	"fmt"
@@ -12,12 +13,7 @@ import (
 	"github.com/lib/pq"
 )
 
-type dictionaryRestrictions struct {
-	BaseRestrictions
-	Interface *map[string]string `json:"interface,omitempty"`
-}
-
-func VerifyDictionary(ctx *gin.Context, componentList *ComponentMap, value map[string]json.RawMessage, restrictions dictionaryRestrictions) error {
+func VerifyDictionary(ctx *gin.Context, componentList *controllers.ComponentMap, value map[string]json.RawMessage, restrictions controllers.DictionaryRestrictions) error {
 	if restrictions.Interface != nil {
 		// getting verifications data
 		type_set := make(map[string]struct{})
