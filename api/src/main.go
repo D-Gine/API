@@ -10,9 +10,13 @@ package main
 import (
 	"api/src/controllers/account"
 	"api/src/controllers/auth"
-	"api/src/controllers/characters"
-	charactersCreate "api/src/controllers/characters/create"
+	charactrerCreate "api/src/controllers/characters/create"
+	charactrerDelete "api/src/controllers/characters/delete"
+	characterGet "api/src/controllers/characters/get"
+	characterSave "api/src/controllers/characters/save"
+	characterSubmit "api/src/controllers/characters/submit"
 	characterValidate "api/src/controllers/characters/validate"
+
 	"api/src/controllers/dev"
 	"api/src/controllers/fileserver"
 	"api/src/controllers/nodes"
@@ -105,27 +109,16 @@ func main() {
 			usersGroup.GET("/id", users.ReadUsersId)
 		}
 
-		// charactersGroup := api.Group("/characters", auth.AuthenticateMiddleware, auth.AdminMiddleware)
-		charactersGroup := api.Group("/characters")
-		{
-			charactersGroup.GET("", characters.ReadCharacters)
-			charactersGroup.PUT("/id", characters.UpdateCharacters)
-			charactersGroup.DELETE("/id", characters.DeleteCharacters)
-			charactersGroup.GET("/:id", characters.ReadCharactersId)
-
-			charactersCreationGroup := charactersGroup.Group("/create")
-			{
-				charactersCreationGroup.GET("/firstnode", charactersCreate.CharacterFirstNode)
-				charactersCreationGroup.POST("/nextnode", charactersCreate.CharacterNextNode)
-				charactersCreationGroup.POST("/submit", charactersCreate.SubmitCharacter)
-			}
-		}
-
 		rulesetGroup := api.Group("/:ruleset_id")
 		{
 			characters_group := rulesetGroup.Group("/character")
 			{
+				characters_group.GET("/:id", characterGet.GetOneCharacter)
 				characters_group.POST("/:id/validate", characterValidate.ValidateCharacter)
+				characters_group.POST("/create", charactrerCreate.CreateCharater)
+				characters_group.DELETE(":id", charactrerDelete.DeleteCharater)
+				characters_group.PUT(":id/save", characterSave.SaveCharacter)
+				characters_group.PUT(":id/submit", characterSubmit.SumbitCharacter)
 			}
 			nodeGroup := rulesetGroup.Group("/node")
 			{

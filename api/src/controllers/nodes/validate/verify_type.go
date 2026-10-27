@@ -1,6 +1,7 @@
 package validate
 
 import (
+	"api/src/controllers"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -9,7 +10,7 @@ import (
 	"github.com/lib/pq"
 )
 
-func VerifyType(ctx *gin.Context, componentList *ComponentMap, valueJson json.RawMessage, baseVerification Verification) error {
+func VerifyType(ctx *gin.Context, componentList *controllers.ComponentMap, valueJson json.RawMessage, baseVerification Verification) error {
 	verification := baseVerification.GetBase()
 	if err := ValidateBaseType(ctx, componentList, valueJson, verification.BaseName, verification.Restrictions); err != nil {
 		return fmt.Errorf("error validation base type: %w", err)
@@ -29,7 +30,7 @@ func VerifyType(ctx *gin.Context, componentList *ComponentMap, valueJson json.Ra
 	return nil
 }
 
-func ValidateRowTypes(ctx *gin.Context, componentList *ComponentMap, rows *sql.Rows) (err error, errors_map map[string]string, count int) {
+func ValidateRowTypes(ctx *gin.Context, componentList *controllers.ComponentMap, rows *sql.Rows) (err error, errors_map map[string]string, count int) {
 	errors_map = make(map[string]string)
 	var result ComponentVerification
 	for count = 0; rows.Next(); count++ {
