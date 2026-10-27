@@ -84,11 +84,11 @@ jobs:
       DB_NAME: dengine
       DB_USER: test
       DB_PWD: test
-      API_PORT: 5000
+      API_PORT: 8090
       DB_CONTAINER: dengine-db-${{ github.run_id }}
       TOKEN_KEY: ci-test-token-key
       TOKEN_DOMAIN: localhost
-      ALLOWED_ORIGINS: http://localhost:5000
+      ALLOWED_ORIGINS: http://localhost:8090,http://127.0.0.1:8090
       USERS_IMAGES_PATH: /tmp/images/users/
       IMAGES_PATH: /tmp/images/
       GIN_MODE: release
