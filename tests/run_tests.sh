@@ -32,6 +32,9 @@ if [[ $* == '--re-install' ]]; then
     go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
     echo "${G}DONE${NC}"
     echo ""
+else
+    echo "run '--re-install' to install right version of golang tools"
+    echo ""
 fi
 
 cleanup() {
