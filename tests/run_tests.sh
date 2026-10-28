@@ -17,6 +17,7 @@ R=$'\e[0;31m'
 NC=$'\e[0m'
 
 export DB_HOST=127.0.0.1
+DB_CONTAINER=dengine-db-test
 
 export GOTOOLCHAIN="${GOTOOLCHAIN:-go1.27.1}"
 export PATH="$(go env GOPATH)/bin:$PATH"
@@ -68,7 +69,7 @@ docker run -d --name "$DB_CONTAINER" \
   -p "$DB_PORT:$DB_PORT" \
   --health-cmd="pg_isready -U $DB_USER -d $DB_NAME" \
   --health-interval=2s --health-timeout=5s --health-retries=30 \
-  ghcr.io/d-gine/database-test:latest >/dev/null || { echo "FAILED"; exit 1; }
+  ghcr.io/d-gine/database-test:latest >/dev/null || { echo "${R}FAILED${NC}"; exit 1; }
 
 for _ in $(seq 1 60); do
   [ "$(docker inspect -f '{{.State.Health.Status}}' "$DB_CONTAINER" 2>/dev/null)" = "healthy" ] && break
