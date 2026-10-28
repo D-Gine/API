@@ -9,10 +9,18 @@ package nodes
 
 import "database/sql"
 
+type EnumOption struct {
+	Id          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
 type NodeTypeResponse struct {
-	Id           string         `json:"id"`
-	Base         string         `json:"base"`
-	Restrictions map[string]any `json:"restrictions"`
+	Id           string            `json:"id"`
+	Base         string            `json:"base"`
+	Restrictions map[string]any    `json:"restrictions"`
+	Options      []EnumOption      `json:"options,omitempty"`
+	Item         *NodeTypeResponse `json:"item,omitempty"`
 }
 
 type FirstNodeResponse struct {

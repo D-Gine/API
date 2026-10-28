@@ -3,6 +3,7 @@ package nodes
 import (
 	"api/src/database"
 	"database/sql"
+	"encoding/json"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -25,13 +26,13 @@ func ReadRulesetFirstNode(c *gin.Context) {
 		return
 	}
 
-	var payload []byte
+	var out FirstNodeResponse
+	var typeRaw []byte
 
 	err := database.Db.QueryRow(`
-		SELECT jsonb_build_object(
-			'node_id', fn.node_id::text,
-			'type', COALESCE(get_base_type_json(sct.type_id), '{}'::jsonb)
-		)::text
+		SELECT
+			fn.node_id::text,
+			COALESCE(get_base_type_json(sct.type_id), '{}'::jsonb)::text
 		FROM public.first_nodes fn
 		INNER JOIN public.nodes n
 			ON n.id = fn.node_id
@@ -40,7 +41,7 @@ func ReadRulesetFirstNode(c *gin.Context) {
 			ON sct.id = n.template_id
 		WHERE fn.ruleset_id = $1
 		LIMIT 1
-	`, rulesetID).Scan(&payload)
+	`, rulesetID).Scan(&out.NodeId, &typeRaw)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -51,5 +52,14 @@ func ReadRulesetFirstNode(c *gin.Context) {
 		return
 	}
 
-	c.Data(http.StatusOK, "application/json; charset=utf-8", payload)
+	if err := json.Unmarshal(typeRaw, &out.Type); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "invalid type payload from database"})
+		return
+	}
+	if err := resolveTypeDetails(&out.Type, rulesetID, 0); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "cannot resolve type: " + err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, out)
 }

@@ -214,6 +214,9 @@ func loadNodeData(rulesetID string, nodeID string) (DbNodeData, error) {
 	if err := json.Unmarshal(typeRaw, &out.Type); err != nil {
 		return out, fmt.Errorf("invalid type payload from database for node %s", nodeID)
 	}
+	if err := resolveTypeDetails(&out.Type, rulesetID, 0); err != nil {
+		return out, fmt.Errorf("cannot resolve type of node %s: %w", nodeID, err)
+	}
 
 	return out, nil
 }
