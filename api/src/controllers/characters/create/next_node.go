@@ -92,6 +92,10 @@ func findMatchingChild(currentNodeId string, values []ValuePair) (string, error)
 		childIds = append(childIds, childId)
 	}
 
+	if err := rows.Err(); err != nil {
+		return "", err
+	}
+
 	if len(childIds) == 0 {
 		return "", sql.ErrNoRows
 	}
@@ -202,10 +206,14 @@ func getNodeTemplates(nodeId string) ([]ComponentTemplate, error) {
 		templates = append(templates, template)
 	}
 
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
 	return templates, nil
 }
 
-func getPossibleValuesByTags(tags []interface{}) ([]PossibleValue, error) {
+func getPossibleValuesByTags(tags []any) ([]PossibleValue, error) {
 	if len(tags) == 0 {
 		return []PossibleValue{}, nil
 	}
@@ -243,6 +251,10 @@ func getPossibleValuesByTags(tags []interface{}) ([]PossibleValue, error) {
 			Id:   id,
 			Name: name,
 		})
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 
 	return possibleValues, nil

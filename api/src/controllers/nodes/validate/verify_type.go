@@ -30,7 +30,7 @@ func VerifyType(ctx *gin.Context, componentList *controllers.ComponentMap, value
 	return nil
 }
 
-func ValidateRowTypes(ctx *gin.Context, componentList *ComponentMap, rows *sql.Rows) (errors_map map[string]string, count int, err error) {
+func ValidateRowTypes(ctx *gin.Context, componentList *controllers.ComponentMap, rows *sql.Rows) (errors_map map[string]string, count int, err error) {
 	errors_map = make(map[string]string)
 	var result ComponentVerification
 	for count = 0; rows.Next(); count++ {

@@ -35,11 +35,11 @@ func ValidateDbCharacter(c *gin.Context, id string) (int, error, map[string]stri
 	if err != nil {
 		return http.StatusInternalServerError, err, nil
 	}
-	defer verifyRows.Close()
+	defer func() { _ = verifyRows.Close() }()
 
-	valErr, error_map, _ := validate.ValidateRowTypes(c, &componentList, verifyRows)
-	if valErr != nil {
-		return http.StatusBadRequest, valErr, nil
+	error_map, _, err := validate.ValidateRowTypes(c, &componentList, verifyRows)
+	if err != nil {
+		return http.StatusBadRequest, err, nil
 	}
 
 	if err = verifyRows.Err(); err != nil {
@@ -70,23 +70,6 @@ func ValidateCharacter(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
-	}
-	defer func() { _ = verifyRows.Close() }()
-
-	error_map, _, valErr := validate.ValidateRowTypes(c, &componentList, verifyRows)
-	if valErr != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": valErr.Error()})
-		return
-	}
-
-	if err = verifyRows.Err(); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	code := http.StatusOK
-	if len(error_map) != 0 {
-		code = http.StatusUnauthorized
 	}
 	c.JSON(code, error_map)
 }

@@ -44,13 +44,8 @@ func ValidateNodesTypes(ctx *gin.Context, nodeList *NodeList, nodeIds []string, 
 	if err != nil {
 		return nil, err
 	}
-<<<<<<< HEAD
 	defer func() { _ = nodeRows.Close() }()
-	componentList := make(ComponentMap)
-=======
-	defer nodeRows.Close()
 	componentList := make(controllers.ComponentMap)
->>>>>>> 17a628e6f0efddbe36d3b5002720e19996b76ab3
 	nodeRecoverMap := make(map[string]string)
 	for nodeRows.Next() {
 		var nodeId, compId string

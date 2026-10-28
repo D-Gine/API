@@ -1,4 +1,4 @@
-package create
+package charactersCreate
 
 import (
 	"api/src/database"
