@@ -8,7 +8,7 @@
 GO	=	go
 GOFLAGS = -ldflags="-s -w"
 
-BINARY_NAME	=	api
+BINARY_NAME	=	api_bin
 
 ## NORMAL MAIN COMPILATION
 all: $(BINARY_NAME)
