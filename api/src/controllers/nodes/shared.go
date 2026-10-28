@@ -45,5 +45,6 @@ type DbNodeData struct {
 	NodeID       string
 	NextScriptID sql.NullString
 	Script       sql.NullString
+	Params       map[string]any
 	Type         NodeTypeResponse
 }
