@@ -44,7 +44,7 @@ type CharacterReadResponse struct {
 // @Param id path string true "ID of the character to read"
 // @Produce json
 // @Success 200 {object} CharacterReadResponse
-// @Router /api/characters/{id} [get]
+// @Router /api/characters/:id [get]
 func ReadCharactersId(c *gin.Context) {
 	characterId := c.Param("id")
 	if characterId == "" {

@@ -119,6 +119,9 @@ func main() {
 				characters_group.DELETE(":id", charactrerDelete.DeleteCharater)
 				characters_group.PUT(":id/save", characterSave.SaveCharacter)
 				characters_group.PUT(":id/submit", characterSubmit.SumbitCharacter)
+
+				characters_group.GET("/first_node", nodes.ReadRulesetFirstNode)
+				characters_group.POST("/get_next_node/:target_node", nodes.GetNextNode)
 			}
 			nodeGroup := rulesetGroup.Group("/node")
 			{
@@ -135,13 +138,6 @@ func main() {
 			rulesetsGroup.PUT("/:id", rulesets.UpdateRulesets)
 			rulesetsGroup.DELETE("/:id", rulesets.DeleteRulesets)
 			rulesetsGroup.GET("/:id", rulesets.ReadRulesetId)
-		}
-
-		nodesGroup := api.Group("/nodes")
-		{
-			nodesGroup.GET("/:ruleset_id/first_node", nodes.ReadRulesetFirstNode)
-			nodesGroup.POST("/:ruleset_id/get_next_node/:target_node", nodes.GetNextNode)
-
 		}
 
 	}

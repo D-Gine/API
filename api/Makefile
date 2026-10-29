@@ -10,15 +10,19 @@ GOFLAGS = -ldflags="-s -w"
 
 BINARY_NAME	=	api
 
-## NORMAL MAIN COMPILATION
-all: $(BINARY_NAME)
+MAIN_FILE = ./src/main.go
+DOCS_FOLDER = ./src/docs/
 
-$(BINARY_NAME):	$(SRC) build run
+# SWAG = $(GO) run github.com/swaggo/swag/cmd/swag@latest
+SWAG = swag
 
-build: $(SRC)
-	$(GO) build $(GOFLAGS) -o $(BINARY_NAME) ./src/main.go
+all: build
 
-run:
+build:
+	$(SWAG) init -g $(MAIN_FILE) -o $(DOCS_FOLDER)
+	$(GO) build $(GOFLAGS) -o $(BINARY_NAME) $(MAIN_FILE)
+
+run: build
 	./$(BINARY_NAME)
 
 re:     fclean all
