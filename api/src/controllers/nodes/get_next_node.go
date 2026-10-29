@@ -26,7 +26,7 @@ const maxNextNodeDepth = 67000
 // @Param target_node path string true "id of the target node"
 // @Param payload body GetNextNodeRequest true "node values and current tree"
 // @Success 200 {object} GetNextNodeResponse
-// @Router /api/nodes/{ruleset_id}/get_next_node/{target_node} [post]
+// @Router /api/nodes/:ruleset_id/get_next_node/:target_node [post]
 func GetNextNode(c *gin.Context) {
 	rulesetID := c.Param("ruleset_id")
 	targetNodeID := c.Param("target_node")

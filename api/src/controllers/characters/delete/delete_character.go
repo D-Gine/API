@@ -15,9 +15,9 @@ import (
 // @Tags character
 // @Accept json
 // @Produce json
-// @Param creds body DeleteRulesetsArgs true "ruleset related informations that will be later needed for the login process"
+// @Param creds body string true "ruleset related informations that will be later needed for the login process"
 // @Success 200 {object} structs.PostResponse
-// @Router api/:ruleset_id/character/:id [put]
+// @Router /api/:ruleset_id/character/:id [put]
 func DeleteCharater(c *gin.Context) {
 	character_id := c.Param("id")
 

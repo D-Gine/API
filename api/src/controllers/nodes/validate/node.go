@@ -93,9 +93,9 @@ func ValidateNodesTypes(ctx *gin.Context, nodeList *NodeList, nodeIds []string, 
 // @Tags nodes
 // @Accept json
 // @Produce json
-// @Param creds body CreateRulesetsArgs true "ruleset related informations that will be later needed for the login process"
+// @Param creds body NodeList true "ruleset related informations that will be later needed for the login process"
 // @Success 200 {object} structs.PostResponse
-// @Router api/:ruleset_id/node/validate [post]
+// @Router /api/:ruleset_id/node/validate [post]
 func ValidateNode(c *gin.Context) {
 	var body NodeList
 	if err := c.ShouldBindBodyWithJSON(&body); err != nil {
@@ -124,9 +124,9 @@ func ValidateNode(c *gin.Context) {
 // @Tags nodes
 // @Accept json
 // @Produce json
-// @Param creds body CreateRulesetsArgs true "ruleset related informations that will be later needed for the login process"
+// @Param creds body MultipleNodeValidation true "ruleset related informations that will be later needed for the login process"
 // @Success 200 {object} structs.PostResponse
-// @Router api/:ruleset_id/node/:id/validate [post]
+// @Router /api/:ruleset_id/node/:id/validate [post]
 func ValidateNodes(c *gin.Context) {
 	var body MultipleNodeValidation
 	if err := c.ShouldBindBodyWithJSON(&body); err != nil {
