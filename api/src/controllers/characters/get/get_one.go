@@ -10,7 +10,7 @@ import (
 )
 
 type ComponentValue = map[string]struct {
-	Value json.RawMessage        `json:"value"`
+	Value json.RawMessage        `json:"value" swaggertype:"object"`
 	Type  nodes.NodeTypeResponse `json:"type"`
 }
 
@@ -28,7 +28,7 @@ type GetResponse struct {
 // @Accept json
 // @Produce json
 // @Param creds body string true "ruleset related informations that will be later needed for the login process"
-// @Success 200 {object} structs.PostResponse
+// @Success 200 {object} characterGet.GetResponse
 // @Router /api/:ruleset_id/character/:id [get]
 func GetOneCharacter(c *gin.Context) {
 	character_id := c.Param("id")

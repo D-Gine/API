@@ -21,8 +21,8 @@ type CreateCharacterBody struct {
 // @Accept json
 // @Produce json
 // @Param creds body CreateCharacterBody true "ruleset related informations that will be later needed for the login process"
-// @Success 200 {object} structs.PostResponse
-// @Router /api/:ruleset_id/character/create [put]
+// @Success 201 {object} map[string]string "Created character ID"
+// @Router /api/:ruleset_id/character/create [post]
 func CreateCharater(c *gin.Context) {
 	// user_id := get_user_id(c)
 	ruleset := c.Param("ruleset_id")

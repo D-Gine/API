@@ -21,17 +21,17 @@ func WriteCharacterInDb(character_id string, nodes validate.NodeList) (int, erro
 	return http.StatusCreated, nil
 }
 
-// // @BasePath api/:ruleset_id/character/:id/save
-// // Nodes godoc
-// // @Summary save a character to db
-// // @Schemes
-// // @Description save the static components into the database.
-// // @Tags character
-// // @Accept json
-// // @Produce json
-// // @Param creds body CreateRulesetsArgs true "ruleset related informations that will be later needed for the login process"
-// // @Success 200 {object} structs.PostResponse
-// // @Router api/:ruleset_id/character/:id/save [put]
+// @BasePath /api/:ruleset_id/character/:id/save
+// Nodes godoc
+// @Summary save a character to db
+// @Schemes
+// @Description save the static components into the database.
+// @Tags character
+// @Accept json
+// @Produce json
+// @Param creds body string true "ruleset related informations that will be later needed for the login process"
+// @Success 200 {object} map[string]any "Empty object"
+// @Router /api/:ruleset_id/character/:id/save [put]
 func SaveCharacter(c *gin.Context) {
 	id := c.Param("id")
 	var body validate.NodeList
