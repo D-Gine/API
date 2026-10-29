@@ -19,17 +19,17 @@ type GenerateDynamicInfos struct {
 	ToGenerate   map[string]typegeneration.GenerationInfos `json:"to_generate"`
 }
 
-// // @BasePath api/:ruleset_id/character/:id/submit
-// // Nodes godoc
-// // @Summary save a character to db
-// // @Schemes
-// // @Description save the static components into the database.
-// // @Tags character
-// // @Accept json
-// // @Produce json
-// // @Param creds body CreateRulesetsArgs true "ruleset related informations that will be later needed for the login process"
-// // @Success 200 {object} structs.PostResponse
-// // @Router api/:ruleset_id/character/:id/submit [put]
+// @BasePath /api/:ruleset_id/character/:id/submit
+// Nodes godoc
+// @Summary save a character to db and check if valid
+// @Schemes
+// @Description save the static components into the database and call the type validation scripts on them.
+// @Tags character
+// @Accept json
+// @Produce json
+// @Param creds body string true "ruleset related informations that will be later needed for the login process"
+// @Success 200 {object} map[string]string "Empty Object"
+// @Router /api/:ruleset_id/character/:id/submit [put]
 func SumbitCharacter(c *gin.Context) {
 	id := c.Param("id")
 	var body nodeValidate.NodeList

@@ -5,7 +5,7 @@ import (
 )
 
 type NodeList struct {
-	NodeValues map[string]json.RawMessage `json:"node_values"`
+	NodeValues map[string]json.RawMessage `json:"node_values" swaggertype:"object"`
 }
 
 type MultipleNodeValidation struct {
