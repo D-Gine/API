@@ -18,7 +18,7 @@ import (
 // @Accept json
 // @Produce json
 // @Param creds body string true "ruleset related informations that will be later needed for the login process"
-// @Success 200 {object} characterGet.GetResponse
+// @Success 200 {object} characters.Entity
 // @Router /api/:ruleset_id/character/:id [get]
 func GetOneCharacter(c *gin.Context) {
 	character_id := c.Param("id")

@@ -20,7 +20,7 @@ type RowReadResponse struct {
 
 type Component struct {
 	Name  string                 `json:"name"`
-	Value json.RawMessage        `json:"value"`
+	Value json.RawMessage        `json:"value" swaggertype:"object"`
 	Type  nodes.NodeTypeResponse `json:"type"`
 }
 
