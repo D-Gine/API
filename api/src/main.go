@@ -16,6 +16,7 @@ import (
 	characterSave "api/src/controllers/characters/save"
 	characterSubmit "api/src/controllers/characters/submit"
 	characterValidate "api/src/controllers/characters/validate"
+	"api/src/controllers/enums"
 
 	"api/src/controllers/dev"
 	"api/src/controllers/fileserver"
@@ -111,6 +112,11 @@ func main() {
 
 		rulesetGroup := api.Group("/:ruleset_id")
 		{
+			enum_group := rulesetGroup.Group("/enums")
+			{
+				enum_group.POST("/get_by_restrictions", enums.GetEnumsByRestrictions)
+			}
+
 			characters_group := rulesetGroup.Group("/character")
 			{
 				characters_group.GET("/:id", characterGet.GetOneCharacter)
