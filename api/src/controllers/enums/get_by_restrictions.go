@@ -23,9 +23,9 @@ type EnumInfos struct {
 // @Tags enums
 // @Accept json
 // @Produce json
-// @Param creds body CreateRulesetsArgs true "ruleset related informations that will be later needed for the login process"
-// @Success 200 {object} structs.PostResponse
-// @Router api/:ruleset_id/enums/get_by_restrictions [post]
+// @Param creds body controllers.EnumRestrictions true "ruleset related informations that will be later needed for the login process"
+// @Success 200 {object} map[string]EnumInfos
+// @Router /api/:ruleset_id/enums/get_by_restrictions [post]
 func GetEnumsByRestrictions(c *gin.Context) {
 	ruleset_id := c.Param("ruleset_id")
 	var restrictions controllers.EnumRestrictions

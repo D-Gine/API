@@ -26,7 +26,7 @@ const maxNextNodeDepth = 67000
 // @Param target_node path string true "id of the target node"
 // @Param payload body GetNextNodeRequest true "node values and current tree"
 // @Success 200 {object} GetNextNodeResponse
-// @Router /api/nodes/{ruleset_id}/get_next_node/{target_node} [post]
+// @Router /api/:ruleset_id/get_next_node/:target_node [post]
 func GetNextNode(c *gin.Context) {
 	rulesetID := c.Param("ruleset_id")
 	targetNodeID := c.Param("target_node")
@@ -126,7 +126,7 @@ func resolveNextChain(
 		c.Request.Context(),
 		current.Script.String,
 		"get_next_node",
-		[]any{nodeValues, currentTree, current.NodeID},
+		[]any{nodeValues, currentTree, current.NodeID, current.Params},
 		nil,
 	)
 	if err != nil {
@@ -180,12 +180,14 @@ func resolveNextChain(
 func loadNodeData(rulesetID string, nodeID string) (DbNodeData, error) {
 	var out DbNodeData
 	var typeRaw []byte
+	var paramsRaw []byte
 
 	err := database.Db.QueryRow(`
 		SELECT
 			n.id::text AS node_id,
 			n.next_script_id::text AS next_script_id,
 			ns.script AS script,
+			n.next_script_params::text AS params_json,
 			COALESCE(get_base_type_json(sct.type_id), '{}'::jsonb)::text AS type_json
 		FROM public.nodes n
 		INNER JOIN public.static_components_templates sct
@@ -194,9 +196,16 @@ func loadNodeData(rulesetID string, nodeID string) (DbNodeData, error) {
 			ON ns.id = n.next_script_id
 		WHERE n.ruleset_id = $1 AND n.id = $2
 		LIMIT 1
-	`, rulesetID, nodeID).Scan(&out.NodeID, &out.NextScriptID, &out.Script, &typeRaw)
+	`, rulesetID, nodeID).Scan(&out.NodeID, &out.NextScriptID, &out.Script, &paramsRaw, &typeRaw)
 	if err != nil {
 		return out, err
+	}
+
+	out.Params = map[string]any{}
+	if len(paramsRaw) > 0 {
+		if err := json.Unmarshal(paramsRaw, &out.Params); err != nil {
+			return out, fmt.Errorf("invalid next_script_params from database for node %s", nodeID)
+		}
 	}
 
 	if len(typeRaw) == 0 {

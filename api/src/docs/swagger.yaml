@@ -68,6 +68,41 @@ definitions:
       username:
         type: string
     type: object
+  characters.CharacterReadResponse:
+    properties:
+      components:
+        items:
+          $ref: '#/definitions/characters.Component'
+        type: array
+      name:
+        type: string
+    type: object
+  characters.Component:
+    properties:
+      component_id:
+        type: string
+      name:
+        type: string
+      values:
+        items:
+          $ref: '#/definitions/characters.ComponentValue'
+        type: array
+    type: object
+  characters.ComponentValue:
+    properties:
+      keyname:
+        description: template_id
+        type: string
+      metadata:
+        additionalProperties: true
+        description: type metadata
+        type: object
+      type:
+        description: type enum (number, string, enum_tag, etc.)
+        type: string
+      value:
+        description: actual value from component
+    type: object
   characters.RowReadResponse:
     properties:
       id:
@@ -84,46 +119,11 @@ definitions:
       player_id:
         type: string
     type: object
-  charactersCreate.CreateArgs:
+  create.CreateCharacterBody:
     properties:
-      ruleset_id:
-        type: string
-    type: object
-  charactersCreate.FirstNodeArgs:
-    properties:
-      ruleset_id:
-        type: string
-    type: object
-  charactersCreate.NextNodeArgs:
-    properties:
-      node_id:
-        description: actual node id
-        type: string
-      type:
-        type: string
-      value:
-        type: string
-    type: object
-  charactersCreate.NextNodeResponse:
-    properties:
-      id:
-        type: string
-      metadata:
+      description:
         type: string
       name:
-        type: string
-      type:
-        type: string
-    type: object
-  charactersCreate.RulesetFirstNode:
-    properties:
-      id:
-        type: string
-      metadata:
-        type: string
-      name:
-        type: string
-      type:
         type: string
     type: object
   dev.CallEngineArgs:
@@ -146,6 +146,54 @@ definitions:
       code:
         type: integer
       data:
+        additionalProperties: {}
+        type: object
+    type: object
+  nodes.CurrentTree:
+    properties:
+      next:
+        $ref: '#/definitions/nodes.CurrentTree'
+      node_id:
+        type: string
+    type: object
+  nodes.FirstNodeResponse:
+    properties:
+      node_id:
+        type: string
+      type:
+        $ref: '#/definitions/nodes.NodeTypeResponse'
+    type: object
+  nodes.GetNextNodeRequest:
+    properties:
+      current_tree:
+        $ref: '#/definitions/nodes.CurrentTree'
+      node_values:
+        additionalProperties: {}
+        type: object
+    type: object
+  nodes.GetNextNodeResponse:
+    properties:
+      next:
+        $ref: '#/definitions/nodes.NextNodeResponse'
+    type: object
+  nodes.NextNodeResponse:
+    properties:
+      final:
+        type: boolean
+      next:
+        $ref: '#/definitions/nodes.NextNodeResponse'
+      node_id:
+        type: string
+      type:
+        $ref: '#/definitions/nodes.NodeTypeResponse'
+    type: object
+  nodes.NodeTypeResponse:
+    properties:
+      base:
+        type: string
+      id:
+        type: string
+      restrictions:
         additionalProperties: {}
         type: object
     type: object
@@ -206,6 +254,10 @@ definitions:
       role:
         type: string
     type: object
+  validate.MultipleNodeValidation:
+    type: object
+  validate.NodeList:
+    type: object
 info:
   contact: {}
 paths:
@@ -224,6 +276,146 @@ paths:
       summary: Gives informations about api
       tags:
       - apidata
+  /api/:ruleset_id/character/:id:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: ruleset related informations that will be later needed for the
+          login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structs.PostResponse'
+      summary: get character infos from the db
+      tags:
+      - character
+    put:
+      consumes:
+      - application/json
+      description: Delete an empty character
+      parameters:
+      - description: ruleset related informations that will be later needed for the
+          login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structs.PostResponse'
+      summary: Delete a character in the db
+      tags:
+      - character
+  /api/:ruleset_id/character/:id/validate:
+    post:
+      consumes:
+      - application/json
+      description: Validate an entity stored in the database by checking every component
+      parameters:
+      - description: ruleset related informations that will be later needed for the
+          login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structs.PostResponse'
+      summary: validate an entity
+      tags:
+      - nodes
+  /api/:ruleset_id/character/create:
+    put:
+      consumes:
+      - application/json
+      description: create an empty character, returning his ID
+      parameters:
+      - description: ruleset related informations that will be later needed for the
+          login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/create.CreateCharacterBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structs.PostResponse'
+      summary: create a character in the db
+      tags:
+      - character
+  /api/:ruleset_id/node/:id/validate:
+    post:
+      consumes:
+      - application/json
+      description: validate the nodes present in the "node_ids" array in the body<br><br>Will
+        return a json object with every key the invalid nodes and value the error
+        output, empty json object if success
+      parameters:
+      - description: ruleset related informations that will be later needed for the
+          login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/validate.MultipleNodeValidation'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structs.PostResponse'
+      summary: validate multiple nodes
+      tags:
+      - nodes
+  /api/:ruleset_id/node/validate:
+    post:
+      consumes:
+      - application/json
+      description: validate the node present the query<br><br>Will return a json object
+        with one key (the node_id) and the error message as value, empty json object
+        if success
+      parameters:
+      - description: ruleset related informations that will be later needed for the
+          login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/validate.NodeList'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/structs.PostResponse'
+      summary: validate one node
+      tags:
+      - nodes
   /api/CRUDTEMPLATEs:
     get:
       description: ⚠️ Only accessible to admins ⚠️<br><br>Reads all CRUDTEMPLATEs
@@ -444,83 +636,26 @@ paths:
       summary: Reads all characters data
       tags:
       - characters
-  /api/characters/create/firstnode:
+  /api/characters/{id}:
     get:
-      consumes:
-      - application/json
-      description: Returns the first node of the given ruleset character creation
-        tree
+      description: Reads the given character/entity data including all components
+        and their values
       parameters:
-      - description: character related informations that will be later needed for
-          the login process
-        in: body
-        name: creds
+      - description: ID of the character to read
+        in: path
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/charactersCreate.FirstNodeArgs'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/charactersCreate.RulesetFirstNode'
-      summary: Returns the first node of the given ruleset
-      tags:
-      - characters creation
-  /api/characters/create/nextnode:
-    get:
-      consumes:
-      - application/json
-      description: Returns the next node of the given node depending on the ruleset
-        character creation tree<br><br>This will check for the tree for all childs
-        of the given node, and return the one(s) that match the condition with the
-        given value<br><br>If no child matches the condition, it means that the character
-        creation process is finished, and the frontend can send the character creation
-        submission request
-      parameters:
-      - description: Actual node id, along with the value and type of the component
-        in: body
-        name: creds
-        required: true
-        schema:
-          $ref: '#/definitions/charactersCreate.NextNodeArgs'
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/charactersCreate.NextNodeResponse'
-            type: array
-      summary: Returns the next node
+            $ref: '#/definitions/characters.CharacterReadResponse'
+      summary: Reads given character data with all components
       tags:
-      - characters creation
-  /api/characters/create/submit:
-    post:
-      consumes:
-      - application/json
-      description: Submits a character list of components and creates the character
-        in database<br><br>Will return the id of created character
-      parameters:
-      - description: character related informations that will be later needed for
-          the login process
-        in: body
-        name: creds
-        required: true
-        schema:
-          $ref: '#/definitions/charactersCreate.CreateArgs'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/charactersCreate.RulesetFirstNode'
-      summary: Submits a character list of components
-      tags:
-      - characters creation
+      - characters
   /api/characters/id:
     delete:
       description: Deletes the given character<br> <b>Careful, there is no turn back
@@ -536,24 +671,6 @@ paths:
         "204":
           description: No Content
       summary: Deletes given character
-      tags:
-      - characters
-    get:
-      description: Reads the given character data
-      parameters:
-      - description: id of the character to read
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/characters.RowReadResponse'
-      summary: Reads given character data
       tags:
       - characters
     put:
@@ -614,6 +731,57 @@ paths:
       summary: Healthcheck for the api
       tags:
       - apidata
+  /api/nodes/:ruleset_id/first_node:
+    get:
+      description: Returns the first node of the given ruleset with resolved type
+      parameters:
+      - description: id of the ruleset
+        in: path
+        name: ruleset_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nodes.FirstNodeResponse'
+      summary: Reads first node for a ruleset
+      tags:
+      - nodes
+  /api/nodes/:ruleset_id/get_next_node/{target_node}:
+    post:
+      consumes:
+      - application/json
+      description: Returns next node metadata for a given target node
+      parameters:
+      - description: id of the ruleset
+        in: path
+        name: ruleset_id
+        required: true
+        type: string
+      - description: id of the target node
+        in: path
+        name: target_node
+        required: true
+        type: string
+      - description: node values and current tree
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/nodes.GetNextNodeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nodes.GetNextNodeResponse'
+      summary: Gets next node info for a target node
+      tags:
+      - nodes
   /api/rulesets:
     get:
       description: Reads all rulesets data

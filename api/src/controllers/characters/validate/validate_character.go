@@ -61,9 +61,9 @@ func ValidateDbCharacter(c *gin.Context, id string) (int, error, map[string]stri
 // @Tags nodes
 // @Accept json
 // @Produce json
-// @Param creds body CreateRulesetsArgs true "ruleset related informations that will be later needed for the login process"
+// @Param creds body string true "ruleset related informations that will be later needed for the login process"
 // @Success 200 {object} structs.PostResponse
-// @Router api/:ruleset_id/character/:id/validate [post]
+// @Router /api/:ruleset_id/character/:id/validate [post]
 func ValidateCharacter(c *gin.Context) {
 	id := c.Param("id")
 	code, err, error_map := ValidateDbCharacter(c, id)
