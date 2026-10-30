@@ -8,7 +8,7 @@
 GO	=	go
 GOFLAGS = -ldflags="-s -w"
 
-BINARY_NAME	=	api
+BINARY_NAME	=	api_bin
 
 MAIN_FILE = ./src/main.go
 DOCS_FOLDER = ./src/docs/

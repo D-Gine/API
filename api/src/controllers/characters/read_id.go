@@ -96,7 +96,7 @@ func getEntityComponents(entityId string) ([]Component, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var components []Component
 	for rows.Next() {
@@ -146,7 +146,7 @@ func getComponentTemplateValues(componentId string, componentValueMap map[string
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var values []ComponentValue
 
@@ -159,7 +159,10 @@ func getComponentTemplateValues(componentId string, componentValueMap map[string
 		}
 		metadata := make(map[string]interface{})
 		if typeMetadataJson.Valid && typeMetadataJson.String != "" {
-			json.Unmarshal([]byte(typeMetadataJson.String), &metadata)
+			if err := json.Unmarshal([]byte(typeMetadataJson.String), &metadata); err != nil {
+				fmt.Printf("Error unmarshaling type metadata: %v\n", err)
+				metadata = make(map[string]interface{})
+			}
 		}
 		var value interface{}
 		if componentValueMap != nil {

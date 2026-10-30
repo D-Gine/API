@@ -14,7 +14,9 @@ func VerifyEnum(ctx *gin.Context, componentList *controllers.ComponentMap, value
 		rows := database.Db.QueryRow(`
 			SELECT COUNT(*) FROM link_enums_tags WHERE enum_id = $1 AND tag_id = ANY($2::uuid[])`, value, pq.Array(restrictions.Tags))
 		var count int
-		rows.Scan(&count)
+		if err := rows.Scan(&count); err != nil {
+			return err
+		}
 		if count != len(restrictions.Tags) {
 			return errors.New("does not respect tag restrictions")
 		}

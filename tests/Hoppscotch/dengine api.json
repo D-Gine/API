@@ -1,0 +1,37 @@
+{
+  "id": "cmvnipzf51weoea1j9plp0nx7",
+  "v": 2,
+  "name": "dengine api",
+  "variables": [
+    {
+      "key": "host",
+      "initialValue": "http://localhost:8090",
+      "currentValue": "",
+      "secret": false
+    },
+    {
+      "key": "ruleset_id",
+      "initialValue": "0e3196a0-f8d8-444f-a6b6-d5f6f81f6333",
+      "currentValue": "",
+      "secret": false
+    },
+    {
+      "key": "stats_pool_node_id",
+      "initialValue": "4fbb7e27-8e26-47dd-bea1-f687cc4a98db",
+      "currentValue": "",
+      "secret": false
+    },
+    {
+      "key": "character_id",
+      "initialValue": "not_set",
+      "currentValue": "",
+      "secret": false
+    },
+    {
+      "key": "characharacte_id",
+      "initialValue": "",
+      "currentValue": "",
+      "secret": false
+    }
+  ]
+}

@@ -29,11 +29,15 @@ func ReadRulesets(c *gin.Context) {
 	rows, err := database.Db.Query("SELECT id, name FROM rulesets")
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		return
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	for rows.Next() {
 		var id, name sql.NullString
-		rows.Scan(&id, &name)
+		if err := rows.Scan(&id, &name); err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+			return
+		}
 		result = append(result, DbReadResponse{
 			Id:   id.String,
 			Name: name.String,

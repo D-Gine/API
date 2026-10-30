@@ -1,0 +1,171 @@
+name: Go
+
+on:
+  pull_request:
+    branches: ['main', 'dev']
+
+jobs:
+  check_vulnerability:
+    runs-on: self-hosted
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.27.x'
+      - name: Vulnerability check
+        working-directory: ./api
+        run: |
+          go install golang.org/x/vuln/cmd/govulncheck@latest
+          govulncheck ./...
+
+      # - name: Security scan (gosec)
+      #   working-directory: ./api
+      #   run: |
+      #     go install github.com/securego/gosec/v2/cmd/gosec@v2.29.0
+      #     "$(go env GOPATH)/bin/gosec" ./...
+
+      - name: Lint
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: latest
+          working-directory: api
+
+  run_unit_tests:
+    runs-on: self-hosted
+    needs: ['check_vulnerability']
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.27.x'
+
+      - name: Install dependencies
+        working-directory: ./api
+        run: go mod download
+
+      - name: Build
+        working-directory: ./api
+        run: go build -v ./...
+
+      - name: Test with the Go CLI
+        working-directory: ./api
+        shell: bash
+        run: |
+          set -o pipefail
+          go test -json ./... | tee TestResults.json
+
+
+      - name: Upload Go test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Go-results
+          path: ./api/TestResults.json
+
+
+  automated-api-tests:
+    runs-on: self-hosted
+    needs: ['run_unit_tests']
+    permissions:
+      contents: read
+      packages: read
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: 55432
+      DB_NAME: dengine
+      DB_USER: test
+      DB_PWD: test
+      API_PORT: 8090
+      DB_CONTAINER: dengine-db-${{ github.run_id }}
+      TOKEN_KEY: ci-test-token-key
+      TOKEN_DOMAIN: localhost
+      ALLOWED_ORIGINS: http://localhost:8090,http://127.0.0.1:8090
+      USERS_IMAGES_PATH: /tmp/images/users/
+      IMAGES_PATH: /tmp/images/
+      GIN_MODE: release
+      HOPPSCOTCH_COLLECTION: 'tests/Hoppscotch/D-Gine API.json'
+      HOPPSCOTCH_ENV: 'tests/Hoppscotch/dengine api.json'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Start Database
+        run: |
+          docker pull ghcr.io/d-gine/database-test:latest
+          docker run -d --name $DB_CONTAINER \
+            -e PGPORT=$DB_PORT \
+            -e POSTGRES_DB=$DB_NAME \
+            -e POSTGRES_USER=$DB_USER \
+            -e POSTGRES_PASSWORD=$DB_PWD \
+            -p $DB_PORT:$DB_PORT \
+            --health-cmd="pg_isready -U $DB_USER -d $DB_NAME" \
+            --health-interval=2s --health-timeout=5s --health-retries=30 \
+            ghcr.io/d-gine/database-test:latest
+
+      - name: Wait for DB to be healthy
+        run: |
+          for i in $(seq 1 60); do
+            status=$(docker inspect -f '{{.State.Health.Status}}' "$DB_CONTAINER" || true)
+            [ "$status" = "healthy" ] && exit 0
+            sleep 2
+          done
+          docker logs "$DB_CONTAINER"
+          exit 1
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.27.x'
+
+      - name: Build API
+        working-directory: ./api
+        run: make build
+
+      - name: Start the API
+        working-directory: ./api
+        run: |
+          nohup ./api > ../api.log 2>&1 &
+          echo $! > ../server.pid
+
+      - name: Wait for API to be ready
+        run: |
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:$API_PORT/api/health && exit 0
+            echo "Waiting for API..."
+            sleep 2
+          done
+          cat api.log
+          exit 1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Hoppscotch CLI
+        run: npm i -g @hoppscotch/cli
+
+      - name: Run Hoppscotch tests
+        run: npx -y @hoppscotch/cli@latest test "$HOPPSCOTCH_COLLECTION" -e "$HOPPSCOTCH_ENV"
+
+      - name: Show API logs
+        if: always()
+        run: cat api.log || true
+
+      - name: Cleanup
+        if: always()
+        run: |
+          [ -f server.pid ] && kill $(cat server.pid) || true
+          rm -f server.pid api.log
+          docker rm -f $DB_CONTAINER || true
