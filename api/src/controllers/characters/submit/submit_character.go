@@ -1,9 +1,9 @@
 package submit
 
 import (
-	"api/src/controllers/shared_types"
 	"api/src/controllers/characters/save"
-	nodeValidate "api/src/controllers/nodes/validate"
+	"api/src/controllers/nodes"
+	"api/src/controllers/shared_types"
 	typegeneration "api/src/controllers/type_generation"
 	"api/src/database"
 	"encoding/json"
@@ -15,7 +15,7 @@ import (
 )
 
 type GenerateDynamicInfos struct {
-	StaticValues shared_types.ComponentMap                  `json:"static_values"`
+	StaticValues shared_types.ComponentMap                 `json:"static_values"`
 	ToGenerate   map[string]typegeneration.GenerationInfos `json:"to_generate"`
 }
 
@@ -38,7 +38,7 @@ func SumbitCharacter(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON body"})
 		return
 	}
-	err, error_list := nodeValidate.ValidateNodesTypes(c, &body, slices.Collect(maps.Keys(body.NodeValues)), c.Param("ruleset_id"))
+	err, error_list := nodes.ValidateNodesTypes(c, &body, slices.Collect(maps.Keys(body.NodeValues)), c.Param("ruleset_id"))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

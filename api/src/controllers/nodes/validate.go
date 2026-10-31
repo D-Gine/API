@@ -1,4 +1,4 @@
-package nodeValidate
+package nodes
 
 import (
 	shared_types "api/src/controllers/shared_types"
