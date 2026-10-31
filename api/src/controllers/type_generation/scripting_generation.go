@@ -1,7 +1,7 @@
 package typegeneration
 
 import (
-	"api/src/controllers"
+	"api/src/controllers/shared_types"
 	"api/src/internal/scripting"
 	"encoding/json"
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func ScriptingGeneration(ctx *gin.Context, staticValues controllers.ComponentMap, infos GenerationInfos) (json.RawMessage, int, error) {
+func ScriptingGeneration(ctx *gin.Context, staticValues shared_types.ComponentMap, infos GenerationInfos) (json.RawMessage, int, error) {
 	value, err := scripting.ScriptEngine.Eval(
 		ctx.Request.Context(),
 		*infos.Script,

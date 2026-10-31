@@ -1,7 +1,7 @@
-package validate
+package type_validation
 
 import (
-	"api/src/controllers"
+	"api/src/controllers/shared_types"
 	"api/src/database"
 	"errors"
 
@@ -9,7 +9,7 @@ import (
 	"github.com/lib/pq"
 )
 
-func VerifyEnum(ctx *gin.Context, componentList *controllers.ComponentMap, value string, restrictions controllers.EnumRestrictions) error {
+func VerifyEnum(ctx *gin.Context, componentList *shared_types.ComponentMap, value string, restrictions shared_types.EnumRestrictions) error {
 	if restrictions.Tags != nil {
 		rows := database.Db.QueryRow(`
 			SELECT COUNT(*) FROM link_enums_tags WHERE enum_id = $1 AND tag_id = ANY($2::uuid[])`, value, pq.Array(restrictions.Tags))

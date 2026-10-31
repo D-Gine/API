@@ -1,7 +1,7 @@
-package validate
+package type_validation
 
 import (
-	"api/src/controllers"
+	"api/src/controllers/shared_types"
 	"api/src/database"
 	"encoding/json"
 	"fmt"
@@ -13,7 +13,12 @@ import (
 	"github.com/lib/pq"
 )
 
-func VerifyDictionary(ctx *gin.Context, componentList *controllers.ComponentMap, value map[string]json.RawMessage, restrictions controllers.DictionaryRestrictions) error {
+func VerifyDictionary(
+	ctx *gin.Context,
+	componentList *shared_types.ComponentMap,
+	value map[string]json.RawMessage,
+	restrictions shared_types.DictionaryRestrictions,
+) error {
 	if restrictions.Interface != nil {
 		// getting verifications data
 		type_set := make(map[string]struct{})
@@ -27,9 +32,9 @@ func VerifyDictionary(ctx *gin.Context, componentList *controllers.ComponentMap,
 			return fmt.Errorf("error fetching interfaces types, please recheck validity of you interface, %w", err)
 		}
 		defer rows.Close()
-		verificationMap := make(map[string]TypeVerifications)
+		verificationMap := make(map[string]shared_types.TypeVerifications)
 		for rows.Next() {
-			var verification TypeVerifications
+			var verification shared_types.TypeVerifications
 			if err := rows.Scan(
 				&verification.TypeId,
 				&verification.BaseName,

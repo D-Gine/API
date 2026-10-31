@@ -1,7 +1,7 @@
 package typegeneration
 
 import (
-	"api/src/controllers"
+	"api/src/controllers/shared_types"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -9,36 +9,36 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func BaseTypeGeneration(ctx *gin.Context, staticValues controllers.ComponentMap, infos GenerationInfos) (json.RawMessage, int, error) {
+func BaseTypeGeneration(ctx *gin.Context, staticValues shared_types.ComponentMap, infos GenerationInfos) (json.RawMessage, int, error) {
 	switch infos.TypeName {
 	case "number":
-		r, err := controllers.ParseRestriction[controllers.NumberRestrictions](infos.TypeName, infos.Restrictions)
+		r, err := shared_types.ParseRestriction[shared_types.NumberRestrictions](infos.TypeName, infos.Restrictions)
 		if err != nil {
 			return nil, http.StatusUnauthorized, err
 		}
 		return generateNumber(r)
 	case "string":
-		r, err := controllers.ParseRestriction[controllers.StringRestrictions](infos.TypeName, infos.Restrictions)
+		r, err := shared_types.ParseRestriction[shared_types.StringRestrictions](infos.TypeName, infos.Restrictions)
 		if err != nil {
 			return nil, http.StatusUnauthorized, err
 		}
 		return generateString(r)
 	case "enum":
 		fmt.Println(infos.Restrictions.String())
-		r, err := controllers.ParseRestriction[controllers.EnumRestrictions](infos.TypeName, infos.Restrictions)
+		r, err := shared_types.ParseRestriction[shared_types.EnumRestrictions](infos.TypeName, infos.Restrictions)
 		if err != nil {
 			return nil, http.StatusUnauthorized, err
 		}
 		fmt.Println(r.Tags)
 		return generateEnum(r)
 	case "list":
-		r, err := controllers.ParseRestriction[controllers.ListRestrictions](infos.TypeName, infos.Restrictions)
+		r, err := shared_types.ParseRestriction[shared_types.ListRestrictions](infos.TypeName, infos.Restrictions)
 		if err != nil {
 			return nil, http.StatusUnauthorized, err
 		}
 		return generateList(r, ctx, staticValues)
 	case "dict":
-		r, err := controllers.ParseRestriction[controllers.DictionaryRestrictions](infos.TypeName, infos.Restrictions)
+		r, err := shared_types.ParseRestriction[shared_types.DictionaryRestrictions](infos.TypeName, infos.Restrictions)
 		if err != nil {
 			return nil, http.StatusUnauthorized, err
 		}

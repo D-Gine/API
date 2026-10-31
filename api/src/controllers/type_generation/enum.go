@@ -1,7 +1,7 @@
 package typegeneration
 
 import (
-	"api/src/controllers"
+	"api/src/controllers/shared_types"
 	"api/src/database"
 	"database/sql"
 	"encoding/json"
@@ -12,7 +12,7 @@ import (
 	"github.com/lib/pq"
 )
 
-func generateEnum(restriction controllers.EnumRestrictions) (json.RawMessage, int, error) {
+func generateEnum(restriction shared_types.EnumRestrictions) (json.RawMessage, int, error) {
 	var enum string
 
 	fmt.Println(restriction)
