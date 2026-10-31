@@ -1,7 +1,7 @@
-package validate
+package type_validation
 
 import (
-	"api/src/controllers"
+	"api/src/controllers/shared_types"
 	"api/src/database"
 	"encoding/json"
 	"fmt"
@@ -10,8 +10,8 @@ import (
 	"github.com/lib/pq"
 )
 
-func VerifyList(ctx *gin.Context, componentList *controllers.ComponentMap, value []json.RawMessage, restrictions controllers.ListRestrictions) error {
-	var verification TypeVerifications
+func VerifyList(ctx *gin.Context, componentList *shared_types.ComponentMap, value []json.RawMessage, restrictions shared_types.ListRestrictions) error {
+	var verification shared_types.TypeVerifications
 	err := database.Db.QueryRow(`
 		SELECT * FROM get_verifications($1)`, pq.Array([]string{restrictions.Type})).Scan(
 		&verification.TypeId,

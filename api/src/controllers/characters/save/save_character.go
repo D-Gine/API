@@ -1,7 +1,7 @@
 package save
 
 import (
-	"api/src/controllers/nodes/validate"
+	"api/src/controllers/shared_types"
 	"api/src/database"
 	"encoding/json"
 	"errors"
@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func WriteCharacterInDb(character_id string, nodes validate.NodeList) (int, error) {
+func WriteCharacterInDb(character_id string, nodes shared_types.NodeList) (int, error) {
 	jsonValues, parseErr := json.Marshal(nodes.NodeValues)
 	if parseErr != nil {
 		return http.StatusBadRequest, errors.New("Failed to parse node values")
@@ -34,7 +34,7 @@ func WriteCharacterInDb(character_id string, nodes validate.NodeList) (int, erro
 // @Router /api/:ruleset_id/character/:id/save [put]
 func SaveCharacter(c *gin.Context) {
 	id := c.Param("id")
-	var body validate.NodeList
+	var body shared_types.NodeList
 
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON body"})

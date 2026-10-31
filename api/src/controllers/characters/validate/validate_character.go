@@ -1,8 +1,8 @@
-package validate
+package characterValidate
 
 import (
-	"api/src/controllers"
-	"api/src/controllers/nodes/validate"
+	"api/src/controllers/shared_types"
+	"api/src/controllers/type_validation"
 	"api/src/database"
 	"database/sql"
 	"encoding/json"
@@ -22,7 +22,7 @@ func ValidateDbCharacter(c *gin.Context, id string) (int, error, map[string]stri
 	if err != nil && err != sql.ErrNoRows {
 		return http.StatusInternalServerError, err, nil
 	}
-	componentList := make(controllers.ComponentMap)
+	componentList := make(shared_types.ComponentMap)
 	if len(rawJSON) > 0 {
 		if err := json.Unmarshal(rawJSON, &componentList); err != nil {
 			return http.StatusInternalServerError, fmt.Errorf("Failed to parse components: %w", err), nil
@@ -37,7 +37,7 @@ func ValidateDbCharacter(c *gin.Context, id string) (int, error, map[string]stri
 	}
 	defer verifyRows.Close()
 
-	valErr, error_map, _ := validate.ValidateRowTypes(c, &componentList, verifyRows)
+	valErr, error_map, _ := type_validation.ValidateRowTypes(c, &componentList, verifyRows)
 	if valErr != nil {
 		return http.StatusBadRequest, valErr, nil
 	}

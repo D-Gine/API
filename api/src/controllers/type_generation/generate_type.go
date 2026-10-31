@@ -1,7 +1,7 @@
 package typegeneration
 
 import (
-	"api/src/controllers"
+	"api/src/controllers/shared_types"
 	"encoding/json"
 
 	"github.com/gin-gonic/gin"
@@ -13,7 +13,7 @@ type GenerationInfos struct {
 	Restrictions json.RawMessage `json:"restrictions"`
 }
 
-func GenerateKnownedType(ctx *gin.Context, staticValues controllers.ComponentMap, infos GenerationInfos) (json.RawMessage, int, error) {
+func GenerateKnownedType(ctx *gin.Context, staticValues shared_types.ComponentMap, infos GenerationInfos) (json.RawMessage, int, error) {
 	if infos.Script != nil {
 		return ScriptingGeneration(ctx, staticValues, infos)
 	}

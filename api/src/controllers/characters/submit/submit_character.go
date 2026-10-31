@@ -1,9 +1,9 @@
 package submit
 
 import (
-	"api/src/controllers"
 	"api/src/controllers/characters/save"
-	nodeValidate "api/src/controllers/nodes/validate"
+	"api/src/controllers/nodes"
+	"api/src/controllers/shared_types"
 	typegeneration "api/src/controllers/type_generation"
 	"api/src/database"
 	"encoding/json"
@@ -15,7 +15,7 @@ import (
 )
 
 type GenerateDynamicInfos struct {
-	StaticValues controllers.ComponentMap                  `json:"static_values"`
+	StaticValues shared_types.ComponentMap                 `json:"static_values"`
 	ToGenerate   map[string]typegeneration.GenerationInfos `json:"to_generate"`
 }
 
@@ -32,13 +32,13 @@ type GenerateDynamicInfos struct {
 // @Router /api/:ruleset_id/character/:id/submit [put]
 func SumbitCharacter(c *gin.Context) {
 	id := c.Param("id")
-	var body nodeValidate.NodeList
+	var body shared_types.NodeList
 
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON body"})
 		return
 	}
-	err, error_list := nodeValidate.ValidateNodesTypes(c, &body, slices.Collect(maps.Keys(body.NodeValues)), c.Param("ruleset_id"))
+	err, error_list := nodes.ValidateNodesTypes(c, &body, slices.Collect(maps.Keys(body.NodeValues)), c.Param("ruleset_id"))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -65,7 +65,7 @@ func SumbitCharacter(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	dynamic_map := make(controllers.ComponentMap)
+	dynamic_map := make(shared_types.ComponentMap)
 	for id, infos := range res.ToGenerate {
 		value, code, err := typegeneration.GenerateKnownedType(c, res.StaticValues, infos)
 		if err != nil {

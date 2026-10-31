@@ -16,12 +16,12 @@ import (
 	characterSave "api/src/controllers/characters/save"
 	characterSubmit "api/src/controllers/characters/submit"
 	characterValidate "api/src/controllers/characters/validate"
+	"api/src/controllers/components"
 	"api/src/controllers/enums"
 
 	"api/src/controllers/dev"
 	"api/src/controllers/fileserver"
 	"api/src/controllers/nodes"
-	"api/src/controllers/nodes/validate"
 	"api/src/controllers/rulesets"
 	"api/src/controllers/users"
 	"api/src/database"
@@ -131,8 +131,13 @@ func main() {
 			}
 			nodeGroup := rulesetGroup.Group("/node")
 			{
-				nodeGroup.POST("/:id/validate", validate.ValidateNode)
-				nodeGroup.POST("/validate", validate.ValidateNodes)
+				nodeGroup.POST("/:id/validate", nodes.ValidateNode)
+				nodeGroup.POST("/validate", nodes.ValidateNodes)
+			}
+			component_group := rulesetGroup.Group("/component")
+			{
+				component_group.POST("/:id/validate", components.ValidateComponent)
+				// nodeGroup.POST("/validate", nodes.ValidateNodes)
 			}
 		}
 
