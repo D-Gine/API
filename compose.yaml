@@ -9,9 +9,14 @@ services:
       - back
       - front
     volumes:
-      - api:/var/www/dengine-api-${VERSION}/
+      - ${API_SRC:-api-src}:/app/src
+      - go-build-cache:/root/.cache/go-build
+      - go-mod-cache:/go/pkg/mod
 
 volumes:
+  api-src:
+  go-build-cache:
+  go-mod-cache:
   api:
     name: ${API_VOLUME}
 

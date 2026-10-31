@@ -54,12 +54,12 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structs.PostResponse"
+                            "$ref": "#/definitions/characterGet.GetResponse"
                         }
                     }
                 }
             },
-            "put": {
+            "delete": {
                 "description": "Delete an empty character",
                 "consumes": [
                     "application/json"
@@ -84,9 +84,82 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Empty object",
                         "schema": {
-                            "$ref": "#/definitions/structs.PostResponse"
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/character/:id/save": {
+            "put": {
+                "description": "save the static components into the database.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "character"
+                ],
+                "summary": "save a character to db",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empty object",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/character/:id/submit": {
+            "put": {
+                "description": "save the static components into the database and call the type validation scripts on them.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "character"
+                ],
+                "summary": "save a character to db and check if valid",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empty Object",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -102,7 +175,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "nodes"
+                    "character"
                 ],
                 "summary": "validate an entity",
                 "parameters": [
@@ -118,16 +191,19 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "errors",
                         "schema": {
-                            "$ref": "#/definitions/structs.PostResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
             }
         },
         "/api/:ruleset_id/character/create": {
-            "put": {
+            "post": {
                 "description": "create an empty character, returning his ID",
                 "consumes": [
                     "application/json"
@@ -151,10 +227,127 @@
                     }
                 ],
                 "responses": {
+                    "201": {
+                        "description": "Created character ID",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/enums/get_by_restrictions": {
+            "post": {
+                "description": "get enums id, name and description matching the given restrictions",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "enums"
+                ],
+                "summary": "get enums infos by restrictions",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.EnumRestrictions"
+                        }
+                    }
+                ],
+                "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/structs.PostResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "$ref": "#/definitions/enums.EnumInfos"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/first_node": {
+            "get": {
+                "description": "Returns the first node of the given ruleset with resolved type",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "nodes"
+                ],
+                "summary": "Reads first node for a ruleset",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id of the ruleset",
+                        "name": "ruleset_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/nodes.FirstNodeResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/get_next_node/:target_node": {
+            "post": {
+                "description": "Returns next node metadata for a given target node",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "nodes"
+                ],
+                "summary": "Gets next node info for a target node",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id of the ruleset",
+                        "name": "ruleset_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "id of the target node",
+                        "name": "target_node",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "node values and current tree",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/nodes.GetNextNodeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/nodes.GetNextNodeResponse"
                         }
                     }
                 }
@@ -532,6 +725,35 @@
                 }
             }
         },
+        "/api/characters/:id": {
+            "get": {
+                "description": "Reads the given character/entity data including all components and their values",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "characters"
+                ],
+                "summary": "Reads given character data with all components",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the character to read",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/characters.CharacterReadResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/characters/id": {
             "put": {
                 "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eUpdates given character with arguments in body",
@@ -588,35 +810,6 @@
                 }
             }
         },
-        "/api/characters/{id}": {
-            "get": {
-                "description": "Reads the given character/entity data including all components and their values",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "characters"
-                ],
-                "summary": "Reads given character data with all components",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID of the character to read",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/characters.CharacterReadResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/api/dev/callengine": {
             "post": {
                 "description": "Makes a HTTP call to whatever URI given using the method, headers and body given in argument, and returns the response of the call",
@@ -663,83 +856,6 @@
                         "description": "OK",
                         "schema": {
                             "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/nodes/:ruleset_id/first_node": {
-            "get": {
-                "description": "Returns the first node of the given ruleset with resolved type",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "nodes"
-                ],
-                "summary": "Reads first node for a ruleset",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id of the ruleset",
-                        "name": "ruleset_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/nodes.FirstNodeResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/nodes/:ruleset_id/get_next_node/{target_node}": {
-            "post": {
-                "description": "Returns next node metadata for a given target node",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "nodes"
-                ],
-                "summary": "Gets next node info for a target node",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id of the ruleset",
-                        "name": "ruleset_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "id of the target node",
-                        "name": "target_node",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "node values and current tree",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/nodes.GetNextNodeRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/nodes.GetNextNodeResponse"
                         }
                     }
                 }
@@ -1148,6 +1264,31 @@
                 }
             }
         },
+        "characterGet.ComponentValue": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "$ref": "#/definitions/nodes.NodeTypeResponse"
+                    },
+                    "value": {
+                        "type": "object"
+                    }
+                }
+            }
+        },
+        "characterGet.GetResponse": {
+            "type": "object",
+            "properties": {
+                "dynamic_components": {
+                    "$ref": "#/definitions/characterGet.ComponentValue"
+                },
+                "static_components": {
+                    "$ref": "#/definitions/characterGet.ComponentValue"
+                }
+            }
+        },
         "characters.CharacterReadResponse": {
             "type": "object",
             "properties": {
@@ -1225,6 +1366,20 @@
                 }
             }
         },
+        "controllers.EnumRestrictions": {
+            "type": "object",
+            "properties": {
+                "optional": {
+                    "type": "boolean"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "create.CreateCharacterBody": {
             "type": "object",
             "properties": {
@@ -1268,6 +1423,17 @@
                 "data": {
                     "type": "object",
                     "additionalProperties": {}
+                }
+            }
+        },
+        "enums.EnumInfos": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },
@@ -1435,10 +1601,26 @@
             }
         },
         "validate.MultipleNodeValidation": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "node_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "node_values": {
+                    "type": "object"
+                }
+            }
         },
         "validate.NodeList": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "node_values": {
+                    "type": "object"
+                }
+            }
         }
     }
 }
