@@ -68,6 +68,22 @@ definitions:
       username:
         type: string
     type: object
+  characterGet.ComponentValue:
+    additionalProperties:
+      properties:
+        type:
+          $ref: '#/definitions/nodes.NodeTypeResponse'
+        value:
+          type: object
+      type: object
+    type: object
+  characterGet.GetResponse:
+    properties:
+      dynamic_components:
+        $ref: '#/definitions/characterGet.ComponentValue'
+      static_components:
+        $ref: '#/definitions/characterGet.ComponentValue'
+    type: object
   characters.CharacterReadResponse:
     properties:
       components:
@@ -119,6 +135,15 @@ definitions:
       player_id:
         type: string
     type: object
+  controllers.EnumRestrictions:
+    properties:
+      optional:
+        type: boolean
+      tags:
+        items:
+          type: string
+        type: array
+    type: object
   create.CreateCharacterBody:
     properties:
       description:
@@ -148,6 +173,13 @@ definitions:
       data:
         additionalProperties: {}
         type: object
+    type: object
+  enums.EnumInfos:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
     type: object
   nodes.CurrentTree:
     properties:
@@ -255,8 +287,18 @@ definitions:
         type: string
     type: object
   validate.MultipleNodeValidation:
+    properties:
+      node_ids:
+        items:
+          type: string
+        type: array
+      node_values:
+        type: object
     type: object
   validate.NodeList:
+    properties:
+      node_values:
+        type: object
     type: object
 info:
   contact: {}
@@ -277,6 +319,29 @@ paths:
       tags:
       - apidata
   /api/:ruleset_id/character/:id:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an empty character
+      parameters:
+      - description: ruleset related informations that will be later needed for the
+          login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Empty object
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete a character in the db
+      tags:
+      - character
     get:
       consumes:
       - application/json
@@ -294,14 +359,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/structs.PostResponse'
+            $ref: '#/definitions/characterGet.GetResponse'
       summary: get character infos from the db
       tags:
       - character
+  /api/:ruleset_id/character/:id/save:
     put:
       consumes:
       - application/json
-      description: Delete an empty character
+      description: save the static components into the database.
       parameters:
       - description: ruleset related informations that will be later needed for the
           login process
@@ -314,10 +380,37 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Empty object
           schema:
-            $ref: '#/definitions/structs.PostResponse'
-      summary: Delete a character in the db
+            additionalProperties: true
+            type: object
+      summary: save a character to db
+      tags:
+      - character
+  /api/:ruleset_id/character/:id/submit:
+    put:
+      consumes:
+      - application/json
+      description: save the static components into the database and call the type
+        validation scripts on them.
+      parameters:
+      - description: ruleset related informations that will be later needed for the
+          login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Empty Object
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: save a character to db and check if valid
       tags:
       - character
   /api/:ruleset_id/character/:id/validate:
@@ -337,14 +430,16 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: errors
           schema:
-            $ref: '#/definitions/structs.PostResponse'
+            additionalProperties:
+              type: string
+            type: object
       summary: validate an entity
       tags:
-      - nodes
+      - character
   /api/:ruleset_id/character/create:
-    put:
+    post:
       consumes:
       - application/json
       description: create an empty character, returning his ID
@@ -359,13 +454,91 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created character ID
           schema:
-            $ref: '#/definitions/structs.PostResponse'
+            additionalProperties:
+              type: string
+            type: object
       summary: create a character in the db
       tags:
       - character
+  /api/:ruleset_id/enums/get_by_restrictions:
+    post:
+      consumes:
+      - application/json
+      description: get enums id, name and description matching the given restrictions
+      parameters:
+      - description: ruleset related informations that will be later needed for the
+          login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.EnumRestrictions'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              $ref: '#/definitions/enums.EnumInfos'
+            type: object
+      summary: get enums infos by restrictions
+      tags:
+      - enums
+  /api/:ruleset_id/first_node:
+    get:
+      description: Returns the first node of the given ruleset with resolved type
+      parameters:
+      - description: id of the ruleset
+        in: path
+        name: ruleset_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nodes.FirstNodeResponse'
+      summary: Reads first node for a ruleset
+      tags:
+      - nodes
+  /api/:ruleset_id/get_next_node/:target_node:
+    post:
+      consumes:
+      - application/json
+      description: Returns next node metadata for a given target node
+      parameters:
+      - description: id of the ruleset
+        in: path
+        name: ruleset_id
+        required: true
+        type: string
+      - description: id of the target node
+        in: path
+        name: target_node
+        required: true
+        type: string
+      - description: node values and current tree
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/nodes.GetNextNodeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nodes.GetNextNodeResponse'
+      summary: Gets next node info for a target node
+      tags:
+      - nodes
   /api/:ruleset_id/node/:id/validate:
     post:
       consumes:
@@ -636,7 +809,7 @@ paths:
       summary: Reads all characters data
       tags:
       - characters
-  /api/characters/{id}:
+  /api/characters/:id:
     get:
       description: Reads the given character/entity data including all components
         and their values
@@ -731,57 +904,6 @@ paths:
       summary: Healthcheck for the api
       tags:
       - apidata
-  /api/nodes/:ruleset_id/first_node:
-    get:
-      description: Returns the first node of the given ruleset with resolved type
-      parameters:
-      - description: id of the ruleset
-        in: path
-        name: ruleset_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/nodes.FirstNodeResponse'
-      summary: Reads first node for a ruleset
-      tags:
-      - nodes
-  /api/nodes/:ruleset_id/get_next_node/{target_node}:
-    post:
-      consumes:
-      - application/json
-      description: Returns next node metadata for a given target node
-      parameters:
-      - description: id of the ruleset
-        in: path
-        name: ruleset_id
-        required: true
-        type: string
-      - description: id of the target node
-        in: path
-        name: target_node
-        required: true
-        type: string
-      - description: node values and current tree
-        in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/nodes.GetNextNodeRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/nodes.GetNextNodeResponse'
-      summary: Gets next node info for a target node
-      tags:
-      - nodes
   /api/rulesets:
     get:
       description: Reads all rulesets data
