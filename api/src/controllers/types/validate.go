@@ -33,7 +33,7 @@ func ValidateTypesValues(
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
 	}
-
+	defer row.Close()
 	err, error_map, count := type_validation.ValidateRowTypes(ctx, &values, &components, row)
 
 	if count != len(values) {

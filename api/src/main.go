@@ -144,6 +144,8 @@ func main() {
 			{
 				type_group.POST("/:id/validate", types.ValidateType)
 				type_group.POST("/validate", types.ValidateTypes)
+				type_group.POST("/:id/generate", types.GenerateType)
+				type_group.POST("/generate", types.GenerateTypes)
 			}
 
 		}
