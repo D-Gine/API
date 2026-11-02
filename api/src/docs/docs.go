@@ -506,6 +506,80 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/:ruleset_id/type/:id/validate": {
+            "post": {
+                "description": "validate a type value with component map",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "components"
+                ],
+                "summary": "validate a type value with component map",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.ValidateValue"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empty Object",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/type/validate": {
+            "post": {
+                "description": "validate mmultiple types with component map",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "components"
+                ],
+                "summary": "validate multiple types with component map",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.ValidateValues"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empty Object",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/CRUDTEMPLATEs": {
             "get": {
                 "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eReads all CRUDTEMPLATEs data",
@@ -1478,7 +1552,15 @@ const docTemplate = `{
             "type": "object"
         },
         "components.ValidateValues": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "components": {
+                    "$ref": "#/definitions/shared_types.ComponentMap"
+                },
+                "values": {
+                    "type": "object"
+                }
+            }
         },
         "create.CreateCharacterBody": {
             "type": "object",
@@ -1638,6 +1720,9 @@ const docTemplate = `{
                 }
             }
         },
+        "shared_types.ComponentMap": {
+            "type": "object"
+        },
         "shared_types.EnumRestrictions": {
             "type": "object",
             "properties": {
@@ -1679,6 +1764,28 @@ const docTemplate = `{
             "properties": {
                 "id": {
                     "type": "string"
+                }
+            }
+        },
+        "types.ValidateValue": {
+            "type": "object",
+            "properties": {
+                "components": {
+                    "$ref": "#/definitions/shared_types.ComponentMap"
+                },
+                "value": {
+                    "type": "object"
+                }
+            }
+        },
+        "types.ValidateValues": {
+            "type": "object",
+            "properties": {
+                "components": {
+                    "$ref": "#/definitions/shared_types.ComponentMap"
+                },
+                "values": {
+                    "type": "object"
                 }
             }
         },

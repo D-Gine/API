@@ -6,11 +6,11 @@ import (
 )
 
 type ValidateValue struct {
-	Value      json.RawMessage           `json:"value" swaggertype:"obect"`
+	Value      json.RawMessage           `json:"value" swaggertype:"object"`
 	Components shared_types.ComponentMap `json:"components"`
 }
 
 type ValidateValues struct {
-	Values     shared_types.ComponentMap `json:"values" swaggertype:"obect"`
+	Values     shared_types.ComponentMap `json:"values" swaggertype:"object"`
 	Components shared_types.ComponentMap `json:"components"`
 }

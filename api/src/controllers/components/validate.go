@@ -38,7 +38,7 @@ func ValidateComponentsValues(
 		return http.StatusInternalServerError, nil, err
 	}
 
-	err, error_map, count := type_validation.ValidateRowTypesWithValues(ctx, &toVerify, &components, row)
+	err, error_map, count := type_validation.ValidateRowComponentsWithValues(ctx, &toVerify, &components, row)
 
 	if count != len(toVerify) {
 		return http.StatusUnauthorized, error_map, errors.New("some sent components are invalid, cannot compute")

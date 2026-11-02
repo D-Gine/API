@@ -6,6 +6,8 @@ import (
 	"fmt"
 )
 
+type TypeValueMap = map[string]json.RawMessage
+
 type BaseVerifications struct {
 	BaseName     string          `json:"base_name"`
 	Scripts      []string        `json:"scripts"`

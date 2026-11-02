@@ -23,6 +23,7 @@ import (
 	"api/src/controllers/fileserver"
 	"api/src/controllers/nodes"
 	"api/src/controllers/rulesets"
+	"api/src/controllers/types"
 	"api/src/controllers/users"
 	"api/src/database"
 	_ "api/src/docs"
@@ -138,8 +139,13 @@ func main() {
 			{
 				component_group.POST("/:id/validate", components.ValidateComponent)
 				component_group.POST("/validate", components.ValidateComponents)
-				// nodeGroup.POST("/validate", nodes.ValidateNodes)
 			}
+			type_group := rulesetGroup.Group("/type")
+			{
+				type_group.POST("/:id/validate", types.ValidateType)
+				type_group.POST("/validate", types.ValidateTypes)
+			}
+
 		}
 
 		// rulesetsGroup := api.Group("/rulesets", auth.AuthenticateMiddleware, auth.AdminMiddleware)

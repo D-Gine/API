@@ -153,6 +153,11 @@ definitions:
   components.ValidateValue:
     type: object
   components.ValidateValues:
+    properties:
+      components:
+        $ref: '#/definitions/shared_types.ComponentMap'
+      values:
+        type: object
     type: object
   create.CreateCharacterBody:
     properties:
@@ -256,6 +261,8 @@ definitions:
       name:
         type: string
     type: object
+  shared_types.ComponentMap:
+    type: object
   shared_types.EnumRestrictions:
     properties:
       optional:
@@ -283,6 +290,20 @@ definitions:
     properties:
       id:
         type: string
+    type: object
+  types.ValidateValue:
+    properties:
+      components:
+        $ref: '#/definitions/shared_types.ComponentMap'
+      value:
+        type: object
+    type: object
+  types.ValidateValues:
+    properties:
+      components:
+        $ref: '#/definitions/shared_types.ComponentMap'
+      values:
+        type: object
     type: object
   users.CreateUsersArgs:
     properties:
@@ -658,6 +679,56 @@ paths:
       summary: validate one node
       tags:
       - nodes
+  /api/:ruleset_id/type/:id/validate:
+    post:
+      consumes:
+      - application/json
+      description: validate a type value with component map
+      parameters:
+      - description: ruleset related informations that will be later needed for the
+          login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/types.ValidateValue'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Empty Object
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: validate a type value with component map
+      tags:
+      - components
+  /api/:ruleset_id/type/validate:
+    post:
+      consumes:
+      - application/json
+      description: validate mmultiple types with component map
+      parameters:
+      - description: ruleset related informations that will be later needed for the
+          login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/types.ValidateValues'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Empty Object
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: validate multiple types with component map
+      tags:
+      - components
   /api/CRUDTEMPLATEs:
     get:
       description: ⚠️ Only accessible to admins ⚠️<br><br>Reads all CRUDTEMPLATEs
