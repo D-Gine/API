@@ -1,6 +1,7 @@
 package nodes
 
 import (
+	"api/src/controllers/shared_types"
 	"api/src/database"
 	"api/src/internal/scripting"
 	"database/sql"
@@ -86,7 +87,7 @@ func GetNextNode(c *gin.Context) {
 		c,
 		rulesetID,
 		targetData,
-		body.NodeValues,
+		body.NodeList,
 		currentTreeMap,
 		visited,
 		maxNextNodeDepth,
@@ -113,7 +114,7 @@ func resolveNextChain(
 	c *gin.Context,
 	rulesetID string,
 	current DbNodeData,
-	nodeValues map[string]any,
+	nodeList shared_types.NodeList,
 	currentTree map[string]any,
 	visited map[string]struct{},
 	remainingDepth int,
@@ -126,7 +127,7 @@ func resolveNextChain(
 		c.Request.Context(),
 		current.Script.String,
 		"get_next_node",
-		[]any{nodeValues, currentTree, current.NodeID, current.Params},
+		[]any{nodeList.NodeValues, currentTree, current.NodeID, current.Params},
 		nil,
 	)
 	if err != nil {
@@ -169,7 +170,7 @@ func resolveNextChain(
 	}
 
 	appendNodeToTree(currentTree, nextData.NodeID)
-	child, err := resolveNextChain(c, rulesetID, nextData, nodeValues, currentTree, visited, remainingDepth-1)
+	child, err := resolveNextChain(c, rulesetID, nextData, nodeList, currentTree, visited, remainingDepth-1)
 	if err != nil {
 		return nil, err
 	}
