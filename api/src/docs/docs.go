@@ -65,7 +65,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/characterGet.GetResponse"
+                            "$ref": "#/definitions/characters.Entity"
                         }
                     }
                 }
@@ -250,6 +250,80 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/:ruleset_id/component/:id/validate": {
+            "post": {
+                "description": "validate a component with component map",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "components"
+                ],
+                "summary": "validate a component with component map",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/components.ValidateValue"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empty Object",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/component/validate": {
+            "post": {
+                "description": "validate mmultiple component with component map",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "components"
+                ],
+                "summary": "validate multiple components with component map",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/components.ValidateValues"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empty Object",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/:ruleset_id/enums/get_by_restrictions": {
             "post": {
                 "description": "get enums id, name and description matching the given restrictions",
@@ -270,7 +344,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.EnumRestrictions"
+                            "$ref": "#/definitions/shared_types.EnumRestrictions"
                         }
                     }
                 ],
@@ -384,7 +458,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/validate.MultipleNodeValidation"
+                            "$ref": "#/definitions/shared_types.MultipleNodeValidation"
                         }
                     }
                 ],
@@ -418,7 +492,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/validate.NodeList"
+                            "$ref": "#/definitions/shared_types.NodeList"
                         }
                     }
                 ],
@@ -1275,38 +1349,13 @@ const docTemplate = `{
                 }
             }
         },
-        "characterGet.ComponentValue": {
-            "type": "object",
-            "additionalProperties": {
-                "type": "object",
-                "properties": {
-                    "type": {
-                        "$ref": "#/definitions/nodes.NodeTypeResponse"
-                    },
-                    "value": {
-                        "type": "object"
-                    }
-                }
-            }
-        },
-        "characterGet.GetResponse": {
-            "type": "object",
-            "properties": {
-                "dynamic_components": {
-                    "$ref": "#/definitions/characterGet.ComponentValue"
-                },
-                "static_components": {
-                    "$ref": "#/definitions/characterGet.ComponentValue"
-                }
-            }
-        },
         "characters.CharacterReadResponse": {
             "type": "object",
             "properties": {
                 "components": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/characters.Component"
+                        "$ref": "#/definitions/characters.Component_"
                     }
                 },
                 "name": {
@@ -1317,18 +1366,21 @@ const docTemplate = `{
         "characters.Component": {
             "type": "object",
             "properties": {
-                "component_id": {
-                    "type": "string"
-                },
                 "name": {
                     "type": "string"
                 },
-                "values": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/characters.ComponentValue"
-                    }
+                "type": {
+                    "$ref": "#/definitions/nodes.NodeTypeResponse"
+                },
+                "value": {
+                    "type": "object"
                 }
+            }
+        },
+        "characters.ComponentMap": {
+            "type": "object",
+            "additionalProperties": {
+                "$ref": "#/definitions/characters.Component"
             }
         },
         "characters.ComponentValue": {
@@ -1349,6 +1401,51 @@ const docTemplate = `{
                 },
                 "value": {
                     "description": "actual value from component"
+                }
+            }
+        },
+        "characters.Component_": {
+            "type": "object",
+            "properties": {
+                "component_id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "values": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/characters.ComponentValue"
+                    }
+                }
+            }
+        },
+        "characters.Entity": {
+            "type": "object",
+            "properties": {
+                "components": {
+                    "$ref": "#/definitions/characters.EntityComponents"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "characters.EntityComponents": {
+            "type": "object",
+            "properties": {
+                "dynamic_components": {
+                    "$ref": "#/definitions/characters.ComponentMap"
+                },
+                "static_components": {
+                    "$ref": "#/definitions/characters.ComponentMap"
                 }
             }
         },
@@ -1377,19 +1474,11 @@ const docTemplate = `{
                 }
             }
         },
-        "controllers.EnumRestrictions": {
-            "type": "object",
-            "properties": {
-                "optional": {
-                    "type": "boolean"
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
+        "components.ValidateValue": {
+            "type": "object"
+        },
+        "components.ValidateValues": {
+            "type": "object"
         },
         "create.CreateCharacterBody": {
             "type": "object",
@@ -1549,6 +1638,42 @@ const docTemplate = `{
                 }
             }
         },
+        "shared_types.EnumRestrictions": {
+            "type": "object",
+            "properties": {
+                "optional": {
+                    "type": "boolean"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "shared_types.MultipleNodeValidation": {
+            "type": "object",
+            "properties": {
+                "node_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "node_values": {
+                    "type": "object"
+                }
+            }
+        },
+        "shared_types.NodeList": {
+            "type": "object",
+            "properties": {
+                "node_values": {
+                    "type": "object"
+                }
+            }
+        },
         "structs.PostResponse": {
             "type": "object",
             "properties": {
@@ -1608,28 +1733,6 @@ const docTemplate = `{
                 },
                 "role": {
                     "type": "string"
-                }
-            }
-        },
-        "validate.MultipleNodeValidation": {
-            "type": "object",
-            "properties": {
-                "node_ids": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "node_values": {
-                    "type": "object"
-                }
-            }
-        },
-        "validate.NodeList": {
-            "type": "object",
-            "properties": {
-                "node_values": {
-                    "type": "object"
                 }
             }
         }

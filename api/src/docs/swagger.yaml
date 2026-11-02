@@ -68,32 +68,25 @@ definitions:
       username:
         type: string
     type: object
-  characterGet.ComponentValue:
-    additionalProperties:
-      properties:
-        type:
-          $ref: '#/definitions/nodes.NodeTypeResponse'
-        value:
-          type: object
-      type: object
-    type: object
-  characterGet.GetResponse:
-    properties:
-      dynamic_components:
-        $ref: '#/definitions/characterGet.ComponentValue'
-      static_components:
-        $ref: '#/definitions/characterGet.ComponentValue'
-    type: object
   characters.CharacterReadResponse:
     properties:
       components:
         items:
-          $ref: '#/definitions/characters.Component'
+          $ref: '#/definitions/characters.Component_'
         type: array
       name:
         type: string
     type: object
   characters.Component:
+    properties:
+      name:
+        type: string
+      type:
+        $ref: '#/definitions/nodes.NodeTypeResponse'
+      value:
+        type: object
+    type: object
+  characters.Component_:
     properties:
       component_id:
         type: string
@@ -103,6 +96,10 @@ definitions:
         items:
           $ref: '#/definitions/characters.ComponentValue'
         type: array
+    type: object
+  characters.ComponentMap:
+    additionalProperties:
+      $ref: '#/definitions/characters.Component'
     type: object
   characters.ComponentValue:
     properties:
@@ -118,6 +115,24 @@ definitions:
         type: string
       value:
         description: actual value from component
+    type: object
+  characters.Entity:
+    properties:
+      components:
+        $ref: '#/definitions/characters.EntityComponents'
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  characters.EntityComponents:
+    properties:
+      dynamic_components:
+        $ref: '#/definitions/characters.ComponentMap'
+      static_components:
+        $ref: '#/definitions/characters.ComponentMap'
     type: object
   characters.RowReadResponse:
     properties:
@@ -135,14 +150,9 @@ definitions:
       player_id:
         type: string
     type: object
-  controllers.EnumRestrictions:
-    properties:
-      optional:
-        type: boolean
-      tags:
-        items:
-          type: string
-        type: array
+  components.ValidateValue:
+    type: object
+  components.ValidateValues:
     type: object
   create.CreateCharacterBody:
     properties:
@@ -246,6 +256,29 @@ definitions:
       name:
         type: string
     type: object
+  shared_types.EnumRestrictions:
+    properties:
+      optional:
+        type: boolean
+      tags:
+        items:
+          type: string
+        type: array
+    type: object
+  shared_types.MultipleNodeValidation:
+    properties:
+      node_ids:
+        items:
+          type: string
+        type: array
+      node_values:
+        type: object
+    type: object
+  shared_types.NodeList:
+    properties:
+      node_values:
+        type: object
+    type: object
   structs.PostResponse:
     properties:
       id:
@@ -285,20 +318,6 @@ definitions:
         type: string
       role:
         type: string
-    type: object
-  validate.MultipleNodeValidation:
-    properties:
-      node_ids:
-        items:
-          type: string
-        type: array
-      node_values:
-        type: object
-    type: object
-  validate.NodeList:
-    properties:
-      node_values:
-        type: object
     type: object
 info:
   contact: {}
@@ -359,7 +378,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/characterGet.GetResponse'
+            $ref: '#/definitions/characters.Entity'
       summary: get character infos from the db
       tags:
       - character
@@ -463,6 +482,56 @@ paths:
       summary: create a character in the db
       tags:
       - character
+  /api/:ruleset_id/component/:id/validate:
+    post:
+      consumes:
+      - application/json
+      description: validate a component with component map
+      parameters:
+      - description: ruleset related informations that will be later needed for the
+          login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/components.ValidateValue'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Empty Object
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: validate a component with component map
+      tags:
+      - components
+  /api/:ruleset_id/component/validate:
+    post:
+      consumes:
+      - application/json
+      description: validate mmultiple component with component map
+      parameters:
+      - description: ruleset related informations that will be later needed for the
+          login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/components.ValidateValues'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Empty Object
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: validate multiple components with component map
+      tags:
+      - components
   /api/:ruleset_id/enums/get_by_restrictions:
     post:
       consumes:
@@ -475,7 +544,7 @@ paths:
         name: creds
         required: true
         schema:
-          $ref: '#/definitions/controllers.EnumRestrictions'
+          $ref: '#/definitions/shared_types.EnumRestrictions'
       produces:
       - application/json
       responses:
@@ -553,7 +622,7 @@ paths:
         name: creds
         required: true
         schema:
-          $ref: '#/definitions/validate.MultipleNodeValidation'
+          $ref: '#/definitions/shared_types.MultipleNodeValidation'
       produces:
       - application/json
       responses:
@@ -578,7 +647,7 @@ paths:
         name: creds
         required: true
         schema:
-          $ref: '#/definitions/validate.NodeList'
+          $ref: '#/definitions/shared_types.NodeList'
       produces:
       - application/json
       responses:

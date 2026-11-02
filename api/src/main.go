@@ -137,6 +137,7 @@ func main() {
 			component_group := rulesetGroup.Group("/component")
 			{
 				component_group.POST("/:id/validate", components.ValidateComponent)
+				component_group.POST("/validate", components.ValidateComponents)
 				// nodeGroup.POST("/validate", nodes.ValidateNodes)
 			}
 		}

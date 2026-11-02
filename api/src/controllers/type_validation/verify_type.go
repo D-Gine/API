@@ -31,13 +31,17 @@ func VerifyType(ctx *gin.Context, componentList *shared_types.ComponentMap, valu
 }
 
 func ValidateRowTypes(ctx *gin.Context, componentList *shared_types.ComponentMap, rows *sql.Rows) (err error, errors_map map[string]string, count int) {
+	return ValidateRowTypesWithValues(ctx, componentList, componentList, rows)
+}
+
+func ValidateRowTypesWithValues(ctx *gin.Context, toVerify *shared_types.ComponentMap, componentList *shared_types.ComponentMap, rows *sql.Rows) (err error, errors_map map[string]string, count int) {
 	errors_map = make(map[string]string)
 	var result shared_types.ComponentVerification
 	for count = 0; rows.Next(); count++ {
 		if err = rows.Scan(&result.ComponentId, &result.BaseName, pq.Array(&result.Scripts), &result.Restrictions); err != nil {
 			return
 		}
-		if type_err := VerifyType(ctx, componentList, (*componentList)[result.ComponentId], result); type_err != nil {
+		if type_err := VerifyType(ctx, componentList, (*toVerify)[result.ComponentId], result); type_err != nil {
 			errors_map[result.ComponentId] = type_err.Error()
 		}
 	}
