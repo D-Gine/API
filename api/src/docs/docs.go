@@ -516,7 +516,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "components"
+                    "type"
                 ],
                 "summary": "generate a type value with component map",
                 "parameters": [
@@ -553,7 +553,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "components"
+                    "type"
                 ],
                 "summary": "validate a type value with component map",
                 "parameters": [
@@ -590,7 +590,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "components"
+                    "type"
                 ],
                 "summary": "generate multiple type values with component map",
                 "parameters": [
@@ -627,7 +627,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "components"
+                    "type"
                 ],
                 "summary": "validate multiple types with component map",
                 "parameters": [

@@ -37,7 +37,7 @@ func generateTypesByIds(
 // @Summary generate a type value with component map
 // @Schemes
 // @Description generate a type value with component map
-// @Tags components
+// @Tags type
 // @Accept json
 // @Produce json
 // @Param creds body shared_types.ComponentMap true "ruleset related informations that will be later needed for the login process"
@@ -66,7 +66,7 @@ func GenerateType(ctx *gin.Context) {
 // @Summary generate multiple type values with component map
 // @Schemes
 // @Description generate multiple type values with component map
-// @Tags components
+// @Tags type
 // @Accept json
 // @Produce json
 // @Param creds body TypeGenerationMultipleBody true "ruleset related informations that will be later needed for the login process"

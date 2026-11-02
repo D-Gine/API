@@ -712,7 +712,7 @@ paths:
             type: object
       summary: generate a type value with component map
       tags:
-      - components
+      - type
   /api/:ruleset_id/type/:id/validate:
     post:
       consumes:
@@ -737,7 +737,7 @@ paths:
             type: object
       summary: validate a type value with component map
       tags:
-      - components
+      - type
   /api/:ruleset_id/type/generate:
     post:
       consumes:
@@ -762,7 +762,7 @@ paths:
             type: object
       summary: generate multiple type values with component map
       tags:
-      - components
+      - type
   /api/:ruleset_id/type/validate:
     post:
       consumes:
@@ -787,7 +787,7 @@ paths:
             type: object
       summary: validate multiple types with component map
       tags:
-      - components
+      - type
   /api/CRUDTEMPLATEs:
     get:
       description: ⚠️ Only accessible to admins ⚠️<br><br>Reads all CRUDTEMPLATEs

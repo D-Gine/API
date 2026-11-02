@@ -51,7 +51,7 @@ func ValidateTypesValues(
 // @Summary validate a type value with component map
 // @Schemes
 // @Description validate a type value with component map
-// @Tags components
+// @Tags type
 // @Accept json
 // @Produce json
 // @Param creds body ValidateValue true "ruleset related informations that will be later needed for the login process"
@@ -80,7 +80,7 @@ func ValidateType(ctx *gin.Context) {
 // @Summary validate multiple types with component map
 // @Schemes
 // @Description validate mmultiple types with component map
-// @Tags components
+// @Tags type
 // @Accept json
 // @Produce json
 // @Param creds body ValidateValues true "ruleset related informations that will be later needed for the login process"
