@@ -69,12 +69,12 @@ func GenerateType(ctx *gin.Context) {
 // @Tags type
 // @Accept json
 // @Produce json
-// @Param creds body TypeGenerationMultipleBody true "ruleset related informations that will be later needed for the login process"
+// @Param creds body shared_types.GenerationMultipleBody true "ruleset related informations that will be later needed for the login process"
 // @Success 200 {object} map[string]object "generated components"
 // @Router /api/:ruleset_id/type/generate [post]
 func GenerateTypes(ctx *gin.Context) {
 	// ruleset_id := ctx.Param("ruleset_id")
-	var body TypeGenerationMultipleBody
+	var body shared_types.GenerationMultipleBody
 	if err := ctx.ShouldBindBodyWithJSON(&body); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request: Invalid body"})
 		return

@@ -14,8 +14,3 @@ type ValidateValues struct {
 	Values     shared_types.TypeValueMap `json:"values" swaggertype:"object"`
 	Components shared_types.ComponentMap `json:"components"`
 }
-
-type TypeGenerationMultipleBody struct {
-	Ids        []string                  `json:"ids"`
-	Components shared_types.ComponentMap `json:"components"`
-}

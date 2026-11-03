@@ -139,6 +139,8 @@ func main() {
 			{
 				component_group.POST("/:id/validate", components.ValidateComponent)
 				component_group.POST("/validate", components.ValidateComponents)
+				component_group.POST("/:id/generate", components.GenerateComponent)
+				component_group.POST("/generate", components.GenerateComponents)
 			}
 			type_group := rulesetGroup.Group("/type")
 			{
