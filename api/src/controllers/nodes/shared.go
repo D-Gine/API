@@ -7,7 +7,10 @@
 
 package nodes
 
-import "database/sql"
+import (
+	"api/src/controllers/shared_types"
+	"database/sql"
+)
 
 type NodeTypeResponse struct {
 	Id           string         `json:"id"`
@@ -26,8 +29,8 @@ type CurrentTree struct {
 }
 
 type GetNextNodeRequest struct {
-	NodeValues  map[string]any `json:"node_values"`
-	CurrentTree *CurrentTree   `json:"current_tree"`
+	shared_types.NodeList
+	CurrentTree *CurrentTree `json:"current_tree"`
 }
 
 type NextNodeResponse struct {

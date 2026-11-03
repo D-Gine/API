@@ -1841,8 +1841,7 @@ const docTemplate = `{
                     "$ref": "#/definitions/nodes.CurrentTree"
                 },
                 "node_values": {
-                    "type": "object",
-                    "additionalProperties": {}
+                    "type": "object"
                 }
             }
         },

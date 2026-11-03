@@ -220,7 +220,6 @@ definitions:
       current_tree:
         $ref: '#/definitions/nodes.CurrentTree'
       node_values:
-        additionalProperties: {}
         type: object
     type: object
   nodes.GetNextNodeResponse:
