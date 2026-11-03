@@ -64,7 +64,7 @@ func ValidateNodesTypes(ctx *gin.Context, nodeList *shared_types.NodeList, nodeI
 
 // @BasePath api/:ruleset_id/node/:id/validate
 // Nodes godoc
-// @Summary validate one node
+// @Summary Nodes - Validate one
 // @Schemes
 // @Description validate the node present the query<br><br>Will return a json object with one key (the node_id) and the error message as value, empty json object if success
 // @Tags nodes
@@ -95,7 +95,7 @@ func ValidateNode(c *gin.Context) {
 
 // @BasePath api/:ruleset_id/node/validate
 // Nodes godoc
-// @Summary validate multiple nodes
+// @Summary Nodes - Validate multiple
 // @Schemes
 // @Description validate the nodes present in the "node_ids" array in the body<br><br>Will return a json object with every key the invalid nodes and value the error output, empty json object if success
 // @Tags nodes

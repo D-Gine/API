@@ -14,7 +14,7 @@ type CreateCharacterBody struct {
 
 // @BasePath api/:ruleset_id/character/create
 // Nodes godoc
-// @Summary create a character in the db
+// @Summary Character - Create
 // @Schemes
 // @Description create an empty character, returning his ID
 // @Tags character

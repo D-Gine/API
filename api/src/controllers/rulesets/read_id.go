@@ -17,7 +17,7 @@ import (
 
 // @BasePath /api/rulesets
 // Ruleset godoc
-// @Summary Reads given ruleset data
+// @Summary Rulesets - Read ID
 // @Schemes
 // @Description Reads the given ruleset's account data
 // @Tags rulesets

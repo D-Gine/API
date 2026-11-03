@@ -21,9 +21,9 @@ type GenerateDynamicInfos struct {
 
 // @BasePath /api/:ruleset_id/character/:id/submit
 // Nodes godoc
-// @Summary save a character to db and check if valid
+// @Summary Character - Submit
 // @Schemes
-// @Description save the static components into the database and call the type validation scripts on them.
+// @Description save a character to db and check if valid<br>save the static components into the database and call the type validation scripts on them.
 // @Tags character
 // @Accept json
 // @Produce json

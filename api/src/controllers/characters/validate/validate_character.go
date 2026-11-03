@@ -55,7 +55,7 @@ func ValidateDbCharacter(c *gin.Context, id string) (int, error, map[string]stri
 
 // @BasePath api/:ruleset_id/character/:id/validate
 // Nodes godoc
-// @Summary validate an entity
+// @Summary Character - Validate entity
 // @Schemes
 // @Description Validate an entity stored in the database by checking every component
 // @Tags character

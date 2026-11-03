@@ -15,7 +15,7 @@ import (
 
 // @BasePath /api/health
 // Apidata godoc
-// @Summary Healthcheck for the api
+// @Summary Apidata - Health
 // @Schemes
 // @Description Healthcheck used (mainly by docker) to check if the api is up and ready to respond
 // @Tags apidata

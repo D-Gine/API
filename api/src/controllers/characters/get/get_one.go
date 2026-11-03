@@ -11,9 +11,9 @@ import (
 
 // @BasePath api/:ruleset_id/character/:id
 // Nodes godoc
-// @Summary get character infos from the db
+// @Summary Character - Read
 // @Schemes
-// @Description
+// @Description get character infos from the db
 // @Tags character
 // @Accept json
 // @Produce json

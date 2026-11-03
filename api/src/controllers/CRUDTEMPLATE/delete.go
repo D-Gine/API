@@ -17,7 +17,7 @@ import (
 
 // @BasePath /api/CRUDTEMPLATEs
 // CRUDTEMPLATEs godoc
-// @Summary Deletes given CRUDTEMPLATE
+// @Summary CRUDTEMPLATE - Delete
 // @Schemes
 // @Param id query string true "id of the CRUDTEMPLATE to delete"
 // @Description ⚠️ Only accessible to admins ⚠️<br><br>Deletes the given CRUDTEMPLATE<br> <b>Careful, there is no turn back or check, once called, this route will delete the CRUDTEMPLATE no matter what</b> <br> It also deletes all content related to the CRUDTEMPLATE depending on the parameters of the database

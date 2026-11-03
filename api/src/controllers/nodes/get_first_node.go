@@ -10,7 +10,7 @@ import (
 
 // @BasePath /api/nodes
 // Node godoc
-// @Summary Reads first node for a ruleset
+// @Summary Nodes - Get first node
 // @Schemes
 // @Description Returns the first node of the given ruleset with resolved type
 // @Tags nodes

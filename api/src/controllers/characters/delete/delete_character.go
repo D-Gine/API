@@ -9,7 +9,7 @@ import (
 
 // @BasePath api/:ruleset_id/character/:id
 // Nodes godoc
-// @Summary Delete a character in the db
+// @Summary Character - Delete
 // @Schemes
 // @Description Delete an empty character
 // @Tags character

@@ -23,7 +23,7 @@ type UpdateArgs struct {
 
 // @BasePath /api/users
 // Users godoc
-// @Summary Updates given user
+// @Summary Users - Update
 // @Schemes
 // @Description ⚠️ Only accessible to admins ⚠️<br><br>Updates given user with arguments in body
 // @Tags users
