@@ -260,7 +260,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "components"
+                    "nodes"
                 ],
                 "summary": "generate a type value with component map",
                 "parameters": [
@@ -541,6 +541,43 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/structs.PostResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/node/generate": {
+            "post": {
+                "description": "generate multiple type values with component map",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "node"
+                ],
+                "summary": "generate multiple type values with component map",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/shared_types.GenerationMultipleBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "generated components",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "object"
+                            }
                         }
                     }
                 }

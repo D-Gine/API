@@ -134,6 +134,9 @@ func main() {
 			{
 				nodeGroup.POST("/:id/validate", nodes.ValidateNode)
 				nodeGroup.POST("/validate", nodes.ValidateNodes)
+				nodeGroup.POST("/:id/generate", nodes.GenerateNode)
+				nodeGroup.POST("/generate", nodes.GenerateNodes)
+
 			}
 			component_group := rulesetGroup.Group("/component")
 			{

@@ -14,7 +14,7 @@ func generateComponentsByIds(
 	ctx *gin.Context,
 	toGenerate []string,
 	components shared_types.ComponentMap,
-) (shared_types.TypeValueMap, int, error) {
+) (shared_types.ComponentMap, int, error) {
 	rows, err := database.Db.Query(`
 			SELECT
 				sct.id,

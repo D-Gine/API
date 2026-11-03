@@ -541,7 +541,7 @@ paths:
             type: object
       summary: generate a type value with component map
       tags:
-      - components
+      - nodes
   /api/:ruleset_id/component/:id/validate:
     post:
       consumes:
@@ -718,6 +718,31 @@ paths:
       summary: validate multiple nodes
       tags:
       - nodes
+  /api/:ruleset_id/node/generate:
+    post:
+      consumes:
+      - application/json
+      description: generate multiple type values with component map
+      parameters:
+      - description: ruleset related informations that will be later needed for the
+          login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/shared_types.GenerationMultipleBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: generated components
+          schema:
+            additionalProperties:
+              type: object
+            type: object
+      summary: generate multiple type values with component map
+      tags:
+      - node
   /api/:ruleset_id/node/validate:
     post:
       consumes:
