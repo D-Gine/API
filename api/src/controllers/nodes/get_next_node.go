@@ -17,7 +17,7 @@ const maxNextNodeDepth = 67000
 
 // @BasePath /api/nodes
 // Node godoc
-// @Summary Gets next node info for a target node
+// @Summary Nodes - Get next node
 // @Schemes
 // @Description Returns next node metadata for a given target node
 // @Tags nodes

@@ -17,7 +17,7 @@ import (
 
 // @BasePath /api/CRUDTEMPLATEs
 // CRUDTEMPLATEs godoc
-// @Summary Reads all CRUDTEMPLATEs data
+// @Summary CRUDTEMPLATE - Read
 // @Schemes
 // @Description ⚠️ Only accessible to admins ⚠️<br><br>Reads all CRUDTEMPLATEs data
 // @Tags CRUDTEMPLATEs

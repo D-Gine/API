@@ -25,7 +25,6 @@ import (
 	"api/src/controllers/rulesets"
 	"api/src/controllers/users"
 	"api/src/database"
-	_ "api/src/docs"
 	"api/src/internal/apidata"
 	"api/src/internal/config"
 	"fmt"
@@ -65,6 +64,8 @@ func setTrustedProxies(r *gin.Engine) {
 	}
 }
 
+// @title D&GINE API
+// @x-tagGroups [{"name":"User","tags":["auth","account","users"]},{"name":"Game","tags":["rulesets", "character","components","enums","nodes"]},{"name":"Others","tags":["img","apidata"]},{"name":"Dev","tags":["CRUDTEMPLATEs","dev"]}]
 func main() {
 	port := ":" + os.Getenv("API_PORT")
 	config.LoadConfig()
@@ -152,11 +153,18 @@ func main() {
 		}
 
 	}
+
+	r.GET("/scalar", apidata.ScalarDoc)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(
 		swaggerfiles.Handler,
 		ginSwagger.DefaultModelsExpandDepth(-1),
 		ginSwagger.DocExpansion("none"),
 	))
+
+	// r.GET("/swagger/doc.json", func(c *gin.Context) {
+	// 	c.Header("Content-Type", "application/json")
+	// 	c.String(http.StatusOK, docs.SwaggerInfo.ReadDoc())
+	// })
 
 	img := r.Group("/img", CORSMiddleware)
 	img.GET("/*filepath", fileserver.GetImage)

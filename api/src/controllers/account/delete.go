@@ -20,7 +20,7 @@ import (
 
 // @BasePath /api/account
 // Account godoc
-// @Summary Deletes the user's account
+// @Summary Account - Delete
 // @Schemes
 // @Description <b>⚠️ The user must be logged in ⚠️</b><br><br>Deletes the user's account from database, the user will also be logged out<br> <b>Careful, there is no turn back or check, once called, this route will delete the user no matter what</b> <br> It also deletes all content related to the user
 // @Tags account

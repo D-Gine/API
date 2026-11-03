@@ -27,7 +27,7 @@ const docTemplate = `{
                 "tags": [
                     "apidata"
                 ],
-                "summary": "Gives informations about api",
+                "summary": "Apidata - About",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -40,6 +40,7 @@ const docTemplate = `{
         },
         "/api/:ruleset_id/character/:id": {
             "get": {
+                "description": "get character infos from the db",
                 "consumes": [
                     "application/json"
                 ],
@@ -49,7 +50,7 @@ const docTemplate = `{
                 "tags": [
                     "character"
                 ],
-                "summary": "get character infos from the db",
+                "summary": "Character - Read",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",
@@ -65,7 +66,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/characterGet.GetResponse"
+                            "$ref": "#/definitions/characters.Entity"
                         }
                     }
                 }
@@ -81,7 +82,7 @@ const docTemplate = `{
                 "tags": [
                     "character"
                 ],
-                "summary": "Delete a character in the db",
+                "summary": "Character - Delete",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",
@@ -116,7 +117,7 @@ const docTemplate = `{
                 "tags": [
                     "character"
                 ],
-                "summary": "save a character to db",
+                "summary": "Character - Save",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",
@@ -141,7 +142,7 @@ const docTemplate = `{
         },
         "/api/:ruleset_id/character/:id/submit": {
             "put": {
-                "description": "save the static components into the database and call the type validation scripts on them.",
+                "description": "save a character to db and check if valid\u003cbr\u003esave the static components into the database and call the type validation scripts on them.",
                 "consumes": [
                     "application/json"
                 ],
@@ -151,7 +152,7 @@ const docTemplate = `{
                 "tags": [
                     "character"
                 ],
-                "summary": "save a character to db and check if valid",
+                "summary": "Character - Submit",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",
@@ -188,7 +189,7 @@ const docTemplate = `{
                 "tags": [
                     "character"
                 ],
-                "summary": "validate an entity",
+                "summary": "Character - Validate entity",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",
@@ -225,7 +226,7 @@ const docTemplate = `{
                 "tags": [
                     "character"
                 ],
-                "summary": "create a character in the db",
+                "summary": "Character - Create",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",
@@ -250,9 +251,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/:ruleset_id/component/:id/validate": {
+            "post": {
+                "description": "validate a component with component map",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "components"
+                ],
+                "summary": "Components - Validate",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/shared_types.ComponentMap"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empty Object",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/:ruleset_id/enums/get_by_restrictions": {
             "post": {
-                "description": "get enums id, name and description matching the given restrictions",
+                "description": "get enums infos by restrictions : get enums id, name and description matching the given restrictions",
                 "consumes": [
                     "application/json"
                 ],
@@ -262,7 +300,7 @@ const docTemplate = `{
                 "tags": [
                     "enums"
                 ],
-                "summary": "get enums infos by restrictions",
+                "summary": "Enums - Get By Restrictions",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",
@@ -270,7 +308,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.EnumRestrictions"
+                            "$ref": "#/definitions/shared_types.EnumRestrictions"
                         }
                     }
                 ],
@@ -296,7 +334,7 @@ const docTemplate = `{
                 "tags": [
                     "nodes"
                 ],
-                "summary": "Reads first node for a ruleset",
+                "summary": "Nodes - Get first node",
                 "parameters": [
                     {
                         "type": "string",
@@ -328,7 +366,7 @@ const docTemplate = `{
                 "tags": [
                     "nodes"
                 ],
-                "summary": "Gets next node info for a target node",
+                "summary": "Nodes - Get next node",
                 "parameters": [
                     {
                         "type": "string",
@@ -376,7 +414,7 @@ const docTemplate = `{
                 "tags": [
                     "nodes"
                 ],
-                "summary": "validate multiple nodes",
+                "summary": "Nodes - Validate multiple",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",
@@ -384,7 +422,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/validate.MultipleNodeValidation"
+                            "$ref": "#/definitions/shared_types.MultipleNodeValidation"
                         }
                     }
                 ],
@@ -410,7 +448,7 @@ const docTemplate = `{
                 "tags": [
                     "nodes"
                 ],
-                "summary": "validate one node",
+                "summary": "Nodes - Validate one",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",
@@ -418,7 +456,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/validate.NodeList"
+                            "$ref": "#/definitions/shared_types.NodeList"
                         }
                     }
                 ],
@@ -441,7 +479,7 @@ const docTemplate = `{
                 "tags": [
                     "CRUDTEMPLATEs"
                 ],
-                "summary": "Reads all CRUDTEMPLATEs data",
+                "summary": "CRUDTEMPLATE - Read",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -465,7 +503,7 @@ const docTemplate = `{
                 "tags": [
                     "CRUDTEMPLATEs"
                 ],
-                "summary": "Creates a CRUDTEMPLATE",
+                "summary": "CRUDTEMPLATE - Create",
                 "parameters": [
                     {
                         "description": "CRUDTEMPLATE related informations that will be later needed for the login process",
@@ -496,7 +534,7 @@ const docTemplate = `{
                 "tags": [
                     "CRUDTEMPLATEs"
                 ],
-                "summary": "Reads given CRUDTEMPLATE data",
+                "summary": "CRUDTEMPLATE - Read ID",
                 "parameters": [
                     {
                         "type": "string",
@@ -523,7 +561,7 @@ const docTemplate = `{
                 "tags": [
                     "CRUDTEMPLATEs"
                 ],
-                "summary": "Updates given CRUDTEMPLATE",
+                "summary": "CRUDTEMPLATE - Update",
                 "parameters": [
                     {
                         "type": "string",
@@ -553,7 +591,7 @@ const docTemplate = `{
                 "tags": [
                     "CRUDTEMPLATEs"
                 ],
-                "summary": "Deletes given CRUDTEMPLATE",
+                "summary": "CRUDTEMPLATE - Delete",
                 "parameters": [
                     {
                         "type": "string",
@@ -579,7 +617,7 @@ const docTemplate = `{
                 "tags": [
                     "account"
                 ],
-                "summary": "Reads the user's account data",
+                "summary": "Account - Read",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -597,7 +635,7 @@ const docTemplate = `{
                 "tags": [
                     "account"
                 ],
-                "summary": "Updates the user's account",
+                "summary": "Account - Update",
                 "parameters": [
                     {
                         "description": "New arguments to be set in the user",
@@ -623,7 +661,7 @@ const docTemplate = `{
                 "tags": [
                     "account"
                 ],
-                "summary": "Deletes the user's account",
+                "summary": "Account - Delete",
                 "responses": {
                     "204": {
                         "description": "No Content"
@@ -643,7 +681,7 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Connection of a user to an existing account",
+                "summary": "Auth - Login",
                 "parameters": [
                     {
                         "description": "Email + Password combination of the corresponding user",
@@ -671,7 +709,7 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Disconnection of the user",
+                "summary": "Auth - Logout",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -691,7 +729,7 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Connection of a new user to a new account",
+                "summary": "Auth - Register",
                 "parameters": [
                     {
                         "description": "User related informations that will be later needed for the login process",
@@ -830,7 +868,7 @@ const docTemplate = `{
                 "tags": [
                     "dev"
                 ],
-                "summary": "Transmit a request via API",
+                "summary": "Dev - Callengine",
                 "parameters": [
                     {
                         "description": "address of the address to call",
@@ -861,7 +899,7 @@ const docTemplate = `{
                 "tags": [
                     "apidata"
                 ],
-                "summary": "Healthcheck for the api",
+                "summary": "Apidata - Health",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -881,7 +919,7 @@ const docTemplate = `{
                 "tags": [
                     "rulesets"
                 ],
-                "summary": "Reads all rulesets data",
+                "summary": "Rulesets - Read",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -905,7 +943,7 @@ const docTemplate = `{
                 "tags": [
                     "rulesets"
                 ],
-                "summary": "Creates a ruleset",
+                "summary": "Rulesets - Create",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",
@@ -936,7 +974,7 @@ const docTemplate = `{
                 "tags": [
                     "rulesets"
                 ],
-                "summary": "Reads given ruleset data",
+                "summary": "Rulesets - Read ID",
                 "parameters": [
                     {
                         "type": "string",
@@ -963,7 +1001,7 @@ const docTemplate = `{
                 "tags": [
                     "rulesets"
                 ],
-                "summary": "Updates given ruleset",
+                "summary": "Rulesets - Update",
                 "parameters": [
                     {
                         "type": "string",
@@ -993,7 +1031,7 @@ const docTemplate = `{
                 "tags": [
                     "rulesets"
                 ],
-                "summary": "Deletes given ruleset",
+                "summary": "Rulesets - Delete",
                 "parameters": [
                     {
                         "type": "string",
@@ -1019,7 +1057,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Reads all users data",
+                "summary": "Users - Read",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1043,7 +1081,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Creates a user",
+                "summary": "Users - Create",
                 "parameters": [
                     {
                         "description": "User related informations that will be later needed for the login process",
@@ -1074,7 +1112,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Reads given user data",
+                "summary": "Users - Read ID",
                 "parameters": [
                     {
                         "type": "string",
@@ -1101,7 +1139,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Updates given user",
+                "summary": "Users - Update",
                 "parameters": [
                     {
                         "type": "string",
@@ -1131,7 +1169,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Deletes given user",
+                "summary": "Users - Delete",
                 "parameters": [
                     {
                         "type": "string",
@@ -1148,7 +1186,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/img/:filepath:": {
+        "/img/:filepath": {
             "get": {
                 "description": "Reads an image file",
                 "produces": [
@@ -1157,7 +1195,7 @@ const docTemplate = `{
                 "tags": [
                     "img"
                 ],
-                "summary": "Reads an image file",
+                "summary": "Img - Read",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -1275,38 +1313,13 @@ const docTemplate = `{
                 }
             }
         },
-        "characterGet.ComponentValue": {
-            "type": "object",
-            "additionalProperties": {
-                "type": "object",
-                "properties": {
-                    "type": {
-                        "$ref": "#/definitions/nodes.NodeTypeResponse"
-                    },
-                    "value": {
-                        "type": "object"
-                    }
-                }
-            }
-        },
-        "characterGet.GetResponse": {
-            "type": "object",
-            "properties": {
-                "dynamic_components": {
-                    "$ref": "#/definitions/characterGet.ComponentValue"
-                },
-                "static_components": {
-                    "$ref": "#/definitions/characterGet.ComponentValue"
-                }
-            }
-        },
         "characters.CharacterReadResponse": {
             "type": "object",
             "properties": {
                 "components": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/characters.Component"
+                        "$ref": "#/definitions/characters.Component_"
                     }
                 },
                 "name": {
@@ -1317,18 +1330,21 @@ const docTemplate = `{
         "characters.Component": {
             "type": "object",
             "properties": {
-                "component_id": {
-                    "type": "string"
-                },
                 "name": {
                     "type": "string"
                 },
-                "values": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/characters.ComponentValue"
-                    }
+                "type": {
+                    "$ref": "#/definitions/nodes.NodeTypeResponse"
+                },
+                "value": {
+                    "type": "object"
                 }
+            }
+        },
+        "characters.ComponentMap": {
+            "type": "object",
+            "additionalProperties": {
+                "$ref": "#/definitions/characters.Component"
             }
         },
         "characters.ComponentValue": {
@@ -1349,6 +1365,51 @@ const docTemplate = `{
                 },
                 "value": {
                     "description": "actual value from component"
+                }
+            }
+        },
+        "characters.Component_": {
+            "type": "object",
+            "properties": {
+                "component_id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "values": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/characters.ComponentValue"
+                    }
+                }
+            }
+        },
+        "characters.Entity": {
+            "type": "object",
+            "properties": {
+                "components": {
+                    "$ref": "#/definitions/characters.EntityComponents"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "characters.EntityComponents": {
+            "type": "object",
+            "properties": {
+                "dynamic_components": {
+                    "$ref": "#/definitions/characters.ComponentMap"
+                },
+                "static_components": {
+                    "$ref": "#/definitions/characters.ComponentMap"
                 }
             }
         },
@@ -1374,20 +1435,6 @@ const docTemplate = `{
                 },
                 "player_id": {
                     "type": "string"
-                }
-            }
-        },
-        "controllers.EnumRestrictions": {
-            "type": "object",
-            "properties": {
-                "optional": {
-                    "type": "boolean"
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
                 }
             }
         },
@@ -1477,8 +1524,7 @@ const docTemplate = `{
                     "$ref": "#/definitions/nodes.CurrentTree"
                 },
                 "node_values": {
-                    "type": "object",
-                    "additionalProperties": {}
+                    "type": "object"
                 }
             }
         },
@@ -1549,6 +1595,45 @@ const docTemplate = `{
                 }
             }
         },
+        "shared_types.ComponentMap": {
+            "type": "object"
+        },
+        "shared_types.EnumRestrictions": {
+            "type": "object",
+            "properties": {
+                "optional": {
+                    "type": "boolean"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "shared_types.MultipleNodeValidation": {
+            "type": "object",
+            "properties": {
+                "node_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "node_values": {
+                    "type": "object"
+                }
+            }
+        },
+        "shared_types.NodeList": {
+            "type": "object",
+            "properties": {
+                "node_values": {
+                    "type": "object"
+                }
+            }
+        },
         "structs.PostResponse": {
             "type": "object",
             "properties": {
@@ -1610,30 +1695,42 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
-        },
-        "validate.MultipleNodeValidation": {
-            "type": "object",
-            "properties": {
-                "node_ids": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "node_values": {
-                    "type": "object"
-                }
-            }
-        },
-        "validate.NodeList": {
-            "type": "object",
-            "properties": {
-                "node_values": {
-                    "type": "object"
-                }
-            }
         }
-    }
+    },
+    "x-tagGroups": [
+        {
+            "name": "User",
+            "tags": [
+                "auth",
+                "account",
+                "users"
+            ]
+        },
+        {
+            "name": "Game",
+            "tags": [
+                "rulesets",
+                "character",
+                "components",
+                "enums",
+                "nodes"
+            ]
+        },
+        {
+            "name": "Others",
+            "tags": [
+                "img",
+                "apidata"
+            ]
+        },
+        {
+            "name": "Dev",
+            "tags": [
+                "CRUDTEMPLATEs",
+                "dev"
+            ]
+        }
+    ]
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
@@ -1642,7 +1739,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "",
+	Title:            "D&GINE API",
 	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

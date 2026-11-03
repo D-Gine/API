@@ -12,7 +12,7 @@ import (
 
 // @BasePath /api/:ruleset_id/component/:id/validate
 // Nodes godoc
-// @Summary validate a component with component map
+// @Summary Components - Validate
 // @Schemes
 // @Description validate a component with component map
 // @Tags components

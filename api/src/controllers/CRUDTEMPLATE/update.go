@@ -20,7 +20,7 @@ type UpdateArgs struct {
 
 // @BasePath /api/CRUDTEMPLATEs
 // CRUDTEMPLATEs godoc
-// @Summary Updates given CRUDTEMPLATE
+// @Summary CRUDTEMPLATE - Update
 // @Schemes
 // @Description ⚠️ Only accessible to admins ⚠️<br><br>Updates given CRUDTEMPLATE with arguments in body
 // @Tags CRUDTEMPLATEs

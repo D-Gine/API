@@ -49,7 +49,7 @@ docker compose up --build -d
 
 ## Doc
 You have access to routes documentations via Swagger, it must be and shall be updated with each new feature on the API
-<br>To access the swagger, go to [THIS LINK](http://localhost:8090/swagger/index.html) once you started the API on your computer
+<br>To access the swagger, go to [THIS LINK](http://localhost:8090/scalar) once you started the API on your computer
 
 ## Participate
 You can add features whenever you feel like, but keep in mind to document them (in the swagger if they are routes)

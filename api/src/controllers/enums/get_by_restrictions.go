@@ -17,9 +17,9 @@ type EnumInfos struct {
 
 // @BasePath api/:ruleset_id/enums/get_by_restrictions
 // Nodes godoc
-// @Summary get enums infos by restrictions
+// @Summary Enums - Get By Restrictions
 // @Schemes
-// @Description get enums id, name and description matching the given restrictions
+// @Description get enums infos by restrictions : get enums id, name and description matching the given restrictions
 // @Tags enums
 // @Accept json
 // @Produce json

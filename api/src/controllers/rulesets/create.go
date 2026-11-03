@@ -23,7 +23,7 @@ type CreateRulesetsArgs struct {
 
 // @BasePath /api/rulesets
 // Rulesets godoc
-// @Summary Creates a ruleset
+// @Summary Rulesets - Create
 // @Schemes
 // @Description Creates a ruleset with arguments in body<br><br>Will return the id of created ruleset
 // @Tags rulesets
