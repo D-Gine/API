@@ -9,15 +9,15 @@ import (
 
 // @BasePath api/:ruleset_id/character/:id
 // Nodes godoc
-// @Summary Delete a character in the db
+// @Summary Character - Delete
 // @Schemes
 // @Description Delete an empty character
 // @Tags character
 // @Accept json
 // @Produce json
-// @Param creds body DeleteRulesetsArgs true "ruleset related informations that will be later needed for the login process"
-// @Success 200 {object} structs.PostResponse
-// @Router api/:ruleset_id/character/:id [put]
+// @Param creds body string true "ruleset related informations that will be later needed for the login process"
+// @Success 200 {object} map[string]any "Empty object"
+// @Router /api/:ruleset_id/character/:id [delete]
 func DeleteCharater(c *gin.Context) {
 	character_id := c.Param("id")
 

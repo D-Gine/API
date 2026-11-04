@@ -73,7 +73,7 @@ func (e *StarlarkEngine) Eval(ctx context.Context, script string, function strin
 		return nil, err
 	}
 
-	globals, err := starlark.ExecFileOptions(&syntax.FileOptions{}, &starlark.Thread{Name: function}, "script.star", script, nil)
+	globals, err := starlark.ExecFileOptions(&syntax.FileOptions{While: true}, &starlark.Thread{Name: function}, "script.star", script, nil)
 	if err != nil {
 		return nil, fmt.Errorf("starlark exec error: %w", err)
 	}

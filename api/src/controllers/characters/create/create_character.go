@@ -14,15 +14,15 @@ type CreateCharacterBody struct {
 
 // @BasePath api/:ruleset_id/character/create
 // Nodes godoc
-// @Summary create a character in the db
+// @Summary Character - Create
 // @Schemes
 // @Description create an empty character, returning his ID
 // @Tags character
 // @Accept json
 // @Produce json
-// @Param creds body CreateRulesetsArgs true "ruleset related informations that will be later needed for the login process"
-// @Success 200 {object} structs.PostResponse
-// @Router api/:ruleset_id/character/create [put]
+// @Param creds body CreateCharacterBody true "ruleset related informations that will be later needed for the login process"
+// @Success 201 {object} map[string]string "Created character ID"
+// @Router /api/:ruleset_id/character/create [post]
 func CreateCharater(c *gin.Context) {
 	// user_id := get_user_id(c)
 	ruleset := c.Param("ruleset_id")

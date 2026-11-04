@@ -1,7 +1,7 @@
-package validate
+package type_validation
 
 import (
-	"api/src/controllers"
+	"api/src/controllers/shared_types"
 	"encoding/json"
 	"fmt"
 
@@ -9,21 +9,21 @@ import (
 )
 
 func InitBaseTypeVerification[Value any, Restrictions interface {
-	GetBaseRestrictions() controllers.BaseRestrictions
+	GetBaseRestrictions() shared_types.BaseRestrictions
 }](
 	ctx *gin.Context,
-	nodeList *controllers.ComponentMap,
+	nodeList *shared_types.ComponentMap,
 	name string,
 	valueJson json.RawMessage,
 	restrictionsJson json.RawMessage,
-	verifyFunc func(*gin.Context, *controllers.ComponentMap, Value, Restrictions) error) error {
+	verifyFunc func(*gin.Context, *shared_types.ComponentMap, Value, Restrictions) error) error {
 
 	var value *Value
 
 	if err := json.Unmarshal(valueJson, &value); err != nil {
 		return fmt.Errorf(`invalid value for "%s": %w`, name, err)
 	}
-	restrictions, err := controllers.ParseRestriction[Restrictions](name, restrictionsJson)
+	restrictions, err := shared_types.ParseRestriction[Restrictions](name, restrictionsJson)
 	if err != nil {
 		return err
 	}
@@ -42,7 +42,7 @@ func InitBaseTypeVerification[Value any, Restrictions interface {
 	return nil
 }
 
-func ValidateBaseType(ctx *gin.Context, nodeList *controllers.ComponentMap, valueJson json.RawMessage, name string, restrictionsJson json.RawMessage) error {
+func ValidateBaseType(ctx *gin.Context, nodeList *shared_types.ComponentMap, valueJson json.RawMessage, name string, restrictionsJson json.RawMessage) error {
 	switch name {
 	case "number":
 		return InitBaseTypeVerification(ctx, nodeList, name, valueJson, restrictionsJson, VerifyNumber)

@@ -1,7 +1,7 @@
 package typegeneration
 
 import (
-	"api/src/controllers"
+	"api/src/controllers/shared_types"
 	"encoding/json"
 	"fmt"
 	"math/rand/v2"
@@ -11,7 +11,7 @@ import (
 	"github.com/lucasjones/reggen"
 )
 
-func generateString(restriction controllers.StringRestrictions) (json.RawMessage, int, error) {
+func generateString(restriction shared_types.StringRestrictions) (json.RawMessage, int, error) {
 	if restriction.RegexExpression != nil && *restriction.RegexExpression != "" {
 		generated, err := reggen.Generate(*restriction.RegexExpression, 10)
 		if err != nil {

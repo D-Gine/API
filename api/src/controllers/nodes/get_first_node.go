@@ -10,14 +10,14 @@ import (
 
 // @BasePath /api/nodes
 // Node godoc
-// @Summary Reads first node for a ruleset
+// @Summary Nodes - Get first node
 // @Schemes
 // @Description Returns the first node of the given ruleset with resolved type
 // @Tags nodes
 // @Param ruleset_id path string true "id of the ruleset"
 // @Produce json
 // @Success 200 {object} FirstNodeResponse
-// @Router /api/nodes/{ruleset_id}/first_node [get]
+// @Router /api/:ruleset_id/first_node [get]
 func ReadRulesetFirstNode(c *gin.Context) {
 	rulesetID := c.Param("ruleset_id")
 	if rulesetID == "" {

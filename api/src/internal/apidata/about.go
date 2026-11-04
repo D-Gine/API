@@ -19,7 +19,7 @@ type About struct {
 
 // Apidata godoc
 // @BasePath /about.json
-// @Summary Gives informations about api
+// @Summary Apidata - About
 // @Schemes
 // @Description Gives informations about api
 // @Tags apidata

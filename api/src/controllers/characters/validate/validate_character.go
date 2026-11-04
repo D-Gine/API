@@ -1,8 +1,8 @@
-package validate
+package characterValidate
 
 import (
-	"api/src/controllers"
-	"api/src/controllers/nodes/validate"
+	"api/src/controllers/shared_types"
+	"api/src/controllers/type_validation"
 	"api/src/database"
 	"database/sql"
 	"encoding/json"
@@ -22,7 +22,7 @@ func ValidateDbCharacter(c *gin.Context, id string) (int, error, map[string]stri
 	if err != nil && err != sql.ErrNoRows {
 		return http.StatusInternalServerError, err, nil
 	}
-	componentList := make(controllers.ComponentMap)
+	componentList := make(shared_types.ComponentMap)
 	if len(rawJSON) > 0 {
 		if err := json.Unmarshal(rawJSON, &componentList); err != nil {
 			return http.StatusInternalServerError, fmt.Errorf("Failed to parse components: %w", err), nil
@@ -37,9 +37,9 @@ func ValidateDbCharacter(c *gin.Context, id string) (int, error, map[string]stri
 	}
 	defer func() { _ = verifyRows.Close() }()
 
-	error_map, _, err := validate.ValidateRowTypes(c, &componentList, verifyRows)
-	if err != nil {
-		return http.StatusBadRequest, err, nil
+	valErr, error_map, _ := type_validation.ValidateRowComponents(c, &componentList, verifyRows)
+	if valErr != nil {
+		return http.StatusBadRequest, valErr, nil
 	}
 
 	if err = verifyRows.Err(); err != nil {
@@ -55,15 +55,15 @@ func ValidateDbCharacter(c *gin.Context, id string) (int, error, map[string]stri
 
 // @BasePath api/:ruleset_id/character/:id/validate
 // Nodes godoc
-// @Summary validate an entity
+// @Summary Character - Validate entity
 // @Schemes
 // @Description Validate an entity stored in the database by checking every component
-// @Tags nodes
+// @Tags character
 // @Accept json
 // @Produce json
-// @Param creds body CreateRulesetsArgs true "ruleset related informations that will be later needed for the login process"
-// @Success 200 {object} structs.PostResponse
-// @Router api/:ruleset_id/character/:id/validate [post]
+// @Param creds body string true "ruleset related informations that will be later needed for the login process"
+// @Success 200 {object} map[string]string "errors"
+// @Router /api/:ruleset_id/character/:id/validate [post]
 func ValidateCharacter(c *gin.Context) {
 	id := c.Param("id")
 	code, err, error_map := ValidateDbCharacter(c, id)

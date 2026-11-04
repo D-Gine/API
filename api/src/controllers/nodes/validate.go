@@ -1,12 +1,10 @@
-package validate
+package nodes
 
 import (
-	"api/src/controllers"
+	shared_types "api/src/controllers/shared_types"
+	validate "api/src/controllers/type_validation"
 	"api/src/database"
-	"api/src/internal/scripting"
-	"encoding/json"
 	"errors"
-	"fmt"
 	"maps"
 	"net/http"
 	"slices"
@@ -15,28 +13,7 @@ import (
 	"github.com/lib/pq"
 )
 
-func runValidateScript(ctx *gin.Context, value json.RawMessage, script string, restrictions json.RawMessage, componentList *controllers.ComponentMap) error {
-	rawResult, err := scripting.ScriptEngine.Eval(
-		ctx.Request.Context(),
-		script,
-		"validate_type",
-		[]any{value, restrictions, *componentList},
-		nil,
-	)
-	if err != nil {
-		return fmt.Errorf("script execution error: %w", err)
-	}
-	stringError, err := scripting.AsOptionalString(rawResult)
-	if err != nil {
-		return fmt.Errorf("script return type error: %w", err)
-	}
-	if stringError == nil {
-		return nil
-	}
-	return errors.New(*stringError)
-}
-
-func ValidateNodesTypes(ctx *gin.Context, nodeList *NodeList, nodeIds []string, rulesetId string) (map[string]string, error) {
+func ValidateNodesTypes(ctx *gin.Context, nodeList *shared_types.NodeList, nodeIds []string, rulesetId string) (map[string]string, error) {
 	nodeKeys := slices.Collect(maps.Keys(nodeList.NodeValues))
 	nodeRows, err := database.Db.Query(`
 		SELECT id, template_id FROM nodes WHERE id = ANY($1)
@@ -45,7 +22,7 @@ func ValidateNodesTypes(ctx *gin.Context, nodeList *NodeList, nodeIds []string, 
 		return nil, err
 	}
 	defer func() { _ = nodeRows.Close() }()
-	componentList := make(controllers.ComponentMap)
+	componentList := make(shared_types.ComponentMap)
 	nodeRecoverMap := make(map[string]string)
 	for nodeRows.Next() {
 		var nodeId, compId string
@@ -69,7 +46,7 @@ func ValidateNodesTypes(ctx *gin.Context, nodeList *NodeList, nodeIds []string, 
 	}
 	defer func() { _ = verifyRows.Close() }()
 
-	errorMap, count, err := ValidateRowTypes(ctx, &componentList, verifyRows)
+	err, errorMap, count := validate.ValidateRowComponents(ctx, &componentList, verifyRows)
 	nodeErrorMap := make(map[string]string)
 	for id, v := range errorMap {
 		nodeErrorMap[nodeRecoverMap[id]] = v
@@ -87,17 +64,17 @@ func ValidateNodesTypes(ctx *gin.Context, nodeList *NodeList, nodeIds []string, 
 
 // @BasePath api/:ruleset_id/node/:id/validate
 // Nodes godoc
-// @Summary validate one node
+// @Summary Nodes - Validate one
 // @Schemes
 // @Description validate the node present the query<br><br>Will return a json object with one key (the node_id) and the error message as value, empty json object if success
 // @Tags nodes
 // @Accept json
 // @Produce json
-// @Param creds body CreateRulesetsArgs true "ruleset related informations that will be later needed for the login process"
+// @Param creds body shared_types.NodeList true "ruleset related informations that will be later needed for the login process"
 // @Success 200 {object} structs.PostResponse
-// @Router api/:ruleset_id/node/validate [post]
+// @Router /api/:ruleset_id/node/validate [post]
 func ValidateNode(c *gin.Context) {
-	var body NodeList
+	var body shared_types.NodeList
 	if err := c.ShouldBindBodyWithJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request: Invalid body"})
 		return
@@ -118,17 +95,17 @@ func ValidateNode(c *gin.Context) {
 
 // @BasePath api/:ruleset_id/node/validate
 // Nodes godoc
-// @Summary validate multiple nodes
+// @Summary Nodes - Validate multiple
 // @Schemes
 // @Description validate the nodes present in the "node_ids" array in the body<br><br>Will return a json object with every key the invalid nodes and value the error output, empty json object if success
 // @Tags nodes
 // @Accept json
 // @Produce json
-// @Param creds body CreateRulesetsArgs true "ruleset related informations that will be later needed for the login process"
+// @Param creds body shared_types.MultipleNodeValidation true "ruleset related informations that will be later needed for the login process"
 // @Success 200 {object} structs.PostResponse
-// @Router api/:ruleset_id/node/:id/validate [post]
+// @Router /api/:ruleset_id/node/:id/validate [post]
 func ValidateNodes(c *gin.Context) {
-	var body MultipleNodeValidation
+	var body shared_types.MultipleNodeValidation
 	if err := c.ShouldBindBodyWithJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request: Invalid body"})
 		return

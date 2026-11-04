@@ -24,15 +24,15 @@ type ComponentValue struct {
 	Value    interface{}            `json:"value"`    // actual value from component
 }
 
-type Component struct {
+type Component_ struct {
 	ComponentId string           `json:"component_id"`
 	Name        string           `json:"name"`
 	Values      []ComponentValue `json:"values"`
 }
 
 type CharacterReadResponse struct {
-	Name       string      `json:"name"`
-	Components []Component `json:"components"`
+	Name       string       `json:"name"`
+	Components []Component_ `json:"components"`
 }
 
 // @BasePath /api/characters
@@ -44,7 +44,7 @@ type CharacterReadResponse struct {
 // @Param id path string true "ID of the character to read"
 // @Produce json
 // @Success 200 {object} CharacterReadResponse
-// @Router /api/characters/{id} [get]
+// @Router /api/characters/:id [get]
 func ReadCharactersId(c *gin.Context) {
 	characterId := c.Param("id")
 	if characterId == "" {
@@ -82,7 +82,7 @@ func ReadCharactersId(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-func getEntityComponents(entityId string) ([]Component, error) {
+func getEntityComponents(entityId string) ([]Component_, error) {
 	rows, err := database.Db.Query(`
 		SELECT DISTINCT
 			c.id as component_id,
@@ -98,7 +98,7 @@ func getEntityComponents(entityId string) ([]Component, error) {
 	}
 	defer func() { _ = rows.Close() }()
 
-	var components []Component
+	var components []Component_
 	for rows.Next() {
 		var componentId, componentName string
 		var componentValueJson sql.NullString
@@ -119,7 +119,7 @@ func getEntityComponents(entityId string) ([]Component, error) {
 			continue
 		}
 
-		component := Component{
+		component := Component_{
 			ComponentId: componentId,
 			Name:        componentName,
 			Values:      values,

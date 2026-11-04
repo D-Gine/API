@@ -17,7 +17,7 @@ import (
 
 // @BasePath /api/rulesets
 // rulesets godoc
-// @Summary Deletes given ruleset
+// @Summary Rulesets - Delete
 // @Schemes
 // @Param id query string true "id of the ruleset to delete"
 // @Description Deletes the given ruleset<br> <b>Careful, there is no turn back or check, once called, this route will delete the ruleset no matter what</b> <br> It also deletes all content related to the ruleset depending on the parameters of the database

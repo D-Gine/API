@@ -20,7 +20,7 @@ type UpdateArgs struct {
 
 // @BasePath /api/rulesets
 // rulesets godoc
-// @Summary Updates given ruleset
+// @Summary Rulesets - Update
 // @Schemes
 // @Description Updates given ruleset with arguments in body
 // @Tags rulesets

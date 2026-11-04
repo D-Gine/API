@@ -16,15 +16,16 @@ import (
 	characterSave "api/src/controllers/characters/save"
 	characterSubmit "api/src/controllers/characters/submit"
 	characterValidate "api/src/controllers/characters/validate"
+	"api/src/controllers/components"
+	"api/src/controllers/enums"
 
 	"api/src/controllers/dev"
 	"api/src/controllers/fileserver"
 	"api/src/controllers/nodes"
-	"api/src/controllers/nodes/validate"
 	"api/src/controllers/rulesets"
+	"api/src/controllers/types"
 	"api/src/controllers/users"
 	"api/src/database"
-	_ "api/src/docs"
 	"api/src/internal/apidata"
 	"api/src/internal/config"
 	"fmt"
@@ -67,6 +68,8 @@ func setTrustedProxies(r *gin.Engine) {
 	}
 }
 
+// @title D&GINE API
+// @x-tagGroups [{"name":"User","tags":["auth","account","users"]},{"name":"Game","tags":["rulesets", "character","components","enums","nodes"]},{"name":"Others","tags":["img","apidata"]},{"name":"Dev","tags":["CRUDTEMPLATEs","dev"]}]
 func main() {
 	port := ":" + os.Getenv("API_PORT")
 	config.LoadConfig()
@@ -114,6 +117,11 @@ func main() {
 
 		rulesetGroup := api.Group("/:ruleset_id")
 		{
+			enum_group := rulesetGroup.Group("/enums")
+			{
+				enum_group.POST("/get_by_restrictions", enums.GetEnumsByRestrictions)
+			}
+
 			characters_group := rulesetGroup.Group("/character")
 			{
 				characters_group.GET("/:id", characterGet.GetOneCharacter)
@@ -122,12 +130,33 @@ func main() {
 				characters_group.DELETE(":id", charactrerDelete.DeleteCharater)
 				characters_group.PUT(":id/save", characterSave.SaveCharacter)
 				characters_group.PUT(":id/submit", characterSubmit.SumbitCharacter)
+
+				characters_group.GET("/first_node", nodes.ReadRulesetFirstNode)
+				characters_group.POST("/get_next_node/:target_node", nodes.GetNextNode)
 			}
 			nodeGroup := rulesetGroup.Group("/node")
 			{
-				nodeGroup.POST("/:id/validate", validate.ValidateNode)
-				nodeGroup.POST("/validate", validate.ValidateNodes)
+				nodeGroup.POST("/:id/validate", nodes.ValidateNode)
+				nodeGroup.POST("/validate", nodes.ValidateNodes)
+				nodeGroup.POST("/:id/generate", nodes.GenerateNode)
+				nodeGroup.POST("/generate", nodes.GenerateNodes)
+
 			}
+			component_group := rulesetGroup.Group("/component")
+			{
+				component_group.POST("/:id/validate", components.ValidateComponent)
+				component_group.POST("/validate", components.ValidateComponents)
+				component_group.POST("/:id/generate", components.GenerateComponent)
+				component_group.POST("/generate", components.GenerateComponents)
+			}
+			type_group := rulesetGroup.Group("/type")
+			{
+				type_group.POST("/:id/validate", types.ValidateType)
+				type_group.POST("/validate", types.ValidateTypes)
+				type_group.POST("/:id/generate", types.GenerateType)
+				type_group.POST("/generate", types.GenerateTypes)
+			}
+
 		}
 
 		// rulesetsGroup := api.Group("/rulesets", auth.AuthenticateMiddleware, auth.AdminMiddleware)
@@ -140,19 +169,19 @@ func main() {
 			rulesetsGroup.GET("/:id", rulesets.ReadRulesetId)
 		}
 
-		nodesGroup := api.Group("/nodes")
-		{
-			nodesGroup.GET("/:ruleset_id/first_node", nodes.ReadRulesetFirstNode)
-			nodesGroup.POST("/:ruleset_id/get_next_node/:target_node", nodes.GetNextNode)
-
-		}
-
 	}
+
+	r.GET("/scalar", apidata.ScalarDoc)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(
 		swaggerfiles.Handler,
 		ginSwagger.DefaultModelsExpandDepth(-1),
 		ginSwagger.DocExpansion("none"),
 	))
+
+	// r.GET("/swagger/doc.json", func(c *gin.Context) {
+	// 	c.Header("Content-Type", "application/json")
+	// 	c.String(http.StatusOK, docs.SwaggerInfo.ReadDoc())
+	// })
 
 	img := r.Group("/img", CORSMiddleware)
 	img.GET("/*filepath", fileserver.GetImage)

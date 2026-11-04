@@ -1,14 +1,14 @@
 package typegeneration
 
 import (
-	"api/src/controllers"
+	"api/src/controllers/shared_types"
 	"encoding/json"
 	"math"
 	"math/rand/v2"
 	"net/http"
 )
 
-func generateNumber(restriction controllers.NumberRestrictions) (json.RawMessage, int, error) {
+func generateNumber(restriction shared_types.NumberRestrictions) (json.RawMessage, int, error) {
 	min := int64(math.MinInt32)
 	if restriction.Min != nil {
 		min = int64(*restriction.Min)

@@ -27,7 +27,7 @@ type CreateUsersArgs struct {
 
 // @BasePath /api/users
 // Users godoc
-// @Summary Creates a user
+// @Summary Users - Create
 // @Schemes
 // @Description ⚠️ Only accessible to admins ⚠️<br><br>Creates a user with arguments in body
 // @Tags users
