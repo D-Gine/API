@@ -251,6 +251,43 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/:ruleset_id/component/:id/generate": {
+            "post": {
+                "description": "generate a type value with component map",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "nodes"
+                ],
+                "summary": "generate a type value with component map",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/shared_types.ComponentMap"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "generated components",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/:ruleset_id/component/:id/validate": {
             "post": {
                 "description": "validate a component with component map",
@@ -271,7 +308,81 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/shared_types.ComponentMap"
+                            "$ref": "#/definitions/components.ValidateValue"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empty Object",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/component/generate": {
+            "post": {
+                "description": "generate multiple type values with component map",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "components"
+                ],
+                "summary": "generate multiple type values with component map",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/shared_types.GenerationMultipleBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "generated components",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/component/validate": {
+            "post": {
+                "description": "validate mmultiple component with component map",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "components"
+                ],
+                "summary": "validate multiple components with component map",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/components.ValidateValues"
                         }
                     }
                 ],
@@ -436,6 +547,43 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/:ruleset_id/node/generate": {
+            "post": {
+                "description": "generate multiple type values with component map",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "node"
+                ],
+                "summary": "generate multiple type values with component map",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/shared_types.GenerationMultipleBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "generated components",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/:ruleset_id/node/validate": {
             "post": {
                 "description": "validate the node present the query\u003cbr\u003e\u003cbr\u003eWill return a json object with one key (the node_id) and the error message as value, empty json object if success",
@@ -465,6 +613,154 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/structs.PostResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/type/:id/generate": {
+            "post": {
+                "description": "generate a type value with component map",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "type"
+                ],
+                "summary": "generate a type value with component map",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/shared_types.ComponentMap"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "generated components",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/type/:id/validate": {
+            "post": {
+                "description": "validate a type value with component map",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "type"
+                ],
+                "summary": "validate a type value with component map",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.ValidateValue"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empty Object",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/type/generate": {
+            "post": {
+                "description": "generate multiple type values with component map",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "type"
+                ],
+                "summary": "generate multiple type values with component map",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/shared_types.GenerationMultipleBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "generated components",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/type/validate": {
+            "post": {
+                "description": "validate mmultiple types with component map",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "type"
+                ],
+                "summary": "validate multiple types with component map",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.ValidateValues"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empty Object",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -1438,6 +1734,28 @@ const docTemplate = `{
                 }
             }
         },
+        "components.ValidateValue": {
+            "type": "object",
+            "properties": {
+                "components": {
+                    "$ref": "#/definitions/shared_types.ComponentMap"
+                },
+                "value": {
+                    "type": "object"
+                }
+            }
+        },
+        "components.ValidateValues": {
+            "type": "object",
+            "properties": {
+                "components": {
+                    "$ref": "#/definitions/shared_types.ComponentMap"
+                },
+                "values": {
+                    "type": "object"
+                }
+            }
+        },
         "create.CreateCharacterBody": {
             "type": "object",
             "properties": {
@@ -1612,6 +1930,20 @@ const docTemplate = `{
                 }
             }
         },
+        "shared_types.GenerationMultipleBody": {
+            "type": "object",
+            "properties": {
+                "components": {
+                    "$ref": "#/definitions/shared_types.ComponentMap"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "shared_types.MultipleNodeValidation": {
             "type": "object",
             "properties": {
@@ -1639,6 +1971,28 @@ const docTemplate = `{
             "properties": {
                 "id": {
                     "type": "string"
+                }
+            }
+        },
+        "types.ValidateValue": {
+            "type": "object",
+            "properties": {
+                "components": {
+                    "$ref": "#/definitions/shared_types.ComponentMap"
+                },
+                "value": {
+                    "type": "object"
+                }
+            }
+        },
+        "types.ValidateValues": {
+            "type": "object",
+            "properties": {
+                "components": {
+                    "$ref": "#/definitions/shared_types.ComponentMap"
+                },
+                "values": {
+                    "type": "object"
                 }
             }
         },

@@ -30,14 +30,50 @@ func VerifyType(ctx *gin.Context, componentList *shared_types.ComponentMap, valu
 	return nil
 }
 
-func ValidateRowTypes(ctx *gin.Context, componentList *shared_types.ComponentMap, rows *sql.Rows) (err error, errors_map map[string]string, count int) {
+func ValidateRowTypes(
+	ctx *gin.Context,
+	toVerify *shared_types.TypeValueMap,
+	components *shared_types.ComponentMap,
+	rows *sql.Rows,
+) (err error, errors_map map[string]string, count int) {
+	errors_map = make(map[string]string)
+	var result shared_types.TypeVerifications
+	for count = 0; rows.Next(); count++ {
+		if err = rows.Scan(&result.TypeId, &result.BaseName, pq.Array(&result.Scripts), &result.Restrictions); err != nil {
+			return
+		}
+		if type_err := VerifyType(ctx, components, (*toVerify)[result.TypeId], result); type_err != nil {
+			errors_map[result.TypeId] = type_err.Error()
+		}
+	}
+	if err = rows.Err(); err != nil {
+		return
+	}
+	return
+}
+
+func ValidateRowComponents(
+	ctx *gin.Context,
+	components *shared_types.ComponentMap,
+	rows *sql.Rows,
+) (error, map[string]string, int) {
+	return ValidateRowComponentsWithValues(ctx, components, components, rows)
+}
+
+func ValidateRowComponentsWithValues(
+	ctx *gin.Context,
+	toVerify *shared_types.ComponentMap,
+	components *shared_types.ComponentMap,
+	rows *sql.Rows,
+) (err error, errors_map map[string]string, count int) {
+
 	errors_map = make(map[string]string)
 	var result shared_types.ComponentVerification
 	for count = 0; rows.Next(); count++ {
 		if err = rows.Scan(&result.ComponentId, &result.BaseName, pq.Array(&result.Scripts), &result.Restrictions); err != nil {
 			return
 		}
-		if type_err := VerifyType(ctx, componentList, (*componentList)[result.ComponentId], result); type_err != nil {
+		if type_err := VerifyType(ctx, components, (*toVerify)[result.ComponentId], result); type_err != nil {
 			errors_map[result.ComponentId] = type_err.Error()
 		}
 	}

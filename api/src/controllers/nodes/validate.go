@@ -46,7 +46,7 @@ func ValidateNodesTypes(ctx *gin.Context, nodeList *shared_types.NodeList, nodeI
 	}
 	defer verifyRows.Close()
 
-	err, errorMap, count := validate.ValidateRowTypes(ctx, &componentList, verifyRows)
+	err, errorMap, count := validate.ValidateRowComponents(ctx, &componentList, verifyRows)
 	nodeErrorMap := make(map[string]string)
 	for id, v := range errorMap {
 		nodeErrorMap[nodeRecoverMap[id]] = v
