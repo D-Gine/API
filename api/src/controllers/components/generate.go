@@ -28,7 +28,7 @@ func generateComponentsByIds(
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
-	defer rows.Close()
+	defer database.CloseRows(rows)
 
 	generated := make(shared_types.ComponentMap)
 	for rows.Next() {

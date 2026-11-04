@@ -96,7 +96,7 @@ func getEntityComponents(entityId string) ([]Component_, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer func() { _ = rows.Close() }()
+	defer database.CloseRows(rows)
 
 	var components []Component_
 	for rows.Next() {
@@ -146,7 +146,7 @@ func getComponentTemplateValues(componentId string, componentValueMap map[string
 	if err != nil {
 		return nil, err
 	}
-	defer func() { _ = rows.Close() }()
+	defer database.CloseRows(rows)
 
 	var values []ComponentValue
 

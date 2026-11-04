@@ -47,7 +47,7 @@ func CreateCRUDTEMPLATEs(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
 		return
 	}
-	defer func() { _ = rows.Close() }()
+	defer database.CloseRows(rows)
 	if rows.Next() {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": "CRUDTEMPLATE already exists"})
 		return

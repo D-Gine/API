@@ -81,7 +81,7 @@ func findMatchingChild(currentNodeId string, values []ValuePair) (string, error)
 	if err != nil {
 		return "", err
 	}
-	defer func() { _ = rows.Close() }()
+	defer database.CloseRows(rows)
 
 	var childIds []string
 	for rows.Next() {
@@ -170,7 +170,7 @@ func getNodeTemplates(nodeId string) ([]ComponentTemplate, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer func() { _ = rows.Close() }()
+	defer database.CloseRows(rows)
 
 	var templates []ComponentTemplate
 	for rows.Next() {
@@ -239,7 +239,7 @@ func getPossibleValuesByTags(tags []any) ([]PossibleValue, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer func() { _ = rows.Close() }()
+	defer database.CloseRows(rows)
 
 	var possibleValues []PossibleValue
 	for rows.Next() {

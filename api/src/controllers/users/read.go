@@ -31,7 +31,7 @@ func ReadUsers(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
 		return
 	}
-	defer func() { _ = rows.Close() }()
+	defer database.CloseRows(rows)
 	for rows.Next() {
 		var id, name, email, image, role sql.NullString
 		if err := rows.Scan(&id, &name, &email, &image, &role); err != nil {

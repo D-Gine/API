@@ -27,7 +27,7 @@ func generateTypesByIds(
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
-	defer rows.Close()
+	defer database.CloseRows(rows)
 
 	return typegeneration.GenerateRowTypes(ctx, components, rows)
 }

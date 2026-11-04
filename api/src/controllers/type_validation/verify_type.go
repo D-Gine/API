@@ -35,7 +35,7 @@ func ValidateRowTypes(
 	toVerify *shared_types.TypeValueMap,
 	components *shared_types.ComponentMap,
 	rows *sql.Rows,
-) (err error, errors_map map[string]string, count int) {
+) (errors_map map[string]string, count int, err error) {
 	errors_map = make(map[string]string)
 	var result shared_types.TypeVerifications
 	for count = 0; rows.Next(); count++ {
@@ -56,7 +56,7 @@ func ValidateRowComponents(
 	ctx *gin.Context,
 	components *shared_types.ComponentMap,
 	rows *sql.Rows,
-) (error, map[string]string, int) {
+) (map[string]string, int, error) {
 	return ValidateRowComponentsWithValues(ctx, components, components, rows)
 }
 
@@ -65,7 +65,7 @@ func ValidateRowComponentsWithValues(
 	toVerify *shared_types.ComponentMap,
 	components *shared_types.ComponentMap,
 	rows *sql.Rows,
-) (err error, errors_map map[string]string, count int) {
+) (errors_map map[string]string, count int, err error) {
 
 	errors_map = make(map[string]string)
 	var result shared_types.ComponentVerification
