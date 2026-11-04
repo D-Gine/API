@@ -2,40 +2,43 @@
 ** D&GINE Project, 2026
 ** API
 ** File description:
-** user/delete.go
+** characters/delete.go
  */
 
 package characters
 
 import (
 	"api/src/database"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-// @BasePath /api/characters
-// Characters godoc
-// @Summary Deletes given character
+// @BasePath api/:ruleset_id/character/:id
+// Nodes godoc
+// @Summary Characters - Delete
 // @Schemes
-// @Param id query string true "id of the character to do the action on"
-// @Description Deletes the given character<br> <b>Careful, there is no turn back or check, once called, this route will delete the character no matter what</b> <br> It also deletes all content related to the character
+// @Description Delete an empty character
 // @Tags characters
-// @Success 204
-// @Router /api/characters/id [delete]
-func DeleteCharacters(c *gin.Context) {
-	idQuery := c.Request.URL.Query().Get("id")
-	if idQuery == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Wrong parameters"})
+// @Accept json
+// @Produce json
+// @Param creds body string true "ruleset related informations that will be later needed for the login process"
+// @Success 200 {object} map[string]any "Empty object"
+// @Router /api/:ruleset_id/character/:id [delete]
+func DeleteCharater(c *gin.Context) {
+	character_id := c.Param("id")
+
+	// check if character exists with the user
+
+	_, err := database.Db.Exec(`
+		DELETE FROM entities
+		WHERE id = $1
+		`, character_id)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	_, err := database.Db.Exec("DELETE FROM games.characters WHERE id=$1", idQuery)
-	if err != nil {
-		fmt.Println(err)
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error" + err.Error()})
-		return
-	}
-	c.JSON(http.StatusNoContent, nil)
+	c.JSON(http.StatusCreated, gin.H{})
 }

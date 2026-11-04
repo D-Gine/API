@@ -1,4 +1,11 @@
-package save
+/*
+** D&GINE Project, 2026
+** API
+** File description:
+** characters/save.go
+ */
+
+package characters
 
 import (
 	"api/src/controllers/shared_types"
@@ -23,10 +30,10 @@ func WriteCharacterInDb(character_id string, nodes shared_types.NodeList) (int, 
 
 // @BasePath /api/:ruleset_id/character/:id/save
 // Nodes godoc
-// @Summary Character - Save
+// @Summary Characters - Save
 // @Schemes
 // @Description save the static components into the database.
-// @Tags character
+// @Tags characters
 // @Accept json
 // @Produce json
 // @Param creds body string true "ruleset related informations that will be later needed for the login process"
