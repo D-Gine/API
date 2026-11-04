@@ -23,7 +23,7 @@ func WriteCharacterInDb(character_id string, nodes shared_types.NodeList) (int, 
 
 // @BasePath /api/:ruleset_id/character/:id/save
 // Nodes godoc
-// @Summary save a character to db
+// @Summary Character - Save
 // @Schemes
 // @Description save the static components into the database.
 // @Tags character

@@ -23,7 +23,7 @@ type CreateCRUDTEMPLATEsArgs struct {
 
 // @BasePath /api/CRUDTEMPLATEs
 // CRUDTEMPLATEs godoc
-// @Summary Creates a CRUDTEMPLATE
+// @Summary CRUDTEMPLATE - Create
 // @Schemes
 // @Description ⚠️ Only accessible to admins ⚠️<br><br>Creates a CRUDTEMPLATE with arguments in body<br><br>Will return the id of created CRUDTEMPLATE
 // @Tags CRUDTEMPLATEs

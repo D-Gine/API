@@ -89,7 +89,7 @@ func httpRequest(method string, uri string, headers map[string]string, body map[
 
 // @BasePath /api/dev/callengine
 // dev godoc
-// @Summary Transmit a request via API
+// @Summary Dev - Callengine
 // @Schemes
 // @Description Makes a HTTP call to whatever URI given using the method, headers and body given in argument, and returns the response of the call
 // @Tags dev

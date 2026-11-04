@@ -39,7 +39,7 @@ var allowedImageExts = map[string]string{
 
 // @BasePath /api/account
 // Account godoc
-// @Summary Updates the user's account
+// @Summary Account - Update
 // @Schemes
 // @Description <b>⚠️ The user must be logged in ⚠️</b><br><br>Updates the user's account<br><br>The image must be base64 encoded and must contain the file type in the header (ex: data:image/png;base64,...)<br><br>All fields are optionals, if a field is empty or not provided, it will not be updated
 // @Tags account

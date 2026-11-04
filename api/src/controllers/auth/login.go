@@ -24,7 +24,7 @@ type Creds struct {
 
 // @BasePath /api/auth/login
 // Auth godoc
-// @Summary Connection of a user to an existing account
+// @Summary Auth - Login
 // @Schemes
 // @Description Connection of a user to an existing account<br>Token will be set in cookies if the arguments combination is valid
 // @Tags auth

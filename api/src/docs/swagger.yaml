@@ -355,6 +355,7 @@ definitions:
     type: object
 info:
   contact: {}
+  title: D&GINE API
 paths:
   /about.json:
     get:
@@ -368,7 +369,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/apidata.About'
-      summary: Gives informations about api
+      summary: Apidata - About
       tags:
       - apidata
   /api/:ruleset_id/character/:id:
@@ -392,12 +393,13 @@ paths:
           schema:
             additionalProperties: true
             type: object
-      summary: Delete a character in the db
+      summary: Character - Delete
       tags:
       - character
     get:
       consumes:
       - application/json
+      description: get character infos from the db
       parameters:
       - description: ruleset related informations that will be later needed for the
           login process
@@ -413,7 +415,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/characters.Entity'
-      summary: get character infos from the db
+      summary: Character - Read
       tags:
       - character
   /api/:ruleset_id/character/:id/save:
@@ -437,15 +439,15 @@ paths:
           schema:
             additionalProperties: true
             type: object
-      summary: save a character to db
+      summary: Character - Save
       tags:
       - character
   /api/:ruleset_id/character/:id/submit:
     put:
       consumes:
       - application/json
-      description: save the static components into the database and call the type
-        validation scripts on them.
+      description: save a character to db and check if valid<br>save the static components
+        into the database and call the type validation scripts on them.
       parameters:
       - description: ruleset related informations that will be later needed for the
           login process
@@ -463,7 +465,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: save a character to db and check if valid
+      summary: Character - Submit
       tags:
       - character
   /api/:ruleset_id/character/:id/validate:
@@ -488,7 +490,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: validate an entity
+      summary: Character - Validate entity
       tags:
       - character
   /api/:ruleset_id/character/create:
@@ -513,7 +515,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: create a character in the db
+      summary: Character - Create
       tags:
       - character
   /api/:ruleset_id/component/:id/generate:
@@ -563,7 +565,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: validate a component with component map
+      summary: Components - Validate
       tags:
       - components
   /api/:ruleset_id/component/generate:
@@ -620,7 +622,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: get enums id, name and description matching the given restrictions
+      description: 'get enums infos by restrictions : get enums id, name and description
+        matching the given restrictions'
       parameters:
       - description: ruleset related informations that will be later needed for the
           login process
@@ -638,7 +641,7 @@ paths:
             additionalProperties:
               $ref: '#/definitions/enums.EnumInfos'
             type: object
-      summary: get enums infos by restrictions
+      summary: Enums - Get By Restrictions
       tags:
       - enums
   /api/:ruleset_id/first_node:
@@ -657,7 +660,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/nodes.FirstNodeResponse'
-      summary: Reads first node for a ruleset
+      summary: Nodes - Get first node
       tags:
       - nodes
   /api/:ruleset_id/get_next_node/:target_node:
@@ -689,7 +692,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/nodes.GetNextNodeResponse'
-      summary: Gets next node info for a target node
+      summary: Nodes - Get next node
       tags:
       - nodes
   /api/:ruleset_id/node/:id/validate:
@@ -714,7 +717,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/structs.PostResponse'
-      summary: validate multiple nodes
+      summary: Nodes - Validate multiple
       tags:
       - nodes
   /api/:ruleset_id/node/generate:
@@ -764,7 +767,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/structs.PostResponse'
-      summary: validate one node
+      summary: Nodes - Validate one
       tags:
       - nodes
   /api/:ruleset_id/type/:id/generate:
@@ -880,7 +883,7 @@ paths:
             items:
               $ref: '#/definitions/CRUDTEMPLATE.DbReadResponse'
             type: array
-      summary: Reads all CRUDTEMPLATEs data
+      summary: CRUDTEMPLATE - Read
       tags:
       - CRUDTEMPLATEs
     post:
@@ -903,7 +906,7 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/structs.PostResponse'
-      summary: Creates a CRUDTEMPLATE
+      summary: CRUDTEMPLATE - Create
       tags:
       - CRUDTEMPLATEs
   /api/CRUDTEMPLATEs/id:
@@ -921,7 +924,7 @@ paths:
       responses:
         "204":
           description: No Content
-      summary: Deletes given CRUDTEMPLATE
+      summary: CRUDTEMPLATE - Delete
       tags:
       - CRUDTEMPLATEs
     get:
@@ -940,7 +943,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/CRUDTEMPLATE.DbReadResponse'
-      summary: Reads given CRUDTEMPLATE data
+      summary: CRUDTEMPLATE - Read ID
       tags:
       - CRUDTEMPLATEs
     put:
@@ -963,7 +966,7 @@ paths:
       responses:
         "200":
           description: OK
-      summary: Updates given CRUDTEMPLATE
+      summary: CRUDTEMPLATE - Update
       tags:
       - CRUDTEMPLATEs
   /api/account:
@@ -975,7 +978,7 @@ paths:
       responses:
         "204":
           description: No Content
-      summary: Deletes the user's account
+      summary: Account - Delete
       tags:
       - account
     get:
@@ -989,7 +992,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/account.UserReadResponse'
-      summary: Reads the user's account data
+      summary: Account - Read
       tags:
       - account
     put:
@@ -1011,7 +1014,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/auth.PostLoginResponse'
-      summary: Updates the user's account
+      summary: Account - Update
       tags:
       - account
   /api/auth/login:
@@ -1034,7 +1037,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/auth.PostLoginResponse'
-      summary: Connection of a user to an existing account
+      summary: Auth - Login
       tags:
       - auth
   /api/auth/logout:
@@ -1044,7 +1047,7 @@ paths:
       responses:
         "200":
           description: OK
-      summary: Disconnection of the user
+      summary: Auth - Logout
       tags:
       - auth
   /api/auth/register:
@@ -1069,7 +1072,7 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/auth.PostLoginResponse'
-      summary: Connection of a new user to a new account
+      summary: Auth - Register
       tags:
       - auth
   /api/characters:
@@ -1165,7 +1168,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dev.Response'
-      summary: Transmit a request via API
+      summary: Dev - Callengine
       tags:
       - dev
   /api/health:
@@ -1179,7 +1182,7 @@ paths:
           description: OK
           schema:
             type: string
-      summary: Healthcheck for the api
+      summary: Apidata - Health
       tags:
       - apidata
   /api/rulesets:
@@ -1194,7 +1197,7 @@ paths:
             items:
               $ref: '#/definitions/rulesets.DbReadResponse'
             type: array
-      summary: Reads all rulesets data
+      summary: Rulesets - Read
       tags:
       - rulesets
     post:
@@ -1217,7 +1220,7 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/structs.PostResponse'
-      summary: Creates a ruleset
+      summary: Rulesets - Create
       tags:
       - rulesets
   /api/rulesets/id:
@@ -1235,7 +1238,7 @@ paths:
       responses:
         "204":
           description: No Content
-      summary: Deletes given ruleset
+      summary: Rulesets - Delete
       tags:
       - rulesets
     get:
@@ -1253,7 +1256,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/rulesets.DbReadResponse'
-      summary: Reads given ruleset data
+      summary: Rulesets - Read ID
       tags:
       - rulesets
     put:
@@ -1275,7 +1278,7 @@ paths:
       responses:
         "200":
           description: OK
-      summary: Updates given ruleset
+      summary: Rulesets - Update
       tags:
       - rulesets
   /api/users:
@@ -1290,7 +1293,7 @@ paths:
             items:
               $ref: '#/definitions/users.UserReadResponse'
             type: array
-      summary: Reads all users data
+      summary: Users - Read
       tags:
       - users
     post:
@@ -1313,7 +1316,7 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/structs.PostResponse'
-      summary: Creates a user
+      summary: Users - Create
       tags:
       - users
   /api/users/id:
@@ -1331,7 +1334,7 @@ paths:
       responses:
         "204":
           description: No Content
-      summary: Deletes given user
+      summary: Users - Delete
       tags:
       - users
     get:
@@ -1349,7 +1352,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/users.UserReadResponse'
-      summary: Reads given user data
+      summary: Users - Read ID
       tags:
       - users
     put:
@@ -1372,10 +1375,10 @@ paths:
       responses:
         "200":
           description: OK
-      summary: Updates given user
+      summary: Users - Update
       tags:
       - users
-  '/img/:filepath:':
+  /img/:filepath:
     get:
       description: Reads an image file
       produces:
@@ -1383,7 +1386,28 @@ paths:
       responses:
         "200":
           description: OK
-      summary: Reads an image file
+      summary: Img - Read
       tags:
       - img
 swagger: "2.0"
+x-tagGroups:
+- name: User
+  tags:
+  - auth
+  - account
+  - users
+- name: Game
+  tags:
+  - rulesets
+  - character
+  - components
+  - enums
+  - nodes
+- name: Others
+  tags:
+  - img
+  - apidata
+- name: Dev
+  tags:
+  - CRUDTEMPLATEs
+  - dev
