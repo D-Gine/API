@@ -52,7 +52,7 @@ func ValidateComponentsValues(
 
 // @BasePath /api/:ruleset_id/component/:id/validate
 // Nodes godoc
-// @Summary Components - Validate
+// @Summary Components - Validate one
 // @Schemes
 // @Description validate a component with component map
 // @Tags components
@@ -81,7 +81,7 @@ func ValidateComponent(ctx *gin.Context) {
 
 // @BasePath /api/:ruleset_id/component/validate
 // Nodes godoc
-// @Summary validate multiple components with component map
+// @Summary Components - Validate multiple
 // @Schemes
 // @Description validate mmultiple component with component map
 // @Tags components

@@ -48,10 +48,10 @@ func ValidateTypesValues(
 
 // @BasePath /api/:ruleset_id/type/:id/validate
 // Nodes godoc
-// @Summary validate a type value with component map
+// @Summary Types - validate one type
 // @Schemes
 // @Description validate a type value with component map
-// @Tags type
+// @Tags types
 // @Accept json
 // @Produce json
 // @Param creds body ValidateValue true "ruleset related informations that will be later needed for the login process"
@@ -77,10 +77,10 @@ func ValidateType(ctx *gin.Context) {
 
 // @BasePath /api/:ruleset_id/type/validate
 // Nodes godoc
-// @Summary validate multiple types with component map
+// @Summary Types - validate multiple types
 // @Schemes
 // @Description validate mmultiple types with component map
-// @Tags type
+// @Tags types
 // @Accept json
 // @Produce json
 // @Param creds body ValidateValues true "ruleset related informations that will be later needed for the login process"

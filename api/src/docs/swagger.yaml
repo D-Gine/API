@@ -540,7 +540,7 @@ paths:
             additionalProperties:
               type: object
             type: object
-      summary: generate a type value with component map
+      summary: Nodes - generate one
       tags:
       - nodes
   /api/:ruleset_id/component/:id/validate:
@@ -565,7 +565,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Components - Validate
+      summary: Components - Validate one
       tags:
       - components
   /api/:ruleset_id/component/generate:
@@ -590,7 +590,7 @@ paths:
             additionalProperties:
               type: object
             type: object
-      summary: generate multiple type values with component map
+      summary: Components - Generate multiple
       tags:
       - components
   /api/:ruleset_id/component/validate:
@@ -615,7 +615,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: validate multiple components with component map
+      summary: Components - Validate multiple
       tags:
       - components
   /api/:ruleset_id/enums/get_by_restrictions:
@@ -742,9 +742,9 @@ paths:
             additionalProperties:
               type: object
             type: object
-      summary: generate multiple type values with component map
+      summary: Nodes - generate multiple
       tags:
-      - node
+      - nodes
   /api/:ruleset_id/node/validate:
     post:
       consumes:
@@ -792,9 +792,9 @@ paths:
             additionalProperties:
               type: object
             type: object
-      summary: generate a type value with component map
+      summary: Types - generate one type
       tags:
-      - type
+      - types
   /api/:ruleset_id/type/:id/validate:
     post:
       consumes:
@@ -817,9 +817,9 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: validate a type value with component map
+      summary: Types - validate one type
       tags:
-      - type
+      - types
   /api/:ruleset_id/type/generate:
     post:
       consumes:
@@ -842,9 +842,9 @@ paths:
             additionalProperties:
               type: object
             type: object
-      summary: generate multiple type values with component map
+      summary: Types - generate multiple type
       tags:
-      - type
+      - types
   /api/:ruleset_id/type/validate:
     post:
       consumes:
@@ -867,9 +867,9 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: validate multiple types with component map
+      summary: Types - validate multiple types
       tags:
-      - type
+      - types
   /api/CRUDTEMPLATEs:
     get:
       description: ⚠️ Only accessible to admins ⚠️<br><br>Reads all CRUDTEMPLATEs

@@ -34,10 +34,10 @@ func generateTypesByIds(
 
 // @BasePath /api/:ruleset_id/type/:id/generate
 // Nodes godoc
-// @Summary generate a type value with component map
+// @Summary Types - generate one type
 // @Schemes
 // @Description generate a type value with component map
-// @Tags type
+// @Tags types
 // @Accept json
 // @Produce json
 // @Param creds body shared_types.ComponentMap true "ruleset related informations that will be later needed for the login process"
@@ -63,10 +63,10 @@ func GenerateType(ctx *gin.Context) {
 
 // @BasePath /api/:ruleset_id/type/generate
 // Nodes godoc
-// @Summary generate multiple type values with component map
+// @Summary Types - generate multiple type
 // @Schemes
 // @Description generate multiple type values with component map
-// @Tags type
+// @Tags types
 // @Accept json
 // @Produce json
 // @Param creds body shared_types.GenerationMultipleBody true "ruleset related informations that will be later needed for the login process"
