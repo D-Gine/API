@@ -128,6 +128,11 @@ jobs:
         with:
           go-version: '1.27.x'
 
+      - name: Install swag
+        run: |
+          go install github.com/swaggo/swag/cmd/swag@v1.16.6
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+
       - name: Build API
         working-directory: ./api
         run: make build
@@ -135,7 +140,7 @@ jobs:
       - name: Start the API
         working-directory: ./api
         run: |
-          nohup ./api > ../api.log 2>&1 &
+          nohup ./api_bin > ../api.log 2>&1 &
           echo $! > ../server.pid
 
       - name: Wait for API to be ready
