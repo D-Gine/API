@@ -263,7 +263,7 @@ const docTemplate = `{
                 "tags": [
                     "nodes"
                 ],
-                "summary": "generate a type value with component map",
+                "summary": "Nodes - generate one",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",
@@ -300,7 +300,7 @@ const docTemplate = `{
                 "tags": [
                     "components"
                 ],
-                "summary": "Components - Validate",
+                "summary": "Components - Validate one",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",
@@ -337,7 +337,7 @@ const docTemplate = `{
                 "tags": [
                     "components"
                 ],
-                "summary": "generate multiple type values with component map",
+                "summary": "Components - Generate multiple",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",
@@ -374,7 +374,7 @@ const docTemplate = `{
                 "tags": [
                     "components"
                 ],
-                "summary": "validate multiple components with component map",
+                "summary": "Components - Validate multiple",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",
@@ -557,9 +557,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "node"
+                    "nodes"
                 ],
-                "summary": "generate multiple type values with component map",
+                "summary": "Nodes - generate multiple",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",
@@ -628,9 +628,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "type"
+                    "types"
                 ],
-                "summary": "generate a type value with component map",
+                "summary": "Types - generate one type",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",
@@ -665,9 +665,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "type"
+                    "types"
                 ],
-                "summary": "validate a type value with component map",
+                "summary": "Types - validate one type",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",
@@ -702,9 +702,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "type"
+                    "types"
                 ],
-                "summary": "generate multiple type values with component map",
+                "summary": "Types - generate multiple type",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",
@@ -739,9 +739,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "type"
+                    "types"
                 ],
-                "summary": "validate multiple types with component map",
+                "summary": "Types - validate multiple types",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",

@@ -51,7 +51,7 @@ func generateComponentsByIds(
 
 // @BasePath /api/:ruleset_id/component/:id/generate
 // Nodes godoc
-// @Summary generate a type value with component map
+// @Summary Components - Generate one
 // @Schemes
 // @Description generate a type value with component map
 // @Tags components
@@ -80,7 +80,7 @@ func GenerateComponent(ctx *gin.Context) {
 
 // @BasePath /api/:ruleset_id/component/generate
 // Nodes godoc
-// @Summary generate multiple type values with component map
+// @Summary Components - Generate multiple
 // @Schemes
 // @Description generate multiple type values with component map
 // @Tags components
