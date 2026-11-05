@@ -44,7 +44,7 @@ func ValidateDbCharacter(c *gin.Context, id string) (int, error, map[string]stri
 	}
 	defer verifyRows.Close()
 
-	valErr, error_map, _ := type_validation.ValidateRowTypes(c, &componentList, verifyRows)
+	valErr, error_map, _ := type_validation.ValidateRowComponents(c, &componentList, verifyRows)
 	if valErr != nil {
 		return http.StatusBadRequest, valErr, nil
 	}

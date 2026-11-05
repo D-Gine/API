@@ -106,6 +106,20 @@ definitions:
       static_components:
         $ref: '#/definitions/characters.ComponentMap'
     type: object
+  components.ValidateValue:
+    properties:
+      components:
+        $ref: '#/definitions/shared_types.ComponentMap'
+      value:
+        type: object
+    type: object
+  components.ValidateValues:
+    properties:
+      components:
+        $ref: '#/definitions/shared_types.ComponentMap'
+      values:
+        type: object
+    type: object
   dev.CallEngineArgs:
     properties:
       body:
@@ -211,6 +225,15 @@ definitions:
           type: string
         type: array
     type: object
+  shared_types.GenerationMultipleBody:
+    properties:
+      components:
+        $ref: '#/definitions/shared_types.ComponentMap'
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
   shared_types.MultipleNodeValidation:
     properties:
       node_ids:
@@ -229,6 +252,20 @@ definitions:
     properties:
       id:
         type: string
+    type: object
+  types.ValidateValue:
+    properties:
+      components:
+        $ref: '#/definitions/shared_types.ComponentMap'
+      value:
+        type: object
+    type: object
+  types.ValidateValues:
+    properties:
+      components:
+        $ref: '#/definitions/shared_types.ComponentMap'
+      values:
+        type: object
     type: object
   users.CreateUsersArgs:
     properties:
@@ -436,11 +473,11 @@ paths:
       summary: Characters - Create
       tags:
       - characters
-  /api/:ruleset_id/component/:id/validate:
+  /api/:ruleset_id/component/:id/generate:
     post:
       consumes:
       - application/json
-      description: validate a component with component map
+      description: generate a type value with component map
       parameters:
       - description: ruleset related informations that will be later needed for the
           login process
@@ -453,12 +490,87 @@ paths:
       - application/json
       responses:
         "200":
+          description: generated components
+          schema:
+            additionalProperties:
+              type: object
+            type: object
+      summary: Nodes - generate one
+      tags:
+      - nodes
+  /api/:ruleset_id/component/:id/validate:
+    post:
+      consumes:
+      - application/json
+      description: validate a component with component map
+      parameters:
+      - description: ruleset related informations that will be later needed for the
+          login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/components.ValidateValue'
+      produces:
+      - application/json
+      responses:
+        "200":
           description: Empty Object
           schema:
             additionalProperties:
               type: string
             type: object
-      summary: Components - Validate
+      summary: Components - Validate one
+      tags:
+      - components
+  /api/:ruleset_id/component/generate:
+    post:
+      consumes:
+      - application/json
+      description: generate multiple type values with component map
+      parameters:
+      - description: ruleset related informations that will be later needed for the
+          login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/shared_types.GenerationMultipleBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: generated components
+          schema:
+            additionalProperties:
+              type: object
+            type: object
+      summary: Components - Generate multiple
+      tags:
+      - components
+  /api/:ruleset_id/component/validate:
+    post:
+      consumes:
+      - application/json
+      description: validate mmultiple component with component map
+      parameters:
+      - description: ruleset related informations that will be later needed for the
+          login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/components.ValidateValues'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Empty Object
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Components - Validate multiple
       tags:
       - components
   /api/:ruleset_id/enums/get_by_restrictions:
@@ -563,6 +675,31 @@ paths:
       summary: Nodes - Validate multiple
       tags:
       - nodes
+  /api/:ruleset_id/node/generate:
+    post:
+      consumes:
+      - application/json
+      description: generate multiple type values with component map
+      parameters:
+      - description: ruleset related informations that will be later needed for the
+          login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/shared_types.GenerationMultipleBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: generated components
+          schema:
+            additionalProperties:
+              type: object
+            type: object
+      summary: Nodes - generate multiple
+      tags:
+      - nodes
   /api/:ruleset_id/node/validate:
     post:
       consumes:
@@ -588,6 +725,106 @@ paths:
       summary: Nodes - Validate one
       tags:
       - nodes
+  /api/:ruleset_id/type/:id/generate:
+    post:
+      consumes:
+      - application/json
+      description: generate a type value with component map
+      parameters:
+      - description: ruleset related informations that will be later needed for the
+          login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/shared_types.ComponentMap'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: generated components
+          schema:
+            additionalProperties:
+              type: object
+            type: object
+      summary: Types - generate one type
+      tags:
+      - types
+  /api/:ruleset_id/type/:id/validate:
+    post:
+      consumes:
+      - application/json
+      description: validate a type value with component map
+      parameters:
+      - description: ruleset related informations that will be later needed for the
+          login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/types.ValidateValue'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Empty Object
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Types - validate one type
+      tags:
+      - types
+  /api/:ruleset_id/type/generate:
+    post:
+      consumes:
+      - application/json
+      description: generate multiple type values with component map
+      parameters:
+      - description: ruleset related informations that will be later needed for the
+          login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/shared_types.GenerationMultipleBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: generated components
+          schema:
+            additionalProperties:
+              type: object
+            type: object
+      summary: Types - generate multiple type
+      tags:
+      - types
+  /api/:ruleset_id/type/validate:
+    post:
+      consumes:
+      - application/json
+      description: validate mmultiple types with component map
+      parameters:
+      - description: ruleset related informations that will be later needed for the
+          login process
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/types.ValidateValues'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Empty Object
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Types - validate multiple types
+      tags:
+      - types
   /api/CRUDTEMPLATEs:
     get:
       description: ⚠️ Only accessible to admins ⚠️<br><br>Reads all CRUDTEMPLATEs
