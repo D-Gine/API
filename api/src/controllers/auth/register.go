@@ -29,7 +29,7 @@ type RegisterArgs struct {
 
 // @BasePath /api/auth/register
 // Auth godoc
-// @Summary Connection of a new user to a new account
+// @Summary Auth - Register
 // @Schemes
 // @Description Connection of a new user to a new account<br>Token will be set in cookies if the username or email is not already taken<br><br>The image must be base64 encoded and must contain the file type in the header (ex: data:image/png;base64,...)
 // @Tags auth
@@ -53,7 +53,7 @@ func Register(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
 		return
 	}
-	defer rows.Close()
+	defer database.CloseRows(rows)
 	if rows.Next() {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": "User already exists"})
 		return

@@ -27,7 +27,7 @@ type CreateUsersArgs struct {
 
 // @BasePath /api/users
 // Users godoc
-// @Summary Creates a user
+// @Summary Users - Create
 // @Schemes
 // @Description ⚠️ Only accessible to admins ⚠️<br><br>Creates a user with arguments in body
 // @Tags users
@@ -51,7 +51,7 @@ func CreateUsers(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
 		return
 	}
-	defer rows.Close()
+	defer database.CloseRows(rows)
 	if rows.Next() {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": "User already exists"})
 		return

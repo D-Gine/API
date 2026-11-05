@@ -23,7 +23,7 @@ type CreateRulesetsArgs struct {
 
 // @BasePath /api/rulesets
 // Rulesets godoc
-// @Summary Creates a ruleset
+// @Summary Rulesets - Create
 // @Schemes
 // @Description Creates a ruleset with arguments in body<br><br>Will return the id of created ruleset
 // @Tags rulesets
@@ -42,12 +42,12 @@ func CreateRulesets(c *gin.Context) {
 	}
 
 	// Checking db if ruleset already exists
-	rows, err := database.Db.Query("SELECT name FROM games.rulesets WHERE name=$1", args.Name)
+	rows, err := database.Db.Query("SELECT name FROM rulesets WHERE name=$1", args.Name)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
 		return
 	}
-	defer rows.Close()
+	defer database.CloseRows(rows)
 	if rows.Next() {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": "Ruleset already exists"})
 		return

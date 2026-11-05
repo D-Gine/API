@@ -7,6 +7,11 @@
 
 package nodes
 
+import (
+	"api/src/controllers/shared_types"
+	"database/sql"
+)
+
 type NodeTypeResponse struct {
 	Id           string         `json:"id"`
 	Base         string         `json:"base"`
@@ -16,4 +21,33 @@ type NodeTypeResponse struct {
 type FirstNodeResponse struct {
 	NodeId string           `json:"node_id"`
 	Type   NodeTypeResponse `json:"type"`
+}
+
+type CurrentTree struct {
+	NodeId string       `json:"node_id"`
+	Next   *CurrentTree `json:"next,omitempty"`
+}
+
+type GetNextNodeRequest struct {
+	shared_types.NodeList
+	CurrentTree *CurrentTree `json:"current_tree"`
+}
+
+type NextNodeResponse struct {
+	NodeId string            `json:"node_id"`
+	Final  bool              `json:"final,omitempty"`
+	Type   NodeTypeResponse  `json:"type"`
+	Next   *NextNodeResponse `json:"next,omitempty"`
+}
+
+type GetNextNodeResponse struct {
+	Next *NextNodeResponse `json:"next"`
+}
+
+type DbNodeData struct {
+	NodeID       string
+	NextScriptID sql.NullString
+	Script       sql.NullString
+	Params       map[string]any
+	Type         NodeTypeResponse
 }

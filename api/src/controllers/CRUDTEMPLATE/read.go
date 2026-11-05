@@ -17,7 +17,7 @@ import (
 
 // @BasePath /api/CRUDTEMPLATEs
 // CRUDTEMPLATEs godoc
-// @Summary Reads all CRUDTEMPLATEs data
+// @Summary CRUDTEMPLATE - Read
 // @Schemes
 // @Description ⚠️ Only accessible to admins ⚠️<br><br>Reads all CRUDTEMPLATEs data
 // @Tags CRUDTEMPLATEs
@@ -29,11 +29,15 @@ func ReadCRUDTEMPLATEs(c *gin.Context) {
 	rows, err := database.Db.Query("SELECT id FROM CRUDTEMPLATEs")
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		return
 	}
-	defer rows.Close()
+	defer database.CloseRows(rows)
 	for rows.Next() {
 		var id sql.NullString
-		rows.Scan(&id)
+		if err := rows.Scan(&id); err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+			return
+		}
 		result = append(result, DbReadResponse{
 			Id: id.String,
 		})

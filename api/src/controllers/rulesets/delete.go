@@ -17,7 +17,7 @@ import (
 
 // @BasePath /api/rulesets
 // rulesets godoc
-// @Summary Deletes given ruleset
+// @Summary Rulesets - Delete
 // @Schemes
 // @Param id query string true "id of the ruleset to delete"
 // @Description Deletes the given ruleset<br> <b>Careful, there is no turn back or check, once called, this route will delete the ruleset no matter what</b> <br> It also deletes all content related to the ruleset depending on the parameters of the database
@@ -31,7 +31,7 @@ func DeleteRulesets(c *gin.Context) {
 		return
 	}
 
-	_, err := database.Db.Exec("DELETE FROM games.rulesets WHERE id=$1", idQuery)
+	_, err := database.Db.Exec("DELETE FROM rulesets WHERE id=$1", idQuery)
 	if err != nil {
 		fmt.Println(err)
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error" + err.Error()})

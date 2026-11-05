@@ -17,7 +17,7 @@ import (
 
 // @BasePath /api/rulesets
 // rulesets godoc
-// @Summary Reads all rulesets data
+// @Summary Rulesets - Read
 // @Schemes
 // @Description Reads all rulesets data
 // @Tags rulesets
@@ -26,14 +26,18 @@ import (
 // @Router /api/rulesets [get]
 func ReadRulesets(c *gin.Context) {
 	result := []DbReadResponse{}
-	rows, err := database.Db.Query("SELECT id, name FROM games.rulesets")
+	rows, err := database.Db.Query("SELECT id, name FROM rulesets")
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		return
 	}
-	defer rows.Close()
+	defer database.CloseRows(rows)
 	for rows.Next() {
 		var id, name sql.NullString
-		rows.Scan(&id, &name)
+		if err := rows.Scan(&id, &name); err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+			return
+		}
 		result = append(result, DbReadResponse{
 			Id:   id.String,
 			Name: name.String,

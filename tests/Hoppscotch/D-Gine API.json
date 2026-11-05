@@ -1,0 +1,39 @@
+{
+  "v": 12,
+  "id": "cmvomglz50c9eh81jyl8zghyv",
+  "name": "Test",
+  "folders": [],
+  "requests": [
+    {
+      "v": "17",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "body": null,
+        "contentType": null
+      },
+      "name": "About",
+      "method": "GET",
+      "params": [],
+      "headers": [],
+      "endpoint": "<<host>>/api/health",
+      "responses": {},
+      "testScript": "",
+      "description": null,
+      "preRequestScript": "",
+      "requestVariables": [],
+      "id": "cmvomhf6j2j7aea1j47adcy3h"
+    }
+  ],
+  "auth": {
+    "authType": "inherit",
+    "authActive": true
+  },
+  "headers": [],
+  "variables": [],
+  "description": null,
+  "preRequestScript": "",
+  "testScript": ""
+}

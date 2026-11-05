@@ -11,16 +11,16 @@ import (
 	"api/src/controllers/account"
 	"api/src/controllers/auth"
 	"api/src/controllers/characters"
-	charactersCreate "api/src/controllers/characters/create"
-	characterValidate "api/src/controllers/characters/validate"
+	"api/src/controllers/components"
+	"api/src/controllers/enums"
+
 	"api/src/controllers/dev"
 	"api/src/controllers/fileserver"
 	"api/src/controllers/nodes"
-	"api/src/controllers/nodes/validate"
 	"api/src/controllers/rulesets"
+	"api/src/controllers/types"
 	"api/src/controllers/users"
 	"api/src/database"
-	_ "api/src/docs"
 	"api/src/internal/apidata"
 	"api/src/internal/config"
 	"fmt"
@@ -53,13 +53,30 @@ func CORSMiddleware(c *gin.Context) {
 }
 
 func setTrustedProxies(r *gin.Engine) {
-	if len(config.Trustedproxies) > 0 {
-		r.SetTrustedProxies(config.Trustedproxies)
-	} else {
-		r.SetTrustedProxies(nil)
+	proxies := config.Trustedproxies
+	if len(proxies) == 0 {
+		proxies = nil
+	}
+	if err := r.SetTrustedProxies(proxies); err != nil {
+		fmt.Println("Invalid trusted proxies configuration:", err)
+		os.Exit(1)
 	}
 }
 
+// @title D&GINE API
+// @schemes http https
+// @x-tagGroups [{"name":"User","tags":["auth","account","users"]},{"name":"Game","tags":["rulesets", "characters","components","enums","nodes"]},{"name":"Others","tags":["img","apidata"]},{"name":"Dev","tags":["CRUDTEMPLATEs","dev"]}]
+
+// @license.name Running on Docker
+
+// @securityDefinitions.apikey  ApiKeyAuth
+// @in                          header
+// @name                        ApiKey
+
+// @contact.name D&Gine Team
+// @contact.url https://discord.gg/VUXSSHB4Zd
+
+// @externalDocs.url https://github.com/D-Gine/API/blob/dev/README.md
 func main() {
 	port := ":" + os.Getenv("API_PORT")
 	config.LoadConfig()
@@ -105,33 +122,48 @@ func main() {
 			usersGroup.GET("/id", users.ReadUsersId)
 		}
 
-		// charactersGroup := api.Group("/characters", auth.AuthenticateMiddleware, auth.AdminMiddleware)
-		charactersGroup := api.Group("/characters")
-		{
-			charactersGroup.GET("", characters.ReadCharacters)
-			charactersGroup.PUT("/id", characters.UpdateCharacters)
-			charactersGroup.DELETE("/id", characters.DeleteCharacters)
-			charactersGroup.GET("/:id", characters.ReadCharactersId)
-
-			charactersCreationGroup := charactersGroup.Group("/create")
-			{
-				charactersCreationGroup.GET("/firstnode", charactersCreate.CharacterFirstNode)
-				charactersCreationGroup.POST("/nextnode", charactersCreate.CharacterNextNode)
-				charactersCreationGroup.POST("/submit", charactersCreate.SubmitCharacter)
-			}
-		}
-
 		rulesetGroup := api.Group("/:ruleset_id")
 		{
+			enum_group := rulesetGroup.Group("/enums")
+			{
+				enum_group.POST("/get_by_restrictions", enums.GetEnumsByRestrictions)
+			}
+
 			characters_group := rulesetGroup.Group("/character")
 			{
-				characters_group.POST("/:id/validate", characterValidate.ValidateCharacter)
+				characters_group.GET("/:id", characters.GetOneCharacter)
+				characters_group.POST("/:id/validate", characters.ValidateCharacter)
+				characters_group.POST("/create", characters.CreateCharater)
+				characters_group.DELETE(":id", characters.DeleteCharater)
+				characters_group.PUT(":id/save", characters.SaveCharacter)
+				characters_group.PUT(":id/submit", characters.SubmitCharacter)
+
+				characters_group.GET("/first_node", nodes.ReadRulesetFirstNode)
+				characters_group.POST("/get_next_node/:target_node", nodes.GetNextNode)
 			}
 			nodeGroup := rulesetGroup.Group("/node")
 			{
-				nodeGroup.POST("/:id/validate", validate.ValidateNode)
-				nodeGroup.POST("/validate", validate.ValidateNodes)
+				nodeGroup.POST("/:id/validate", nodes.ValidateNode)
+				nodeGroup.POST("/validate", nodes.ValidateNodes)
+				nodeGroup.POST("/:id/generate", nodes.GenerateNode)
+				nodeGroup.POST("/generate", nodes.GenerateNodes)
+
 			}
+			component_group := rulesetGroup.Group("/component")
+			{
+				component_group.POST("/:id/validate", components.ValidateComponent)
+				component_group.POST("/validate", components.ValidateComponents)
+				component_group.POST("/:id/generate", components.GenerateComponent)
+				component_group.POST("/generate", components.GenerateComponents)
+			}
+			type_group := rulesetGroup.Group("/type")
+			{
+				type_group.POST("/:id/validate", types.ValidateType)
+				type_group.POST("/validate", types.ValidateTypes)
+				type_group.POST("/:id/generate", types.GenerateType)
+				type_group.POST("/generate", types.GenerateTypes)
+			}
+
 		}
 
 		// rulesetsGroup := api.Group("/rulesets", auth.AuthenticateMiddleware, auth.AdminMiddleware)
@@ -144,21 +176,26 @@ func main() {
 			rulesetsGroup.GET("/:id", rulesets.ReadRulesetId)
 		}
 
-		nodesGroup := api.Group("/nodes")
-		{
-			nodesGroup.GET("/:ruleset_id/first_node", nodes.ReadRulesetFirstNode)
-		}
-
 	}
+
+	r.GET("/scalar", apidata.ScalarDoc)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(
 		swaggerfiles.Handler,
 		ginSwagger.DefaultModelsExpandDepth(-1),
 		ginSwagger.DocExpansion("none"),
 	))
 
+	// r.GET("/swagger/doc.json", func(c *gin.Context) {
+	// 	c.Header("Content-Type", "application/json")
+	// 	c.String(http.StatusOK, docs.SwaggerInfo.ReadDoc())
+	// })
+
 	img := r.Group("/img", CORSMiddleware)
 	img.GET("/*filepath", fileserver.GetImage)
 
 	fmt.Println("Listening and serving HTTP on " + port)
-	r.Run(port)
+	if err := r.Run(port); err != nil {
+		fmt.Println("Failed to start server:", err)
+		os.Exit(1)
+	}
 }

@@ -9,7 +9,13 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {},
+        "contact": {
+            "name": "D\u0026Gine Team",
+            "url": "https://discord.gg/VUXSSHB4Zd"
+        },
+        "license": {
+            "name": "Running on Docker"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -27,12 +33,740 @@ const docTemplate = `{
                 "tags": [
                     "apidata"
                 ],
-                "summary": "Gives informations about api",
+                "summary": "Apidata - About",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/apidata.About"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/character/:id": {
+            "get": {
+                "description": "get character infos from the db",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "characters"
+                ],
+                "summary": "Characters - Read",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/characters.Entity"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete an empty character",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "characters"
+                ],
+                "summary": "Characters - Delete",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empty object",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/character/:id/save": {
+            "put": {
+                "description": "save the static components into the database.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "characters"
+                ],
+                "summary": "Characters - Save",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empty object",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/character/:id/submit": {
+            "put": {
+                "description": "save a character to db and check if valid\u003cbr\u003esave the static components into the database and call the type validation scripts on them.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "characters"
+                ],
+                "summary": "Characters - Submit",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empty Object",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/character/:id/validate": {
+            "post": {
+                "description": "Validate an entity stored in the database by checking every component",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "characters"
+                ],
+                "summary": "Characters - Validate entity",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "errors",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/character/create": {
+            "post": {
+                "description": "create an empty character, returning his ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "characters"
+                ],
+                "summary": "Characters - Create",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/characters.CreateCharacterBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created character ID",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/component/:id/generate": {
+            "post": {
+                "description": "generate a type value with component map",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "nodes"
+                ],
+                "summary": "Nodes - generate one",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/shared_types.ComponentMap"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "generated components",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/component/:id/validate": {
+            "post": {
+                "description": "validate a component with component map",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "components"
+                ],
+                "summary": "Components - Validate one",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/components.ValidateValue"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empty Object",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/component/generate": {
+            "post": {
+                "description": "generate multiple type values with component map",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "components"
+                ],
+                "summary": "Components - Generate multiple",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/shared_types.GenerationMultipleBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "generated components",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/component/validate": {
+            "post": {
+                "description": "validate mmultiple component with component map",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "components"
+                ],
+                "summary": "Components - Validate multiple",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/components.ValidateValues"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empty Object",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/enums/get_by_restrictions": {
+            "post": {
+                "description": "get enums infos by restrictions : get enums id, name and description matching the given restrictions",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "enums"
+                ],
+                "summary": "Enums - Get By Restrictions",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/shared_types.EnumRestrictions"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "$ref": "#/definitions/enums.EnumInfos"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/first_node": {
+            "get": {
+                "description": "Returns the first node of the given ruleset with resolved type",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "nodes"
+                ],
+                "summary": "Nodes - Get first node",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id of the ruleset",
+                        "name": "ruleset_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/nodes.FirstNodeResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/get_next_node/:target_node": {
+            "post": {
+                "description": "Returns next node metadata for a given target node",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "nodes"
+                ],
+                "summary": "Nodes - Get next node",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id of the ruleset",
+                        "name": "ruleset_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "id of the target node",
+                        "name": "target_node",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "node values and current tree",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/nodes.GetNextNodeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/nodes.GetNextNodeResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/node/:id/validate": {
+            "post": {
+                "description": "validate the nodes present in the \"node_ids\" array in the body\u003cbr\u003e\u003cbr\u003eWill return a json object with every key the invalid nodes and value the error output, empty json object if success",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "nodes"
+                ],
+                "summary": "Nodes - Validate multiple",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/shared_types.MultipleNodeValidation"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structs.PostResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/node/generate": {
+            "post": {
+                "description": "generate multiple type values with component map",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "nodes"
+                ],
+                "summary": "Nodes - generate multiple",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/shared_types.GenerationMultipleBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "generated components",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/node/validate": {
+            "post": {
+                "description": "validate the node present the query\u003cbr\u003e\u003cbr\u003eWill return a json object with one key (the node_id) and the error message as value, empty json object if success",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "nodes"
+                ],
+                "summary": "Nodes - Validate one",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/shared_types.NodeList"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/structs.PostResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/type/:id/generate": {
+            "post": {
+                "description": "generate a type value with component map",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "types"
+                ],
+                "summary": "Types - generate one type",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/shared_types.ComponentMap"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "generated components",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/type/:id/validate": {
+            "post": {
+                "description": "validate a type value with component map",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "types"
+                ],
+                "summary": "Types - validate one type",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.ValidateValue"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empty Object",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/type/generate": {
+            "post": {
+                "description": "generate multiple type values with component map",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "types"
+                ],
+                "summary": "Types - generate multiple type",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/shared_types.GenerationMultipleBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "generated components",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/:ruleset_id/type/validate": {
+            "post": {
+                "description": "validate mmultiple types with component map",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "types"
+                ],
+                "summary": "Types - validate multiple types",
+                "parameters": [
+                    {
+                        "description": "ruleset related informations that will be later needed for the login process",
+                        "name": "creds",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.ValidateValues"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empty Object",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -47,7 +781,7 @@ const docTemplate = `{
                 "tags": [
                     "CRUDTEMPLATEs"
                 ],
-                "summary": "Reads all CRUDTEMPLATEs data",
+                "summary": "CRUDTEMPLATE - Read",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -71,7 +805,7 @@ const docTemplate = `{
                 "tags": [
                     "CRUDTEMPLATEs"
                 ],
-                "summary": "Creates a CRUDTEMPLATE",
+                "summary": "CRUDTEMPLATE - Create",
                 "parameters": [
                     {
                         "description": "CRUDTEMPLATE related informations that will be later needed for the login process",
@@ -102,7 +836,7 @@ const docTemplate = `{
                 "tags": [
                     "CRUDTEMPLATEs"
                 ],
-                "summary": "Reads given CRUDTEMPLATE data",
+                "summary": "CRUDTEMPLATE - Read ID",
                 "parameters": [
                     {
                         "type": "string",
@@ -129,7 +863,7 @@ const docTemplate = `{
                 "tags": [
                     "CRUDTEMPLATEs"
                 ],
-                "summary": "Updates given CRUDTEMPLATE",
+                "summary": "CRUDTEMPLATE - Update",
                 "parameters": [
                     {
                         "type": "string",
@@ -159,7 +893,7 @@ const docTemplate = `{
                 "tags": [
                     "CRUDTEMPLATEs"
                 ],
-                "summary": "Deletes given CRUDTEMPLATE",
+                "summary": "CRUDTEMPLATE - Delete",
                 "parameters": [
                     {
                         "type": "string",
@@ -185,7 +919,7 @@ const docTemplate = `{
                 "tags": [
                     "account"
                 ],
-                "summary": "Reads the user's account data",
+                "summary": "Account - Read",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -203,7 +937,7 @@ const docTemplate = `{
                 "tags": [
                     "account"
                 ],
-                "summary": "Updates the user's account",
+                "summary": "Account - Update",
                 "parameters": [
                     {
                         "description": "New arguments to be set in the user",
@@ -229,7 +963,7 @@ const docTemplate = `{
                 "tags": [
                     "account"
                 ],
-                "summary": "Deletes the user's account",
+                "summary": "Account - Delete",
                 "responses": {
                     "204": {
                         "description": "No Content"
@@ -249,7 +983,7 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Connection of a user to an existing account",
+                "summary": "Auth - Login",
                 "parameters": [
                     {
                         "description": "Email + Password combination of the corresponding user",
@@ -277,7 +1011,7 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Disconnection of the user",
+                "summary": "Auth - Logout",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -297,7 +1031,7 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Connection of a new user to a new account",
+                "summary": "Auth - Register",
                 "parameters": [
                     {
                         "description": "User related informations that will be later needed for the login process",
@@ -319,217 +1053,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/characters": {
-            "get": {
-                "description": "Reads all characters data",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "characters"
-                ],
-                "summary": "Reads all characters data",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/characters.RowReadResponse"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/characters/create/firstnode": {
-            "get": {
-                "description": "Returns the first node of the given ruleset character creation tree",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "characters creation"
-                ],
-                "summary": "Returns the first node of the given ruleset",
-                "parameters": [
-                    {
-                        "description": "character related informations that will be later needed for the login process",
-                        "name": "creds",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/charactersCreate.FirstNodeArgs"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/charactersCreate.RulesetFirstNode"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/characters/create/nextnode": {
-            "get": {
-                "description": "Returns the next node of the given node depending on the ruleset character creation tree\u003cbr\u003e\u003cbr\u003eThis will check for the tree for all childs of the given node, and return the one(s) that match the condition with the given value\u003cbr\u003e\u003cbr\u003eIf no child matches the condition, it means that the character creation process is finished, and the frontend can send the character creation submission request",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "characters creation"
-                ],
-                "summary": "Returns the next node",
-                "parameters": [
-                    {
-                        "description": "Actual node id, along with the value and type of the component",
-                        "name": "creds",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/charactersCreate.NextNodeArgs"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/charactersCreate.NextNodeResponse"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/characters/create/submit": {
-            "post": {
-                "description": "Submits a character list of components and creates the character in database\u003cbr\u003e\u003cbr\u003eWill return the id of created character",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "characters creation"
-                ],
-                "summary": "Submits a character list of components",
-                "parameters": [
-                    {
-                        "description": "character related informations that will be later needed for the login process",
-                        "name": "creds",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/charactersCreate.CreateArgs"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/charactersCreate.RulesetFirstNode"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/characters/id": {
-            "get": {
-                "description": "Reads the given character data",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "characters"
-                ],
-                "summary": "Reads given character data",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id of the character to read",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/characters.RowReadResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eUpdates given character with arguments in body",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "characters"
-                ],
-                "summary": "Updates given character",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id of the character to update",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "New arguments to be set in the character given",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/characters.UpdateArgs"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            },
-            "delete": {
-                "description": "Deletes the given character\u003cbr\u003e \u003cb\u003eCareful, there is no turn back or check, once called, this route will delete the character no matter what\u003c/b\u003e \u003cbr\u003e It also deletes all content related to the character",
-                "tags": [
-                    "characters"
-                ],
-                "summary": "Deletes given character",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id of the character to do the action on",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    }
-                }
-            }
-        },
         "/api/dev/callengine": {
             "post": {
                 "description": "Makes a HTTP call to whatever URI given using the method, headers and body given in argument, and returns the response of the call",
@@ -539,7 +1062,7 @@ const docTemplate = `{
                 "tags": [
                     "dev"
                 ],
-                "summary": "Transmit a request via API",
+                "summary": "Dev - Callengine",
                 "parameters": [
                     {
                         "description": "address of the address to call",
@@ -570,7 +1093,7 @@ const docTemplate = `{
                 "tags": [
                     "apidata"
                 ],
-                "summary": "Healthcheck for the api",
+                "summary": "Apidata - Health",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -590,7 +1113,7 @@ const docTemplate = `{
                 "tags": [
                     "rulesets"
                 ],
-                "summary": "Reads all rulesets data",
+                "summary": "Rulesets - Read",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -614,7 +1137,7 @@ const docTemplate = `{
                 "tags": [
                     "rulesets"
                 ],
-                "summary": "Creates a ruleset",
+                "summary": "Rulesets - Create",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",
@@ -645,7 +1168,7 @@ const docTemplate = `{
                 "tags": [
                     "rulesets"
                 ],
-                "summary": "Reads given ruleset data",
+                "summary": "Rulesets - Read ID",
                 "parameters": [
                     {
                         "type": "string",
@@ -672,7 +1195,7 @@ const docTemplate = `{
                 "tags": [
                     "rulesets"
                 ],
-                "summary": "Updates given ruleset",
+                "summary": "Rulesets - Update",
                 "parameters": [
                     {
                         "type": "string",
@@ -702,7 +1225,7 @@ const docTemplate = `{
                 "tags": [
                     "rulesets"
                 ],
-                "summary": "Deletes given ruleset",
+                "summary": "Rulesets - Delete",
                 "parameters": [
                     {
                         "type": "string",
@@ -728,7 +1251,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Reads all users data",
+                "summary": "Users - Read",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -752,7 +1275,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Creates a user",
+                "summary": "Users - Create",
                 "parameters": [
                     {
                         "description": "User related informations that will be later needed for the login process",
@@ -783,7 +1306,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Reads given user data",
+                "summary": "Users - Read ID",
                 "parameters": [
                     {
                         "type": "string",
@@ -810,7 +1333,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Updates given user",
+                "summary": "Users - Update",
                 "parameters": [
                     {
                         "type": "string",
@@ -840,7 +1363,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Deletes given user",
+                "summary": "Users - Delete",
                 "parameters": [
                     {
                         "type": "string",
@@ -857,7 +1380,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/img/:filepath:": {
+        "/img/:filepath": {
             "get": {
                 "description": "Reads an image file",
                 "produces": [
@@ -866,7 +1389,7 @@ const docTemplate = `{
                 "tags": [
                     "img"
                 ],
-                "summary": "Reads an image file",
+                "summary": "Img - Read",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -984,93 +1507,84 @@ const docTemplate = `{
                 }
             }
         },
-        "characters.RowReadResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "player_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "characters.UpdateArgs": {
+        "characters.Component": {
             "type": "object",
             "properties": {
                 "name": {
-                    "type": "string"
-                },
-                "player_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "charactersCreate.CreateArgs": {
-            "type": "object",
-            "properties": {
-                "ruleset_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "charactersCreate.FirstNodeArgs": {
-            "type": "object",
-            "properties": {
-                "ruleset_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "charactersCreate.NextNodeArgs": {
-            "type": "object",
-            "properties": {
-                "node_id": {
-                    "description": "actual node id",
                     "type": "string"
                 },
                 "type": {
-                    "type": "string"
+                    "$ref": "#/definitions/nodes.NodeTypeResponse"
                 },
                 "value": {
-                    "type": "string"
+                    "type": "object"
                 }
             }
         },
-        "charactersCreate.NextNodeResponse": {
+        "characters.ComponentMap": {
+            "type": "object",
+            "additionalProperties": {
+                "$ref": "#/definitions/characters.Component"
+            }
+        },
+        "characters.CreateCharacterBody": {
             "type": "object",
             "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "metadata": {
+                "description": {
                     "type": "string"
                 },
                 "name": {
                     "type": "string"
-                },
-                "type": {
-                    "type": "string"
                 }
             }
         },
-        "charactersCreate.RulesetFirstNode": {
+        "characters.Entity": {
             "type": "object",
             "properties": {
-                "id": {
+                "components": {
+                    "$ref": "#/definitions/characters.EntityComponents"
+                },
+                "description": {
                     "type": "string"
                 },
-                "metadata": {
+                "id": {
                     "type": "string"
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "characters.EntityComponents": {
+            "type": "object",
+            "properties": {
+                "dynamic_components": {
+                    "$ref": "#/definitions/characters.ComponentMap"
                 },
-                "type": {
-                    "type": "string"
+                "static_components": {
+                    "$ref": "#/definitions/characters.ComponentMap"
+                }
+            }
+        },
+        "components.ValidateValue": {
+            "type": "object",
+            "properties": {
+                "components": {
+                    "$ref": "#/definitions/shared_types.ComponentMap"
+                },
+                "value": {
+                    "type": "object"
+                }
+            }
+        },
+        "components.ValidateValues": {
+            "type": "object",
+            "properties": {
+                "components": {
+                    "$ref": "#/definitions/shared_types.ComponentMap"
+                },
+                "values": {
+                    "type": "object"
                 }
             }
         },
@@ -1109,6 +1623,90 @@ const docTemplate = `{
                 }
             }
         },
+        "enums.EnumInfos": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "nodes.CurrentTree": {
+            "type": "object",
+            "properties": {
+                "next": {
+                    "$ref": "#/definitions/nodes.CurrentTree"
+                },
+                "node_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "nodes.FirstNodeResponse": {
+            "type": "object",
+            "properties": {
+                "node_id": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/nodes.NodeTypeResponse"
+                }
+            }
+        },
+        "nodes.GetNextNodeRequest": {
+            "type": "object",
+            "properties": {
+                "current_tree": {
+                    "$ref": "#/definitions/nodes.CurrentTree"
+                },
+                "node_values": {
+                    "type": "object"
+                }
+            }
+        },
+        "nodes.GetNextNodeResponse": {
+            "type": "object",
+            "properties": {
+                "next": {
+                    "$ref": "#/definitions/nodes.NextNodeResponse"
+                }
+            }
+        },
+        "nodes.NextNodeResponse": {
+            "type": "object",
+            "properties": {
+                "final": {
+                    "type": "boolean"
+                },
+                "next": {
+                    "$ref": "#/definitions/nodes.NextNodeResponse"
+                },
+                "node_id": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/nodes.NodeTypeResponse"
+                }
+            }
+        },
+        "nodes.NodeTypeResponse": {
+            "type": "object",
+            "properties": {
+                "base": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "restrictions": {
+                    "type": "object",
+                    "additionalProperties": {}
+                }
+            }
+        },
         "rulesets.CreateRulesetsArgs": {
             "type": "object",
             "properties": {
@@ -1136,11 +1734,86 @@ const docTemplate = `{
                 }
             }
         },
+        "shared_types.ComponentMap": {
+            "type": "object"
+        },
+        "shared_types.EnumRestrictions": {
+            "type": "object",
+            "properties": {
+                "optional": {
+                    "type": "boolean"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "shared_types.GenerationMultipleBody": {
+            "type": "object",
+            "properties": {
+                "components": {
+                    "$ref": "#/definitions/shared_types.ComponentMap"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "shared_types.MultipleNodeValidation": {
+            "type": "object",
+            "properties": {
+                "node_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "node_values": {
+                    "type": "object"
+                }
+            }
+        },
+        "shared_types.NodeList": {
+            "type": "object",
+            "properties": {
+                "node_values": {
+                    "type": "object"
+                }
+            }
+        },
         "structs.PostResponse": {
             "type": "object",
             "properties": {
                 "id": {
                     "type": "string"
+                }
+            }
+        },
+        "types.ValidateValue": {
+            "type": "object",
+            "properties": {
+                "components": {
+                    "$ref": "#/definitions/shared_types.ComponentMap"
+                },
+                "value": {
+                    "type": "object"
+                }
+            }
+        },
+        "types.ValidateValues": {
+            "type": "object",
+            "properties": {
+                "components": {
+                    "$ref": "#/definitions/shared_types.ComponentMap"
+                },
+                "values": {
+                    "type": "object"
                 }
             }
         },
@@ -1198,7 +1871,51 @@ const docTemplate = `{
                 }
             }
         }
-    }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "ApiKey",
+            "in": "header"
+        }
+    },
+    "externalDocs": {
+        "url": "https://github.com/D-Gine/API/blob/dev/README.md"
+    },
+    "x-tagGroups": [
+        {
+            "name": "User",
+            "tags": [
+                "auth",
+                "account",
+                "users"
+            ]
+        },
+        {
+            "name": "Game",
+            "tags": [
+                "rulesets",
+                "characters",
+                "components",
+                "enums",
+                "nodes"
+            ]
+        },
+        {
+            "name": "Others",
+            "tags": [
+                "img",
+                "apidata"
+            ]
+        },
+        {
+            "name": "Dev",
+            "tags": [
+                "CRUDTEMPLATEs",
+                "dev"
+            ]
+        }
+    ]
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
@@ -1206,8 +1923,8 @@ var SwaggerInfo = &swag.Spec{
 	Version:          "",
 	Host:             "",
 	BasePath:         "",
-	Schemes:          []string{},
-	Title:            "",
+	Schemes:          []string{"http", "https"},
+	Title:            "D&GINE API",
 	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

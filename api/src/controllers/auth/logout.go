@@ -16,7 +16,7 @@ import (
 
 // @BasePath /api/auth/logout
 // Auth godoc
-// @Summary Disconnection of the user
+// @Summary Auth - Logout
 // @Schemes
 // @Description Disconnection of the user <br>The token in the Cookies will be deleted after this route has been called
 // @Tags auth

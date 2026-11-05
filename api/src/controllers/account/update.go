@@ -12,8 +12,11 @@ import (
 	"api/src/database"
 	"database/sql"
 	"encoding/base64"
+	"fmt"
+	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -27,9 +30,16 @@ type UpdateArgs struct {
 	Image    string `json:"image"`
 }
 
+var allowedImageExts = map[string]string{
+	"png":  "png",
+	"jpg":  "jpg",
+	"jpeg": "jpg",
+	"webp": "webp",
+}
+
 // @BasePath /api/account
 // Account godoc
-// @Summary Updates the user's account
+// @Summary Account - Update
 // @Schemes
 // @Description <b>⚠️ The user must be logged in ⚠️</b><br><br>Updates the user's account<br><br>The image must be base64 encoded and must contain the file type in the header (ex: data:image/png;base64,...)<br><br>All fields are optionals, if a field is empty or not provided, it will not be updated
 // @Tags account
@@ -47,10 +57,11 @@ func UpdateAccount(c *gin.Context) {
 
 	user, err := auth.GetUserFromToken(c)
 	if err != nil {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
 	}
 
-	// Getting db infos
+	// Fetch current DB values
 	var dbEmail, dbName, dbImage sql.NullString
 	err = database.Db.QueryRow(
 		"SELECT email, name, image FROM accounts.users WHERE id=$1", user.Id,
@@ -60,7 +71,7 @@ func UpdateAccount(c *gin.Context) {
 		return
 	}
 
-	// Merging new data with old data if new data is empty
+	// Keep old values when the new ones are empty
 	newEmail := args.Email
 	if newEmail == "" {
 		newEmail = dbEmail.String
@@ -70,18 +81,25 @@ func UpdateAccount(c *gin.Context) {
 		newUsername = dbName.String
 	}
 
-	newPassword := ""
+	// Password (only hashed if provided)
+	var newPasswordHash string
 	if args.Password != "" {
 		hashed, err := bcrypt.GenerateFromPassword([]byte(args.Password), bcrypt.DefaultCost)
 		if err != nil {
+			log.Printf("UpdateAccount: bcrypt failed: %v", err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
 			return
 		}
-		newPassword = string(hashed)
+		newPasswordHash = string(hashed)
 	}
 
-	// Gestion de l'image
-	newImagePath := dbImage.String
+	// Image handling: the file is written first, the old one is deleted
+	// only after the DB update succeeds.
+	var (
+		imageChanged bool
+		newImagePath string
+	)
+
 	if args.Image != "" {
 		imgBase64 := args.Image
 		imgExt := ""
@@ -91,13 +109,14 @@ func UpdateAccount(c *gin.Context) {
 			imgBase64 = imgBase64[idx+1:]
 
 			if start := strings.Index(prefix, "/"); start != -1 {
-				if end := strings.Index(prefix, ";"); end != -1 {
-					imgExt = prefix[start+1 : end]
+				if end := strings.Index(prefix, ";"); end != -1 && end > start {
+					imgExt = strings.ToLower(prefix[start+1 : end])
 				}
 			}
 		}
 
-		if imgExt == "" {
+		normalizedExt, ok := allowedImageExts[imgExt]
+		if !ok {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid image format"})
 			return
 		}
@@ -108,54 +127,77 @@ func UpdateAccount(c *gin.Context) {
 			return
 		}
 
-		if dbImage.String != "" {
-			if err := os.Remove(dbImage.String); err != nil && !os.IsNotExist(err) {
-				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete old image"})
-				return
-			}
-		}
-
-		if err := os.MkdirAll(os.Getenv("USERS_IMAGES_PATH"), 0750); err != nil {
+		imagesDir := os.Getenv("USERS_IMAGES_PATH")
+		if err := os.MkdirAll(imagesDir, os.ModePerm); err != nil {
+			log.Printf("UpdateAccount: mkdir failed: %v", err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to create image directory"})
 			return
 		}
-		newImagePath = os.Getenv("USERS_IMAGES_PATH") + user.Id + "." + imgExt
+
+		newImagePath = filepath.Join(imagesDir, user.Id+"."+normalizedExt)
 		if err := os.WriteFile(newImagePath, imgData, 0600); err != nil {
+			log.Printf("UpdateAccount: write image failed: %v", err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to save new image"})
 			return
 		}
+		imageChanged = true
 	}
 
-	var id, role sql.NullString
-	if args.Password != "" {
-		err = database.Db.QueryRow(
-			"UPDATE accounts.users SET email=$1, name=$2, password=$3, image=$4 WHERE id=$5 RETURNING id, role",
-			newEmail, newUsername, newPassword, newImagePath, user.Id,
-		).Scan(&id, &role)
-	} else {
-		err = database.Db.QueryRow(
-			"UPDATE accounts.users SET email=$1, name=$2, image=$3 WHERE id=$4 RETURNING id, role",
-			newEmail, newUsername, newImagePath, user.Id,
-		).Scan(&id, &role)
+	setClauses := []string{"email=$1", "name=$2"}
+	params := []interface{}{newEmail, newUsername}
+
+	if newPasswordHash != "" {
+		params = append(params, newPasswordHash)
+		setClauses = append(setClauses, fmt.Sprintf("password=$%d", len(params)))
 	}
+	if imageChanged {
+		params = append(params, newImagePath)
+		setClauses = append(setClauses, fmt.Sprintf("image=$%d", len(params)))
+	}
+
+	params = append(params, user.Id)
+	query := fmt.Sprintf(
+		"UPDATE accounts.users SET %s WHERE id=$%d RETURNING id, role, image",
+		strings.Join(setClauses, ", "), len(params),
+	)
+
+	var id, role, image sql.NullString
+	err = database.Db.QueryRow(query, params...).Scan(&id, &role, &image)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to update account", "details": err})
+		log.Printf("UpdateAccount: update user %s failed: %v", user.Id, err)
+
+		// Roll back the newly written file so we don't leave orphans
+		if imageChanged && newImagePath != dbImage.String {
+			_ = os.Remove(newImagePath)
+		}
+
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to update account"})
+		return
+	}
+
+	// DB update succeeded; safe to update image
+	if imageChanged && dbImage.String != "" && dbImage.String != newImagePath {
+		if err := os.Remove(dbImage.String); err != nil && !os.IsNotExist(err) {
+			log.Printf("UpdateAccount: failed to delete old image %s: %v", dbImage.String, err)
+		}
+	}
+
+	token, err := auth.BuildToken(c, auth.UserData{
+		Id:    id.String,
+		Email: newEmail,
+		Name:  newUsername,
+		Image: image.String, // value actually stored in the DB
+		Role:  role.String,
+	})
+	if err != nil {
+		log.Printf("UpdateAccount: build token failed: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to build token"})
 		return
 	}
 
 	var result auth.PostLoginResponse
 	result.Id = id.String
-	result.Token, err = auth.BuildToken(c, auth.UserData{
-		Id:    id.String,
-		Email: newEmail,
-		Name:  newUsername,
-		Image: newImagePath,
-		Role:  role.String,
-	})
+	result.Token = token
 
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
-	} else {
-		c.JSON(http.StatusOK, result)
-	}
+	c.JSON(http.StatusOK, result)
 }

@@ -23,7 +23,7 @@ type CreateCRUDTEMPLATEsArgs struct {
 
 // @BasePath /api/CRUDTEMPLATEs
 // CRUDTEMPLATEs godoc
-// @Summary Creates a CRUDTEMPLATE
+// @Summary CRUDTEMPLATE - Create
 // @Schemes
 // @Description ⚠️ Only accessible to admins ⚠️<br><br>Creates a CRUDTEMPLATE with arguments in body<br><br>Will return the id of created CRUDTEMPLATE
 // @Tags CRUDTEMPLATEs
@@ -47,7 +47,7 @@ func CreateCRUDTEMPLATEs(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
 		return
 	}
-	defer rows.Close()
+	defer database.CloseRows(rows)
 	if rows.Next() {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": "CRUDTEMPLATE already exists"})
 		return
