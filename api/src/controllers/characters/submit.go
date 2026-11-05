@@ -1,7 +1,13 @@
-package submit
+/*
+** D&GINE Project, 2026
+** API
+** File description:
+** characters/submit.go
+ */
+
+package characters
 
 import (
-	"api/src/controllers/characters/save"
 	"api/src/controllers/nodes"
 	"api/src/controllers/shared_types"
 	typegeneration "api/src/controllers/type_generation"
@@ -21,16 +27,16 @@ type GenerateDynamicInfos struct {
 
 // @BasePath /api/:ruleset_id/character/:id/submit
 // Nodes godoc
-// @Summary Character - Submit
+// @Summary Characters - Submit
 // @Schemes
 // @Description save a character to db and check if valid<br>save the static components into the database and call the type validation scripts on them.
-// @Tags character
+// @Tags characters
 // @Accept json
 // @Produce json
 // @Param creds body string true "ruleset related informations that will be later needed for the login process"
 // @Success 200 {object} map[string]string "Empty Object"
 // @Router /api/:ruleset_id/character/:id/submit [put]
-func SumbitCharacter(c *gin.Context) {
+func SubmitCharacter(c *gin.Context) {
 	id := c.Param("id")
 	var body shared_types.NodeList
 
@@ -48,7 +54,7 @@ func SumbitCharacter(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, error_list)
 		return
 	}
-	if code, err := save.WriteCharacterInDb(id, body); err != nil {
+	if code, err := WriteCharacterInDb(id, body); err != nil {
 		c.JSON(code, gin.H{"error": err.Error()})
 		return
 	}
