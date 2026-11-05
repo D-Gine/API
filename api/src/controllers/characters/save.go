@@ -20,7 +20,7 @@ import (
 func WriteCharacterInDb(character_id string, nodes shared_types.NodeList) (int, error) {
 	jsonValues, parseErr := json.Marshal(nodes.NodeValues)
 	if parseErr != nil {
-		return http.StatusBadRequest, errors.New("Failed to parse node values")
+		return http.StatusBadRequest, errors.New("failed to parse node values")
 	}
 	if _, err := database.Db.Exec(`SELECT save_character($1, $2::JSONB)`, character_id, jsonValues); err != nil {
 		return http.StatusInternalServerError, err

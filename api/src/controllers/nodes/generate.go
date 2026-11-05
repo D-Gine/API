@@ -29,7 +29,7 @@ func generateNodesByIds(
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
-	defer rows.Close()
+	defer database.CloseRows(rows)
 
 	generated := make(shared_types.NodeMap)
 	for rows.Next() {

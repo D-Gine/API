@@ -10,6 +10,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 
@@ -17,6 +18,14 @@ import (
 )
 
 var Db *sql.DB
+
+// CloseRows closes rows and logs the error if closing fails.
+// Intended to be used with defer; iteration errors must still be checked with rows.Err().
+func CloseRows(rows *sql.Rows) {
+	if err := rows.Close(); err != nil {
+		log.Printf("database: failed to close rows: %v", err)
+	}
+}
 
 func ConnectDatabase() {
 	host := os.Getenv("DB_HOST")

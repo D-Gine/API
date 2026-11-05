@@ -44,6 +44,7 @@ func GenerateRowTypes(
 		generated[type_id] = value
 	}
 	if err = rows.Err(); err != nil {
+		code = http.StatusInternalServerError
 		return
 	}
 	return

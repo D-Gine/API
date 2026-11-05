@@ -37,9 +37,12 @@ func ValidateComponentsValues(
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
 	}
+	defer database.CloseRows(row)
 
-	err, error_map, count := type_validation.ValidateRowComponentsWithValues(ctx, &toVerify, &components, row)
-
+	error_map, count, err := type_validation.ValidateRowComponentsWithValues(ctx, &toVerify, &components, row)
+	if err != nil {
+		return http.StatusInternalServerError, error_map, err
+	}
 	if count != len(toVerify) {
 		return http.StatusUnauthorized, error_map, errors.New("some sent components are invalid, cannot compute")
 	}

@@ -32,7 +32,7 @@ func generateEnum(restriction shared_types.EnumRestrictions) (json.RawMessage, i
 	fmt.Println("enum: ", enum)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, http.StatusBadRequest, fmt.Errorf("No enum found for tag requirement %q", restriction.Tags)
+			return nil, http.StatusBadRequest, fmt.Errorf("no enum found for tag requirement %q", restriction.Tags)
 		}
 	}
 	res, err := json.Marshal(enum)

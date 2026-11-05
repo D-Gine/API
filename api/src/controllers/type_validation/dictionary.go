@@ -31,7 +31,7 @@ func VerifyDictionary(
 		if err != nil {
 			return fmt.Errorf("error fetching interfaces types, please recheck validity of you interface, %w", err)
 		}
-		defer rows.Close()
+		defer database.CloseRows(rows)
 		verificationMap := make(map[string]shared_types.TypeVerifications)
 		for rows.Next() {
 			var verification shared_types.TypeVerifications

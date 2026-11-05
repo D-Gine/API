@@ -19,7 +19,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func ValidateDbCharacter(c *gin.Context, id string) (int, error, map[string]string) {
+func ValidateDbCharacter(c *gin.Context, id string) (int, map[string]string, error) {
 	var rawJSON []byte
 	err := database.Db.QueryRow(`
 		SELECT jsonb_object_agg(template_id, value)
@@ -27,12 +27,12 @@ func ValidateDbCharacter(c *gin.Context, id string) (int, error, map[string]stri
 		WHERE entity_id = $1
 	`, id).Scan(&rawJSON)
 	if err != nil && err != sql.ErrNoRows {
-		return http.StatusInternalServerError, err, nil
+		return http.StatusInternalServerError, nil, err
 	}
 	componentList := make(shared_types.ComponentMap)
 	if len(rawJSON) > 0 {
 		if err := json.Unmarshal(rawJSON, &componentList); err != nil {
-			return http.StatusInternalServerError, fmt.Errorf("Failed to parse components: %w", err), nil
+			return http.StatusInternalServerError, nil, fmt.Errorf("failed to parse components: %w", err)
 		}
 	}
 
@@ -40,24 +40,24 @@ func ValidateDbCharacter(c *gin.Context, id string) (int, error, map[string]stri
 		SELECT * FROM get_entity_verifications($1)
 	`, id)
 	if err != nil {
-		return http.StatusInternalServerError, err, nil
+		return http.StatusInternalServerError, nil, err
 	}
-	defer verifyRows.Close()
+	defer database.CloseRows(verifyRows)
 
-	valErr, error_map, _ := type_validation.ValidateRowComponents(c, &componentList, verifyRows)
+	error_map, _, valErr := type_validation.ValidateRowComponents(c, &componentList, verifyRows)
 	if valErr != nil {
-		return http.StatusBadRequest, valErr, nil
+		return http.StatusBadRequest, nil, valErr
 	}
 
 	if err = verifyRows.Err(); err != nil {
-		return http.StatusInternalServerError, err, nil
+		return http.StatusInternalServerError, nil, err
 	}
 
 	code := http.StatusOK
 	if len(error_map) != 0 {
 		code = http.StatusUnauthorized
 	}
-	return code, nil, error_map
+	return code, error_map, nil
 }
 
 // @BasePath api/:ruleset_id/character/:id/validate
@@ -73,9 +73,10 @@ func ValidateDbCharacter(c *gin.Context, id string) (int, error, map[string]stri
 // @Router /api/:ruleset_id/character/:id/validate [post]
 func ValidateCharacter(c *gin.Context) {
 	id := c.Param("id")
-	code, err, error_map := ValidateDbCharacter(c, id)
+	code, error_map, err := ValidateDbCharacter(c, id)
 	if err != nil {
-		c.JSON(code, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
 	c.JSON(code, error_map)
 }

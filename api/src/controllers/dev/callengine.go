@@ -60,7 +60,7 @@ func httpRequest(method string, uri string, headers map[string]string, body map[
 	if err != nil {
 		return Response{}, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	respBytes, err := io.ReadAll(resp.Body)
 	if err != nil {

@@ -44,5 +44,5 @@ func BaseTypeGeneration(ctx *gin.Context, staticValues shared_types.ComponentMap
 		}
 		return generateDictionary(r, ctx, staticValues)
 	}
-	return nil, http.StatusBadRequest, fmt.Errorf("Unknow type %s", infos.TypeName)
+	return nil, http.StatusBadRequest, fmt.Errorf("unknown type %s", infos.TypeName)
 }
