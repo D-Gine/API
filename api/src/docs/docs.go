@@ -9,7 +9,13 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {},
+        "contact": {
+            "name": "D\u0026Gine Team",
+            "url": "https://discord.gg/VUXSSHB4Zd"
+        },
+        "license": {
+            "name": "Running on Docker"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -48,9 +54,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "character"
+                    "characters"
                 ],
-                "summary": "Character - Read",
+                "summary": "Characters - Read",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",
@@ -80,9 +86,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "character"
+                    "characters"
                 ],
-                "summary": "Character - Delete",
+                "summary": "Characters - Delete",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",
@@ -115,9 +121,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "character"
+                    "characters"
                 ],
-                "summary": "Character - Save",
+                "summary": "Characters - Save",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",
@@ -150,9 +156,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "character"
+                    "characters"
                 ],
-                "summary": "Character - Submit",
+                "summary": "Characters - Submit",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",
@@ -187,9 +193,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "character"
+                    "characters"
                 ],
-                "summary": "Character - Validate entity",
+                "summary": "Characters - Validate entity",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",
@@ -224,9 +230,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "character"
+                    "characters"
                 ],
-                "summary": "Character - Create",
+                "summary": "Characters - Create",
                 "parameters": [
                     {
                         "description": "ruleset related informations that will be later needed for the login process",
@@ -234,7 +240,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/create.CreateCharacterBody"
+                            "$ref": "#/definitions/characters.CreateCharacterBody"
                         }
                     }
                 ],
@@ -1047,114 +1053,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/characters": {
-            "get": {
-                "description": "Reads all characters data",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "characters"
-                ],
-                "summary": "Reads all characters data",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/characters.RowReadResponse"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/characters/:id": {
-            "get": {
-                "description": "Reads the given character/entity data including all components and their values",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "characters"
-                ],
-                "summary": "Reads given character data with all components",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID of the character to read",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/characters.CharacterReadResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/characters/id": {
-            "put": {
-                "description": "⚠️ Only accessible to admins ⚠️\u003cbr\u003e\u003cbr\u003eUpdates given character with arguments in body",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "characters"
-                ],
-                "summary": "Updates given character",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id of the character to update",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "New arguments to be set in the character given",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/characters.UpdateArgs"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            },
-            "delete": {
-                "description": "Deletes the given character\u003cbr\u003e \u003cb\u003eCareful, there is no turn back or check, once called, this route will delete the character no matter what\u003c/b\u003e \u003cbr\u003e It also deletes all content related to the character",
-                "tags": [
-                    "characters"
-                ],
-                "summary": "Deletes given character",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id of the character to do the action on",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    }
-                }
-            }
-        },
         "/api/dev/callengine": {
             "post": {
                 "description": "Makes a HTTP call to whatever URI given using the method, headers and body given in argument, and returns the response of the call",
@@ -1609,20 +1507,6 @@ const docTemplate = `{
                 }
             }
         },
-        "characters.CharacterReadResponse": {
-            "type": "object",
-            "properties": {
-                "components": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/characters.Component_"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
         "characters.Component": {
             "type": "object",
             "properties": {
@@ -1643,41 +1527,14 @@ const docTemplate = `{
                 "$ref": "#/definitions/characters.Component"
             }
         },
-        "characters.ComponentValue": {
+        "characters.CreateCharacterBody": {
             "type": "object",
             "properties": {
-                "keyname": {
-                    "description": "template_id",
-                    "type": "string"
-                },
-                "metadata": {
-                    "description": "type metadata",
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "type": {
-                    "description": "type enum (number, string, enum_tag, etc.)",
-                    "type": "string"
-                },
-                "value": {
-                    "description": "actual value from component"
-                }
-            }
-        },
-        "characters.Component_": {
-            "type": "object",
-            "properties": {
-                "component_id": {
+                "description": {
                     "type": "string"
                 },
                 "name": {
                     "type": "string"
-                },
-                "values": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/characters.ComponentValue"
-                    }
                 }
             }
         },
@@ -1709,31 +1566,6 @@ const docTemplate = `{
                 }
             }
         },
-        "characters.RowReadResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "player_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "characters.UpdateArgs": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "player_id": {
-                    "type": "string"
-                }
-            }
-        },
         "components.ValidateValue": {
             "type": "object",
             "properties": {
@@ -1753,17 +1585,6 @@ const docTemplate = `{
                 },
                 "values": {
                     "type": "object"
-                }
-            }
-        },
-        "create.CreateCharacterBody": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
                 }
             }
         },
@@ -2051,6 +1872,16 @@ const docTemplate = `{
             }
         }
     },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "ApiKey",
+            "in": "header"
+        }
+    },
+    "externalDocs": {
+        "url": "https://github.com/D-Gine/API/blob/dev/README.md"
+    },
     "x-tagGroups": [
         {
             "name": "User",
@@ -2064,7 +1895,7 @@ const docTemplate = `{
             "name": "Game",
             "tags": [
                 "rulesets",
-                "character",
+                "characters",
                 "components",
                 "enums",
                 "nodes"
@@ -2092,7 +1923,7 @@ var SwaggerInfo = &swag.Spec{
 	Version:          "",
 	Host:             "",
 	BasePath:         "",
-	Schemes:          []string{},
+	Schemes:          []string{"http", "https"},
 	Title:            "D&GINE API",
 	Description:      "",
 	InfoInstanceName: "swagger",

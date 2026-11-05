@@ -68,15 +68,6 @@ definitions:
       username:
         type: string
     type: object
-  characters.CharacterReadResponse:
-    properties:
-      components:
-        items:
-          $ref: '#/definitions/characters.Component_'
-        type: array
-      name:
-        type: string
-    type: object
   characters.Component:
     properties:
       name:
@@ -86,35 +77,16 @@ definitions:
       value:
         type: object
     type: object
-  characters.Component_:
-    properties:
-      component_id:
-        type: string
-      name:
-        type: string
-      values:
-        items:
-          $ref: '#/definitions/characters.ComponentValue'
-        type: array
-    type: object
   characters.ComponentMap:
     additionalProperties:
       $ref: '#/definitions/characters.Component'
     type: object
-  characters.ComponentValue:
+  characters.CreateCharacterBody:
     properties:
-      keyname:
-        description: template_id
+      description:
         type: string
-      metadata:
-        additionalProperties: true
-        description: type metadata
-        type: object
-      type:
-        description: type enum (number, string, enum_tag, etc.)
+      name:
         type: string
-      value:
-        description: actual value from component
     type: object
   characters.Entity:
     properties:
@@ -134,22 +106,6 @@ definitions:
       static_components:
         $ref: '#/definitions/characters.ComponentMap'
     type: object
-  characters.RowReadResponse:
-    properties:
-      id:
-        type: string
-      name:
-        type: string
-      player_id:
-        type: string
-    type: object
-  characters.UpdateArgs:
-    properties:
-      name:
-        type: string
-      player_id:
-        type: string
-    type: object
   components.ValidateValue:
     properties:
       components:
@@ -163,13 +119,6 @@ definitions:
         $ref: '#/definitions/shared_types.ComponentMap'
       values:
         type: object
-    type: object
-  create.CreateCharacterBody:
-    properties:
-      description:
-        type: string
-      name:
-        type: string
     type: object
   dev.CallEngineArgs:
     properties:
@@ -353,8 +302,14 @@ definitions:
       role:
         type: string
     type: object
+externalDocs:
+  url: https://github.com/D-Gine/API/blob/dev/README.md
 info:
-  contact: {}
+  contact:
+    name: D&Gine Team
+    url: https://discord.gg/VUXSSHB4Zd
+  license:
+    name: Running on Docker
   title: D&GINE API
 paths:
   /about.json:
@@ -393,9 +348,9 @@ paths:
           schema:
             additionalProperties: true
             type: object
-      summary: Character - Delete
+      summary: Characters - Delete
       tags:
-      - character
+      - characters
     get:
       consumes:
       - application/json
@@ -415,9 +370,9 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/characters.Entity'
-      summary: Character - Read
+      summary: Characters - Read
       tags:
-      - character
+      - characters
   /api/:ruleset_id/character/:id/save:
     put:
       consumes:
@@ -439,9 +394,9 @@ paths:
           schema:
             additionalProperties: true
             type: object
-      summary: Character - Save
+      summary: Characters - Save
       tags:
-      - character
+      - characters
   /api/:ruleset_id/character/:id/submit:
     put:
       consumes:
@@ -465,9 +420,9 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Character - Submit
+      summary: Characters - Submit
       tags:
-      - character
+      - characters
   /api/:ruleset_id/character/:id/validate:
     post:
       consumes:
@@ -490,9 +445,9 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Character - Validate entity
+      summary: Characters - Validate entity
       tags:
-      - character
+      - characters
   /api/:ruleset_id/character/create:
     post:
       consumes:
@@ -505,7 +460,7 @@ paths:
         name: creds
         required: true
         schema:
-          $ref: '#/definitions/create.CreateCharacterBody'
+          $ref: '#/definitions/characters.CreateCharacterBody'
       produces:
       - application/json
       responses:
@@ -515,9 +470,9 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Character - Create
+      summary: Characters - Create
       tags:
-      - character
+      - characters
   /api/:ruleset_id/component/:id/generate:
     post:
       consumes:
@@ -1075,81 +1030,6 @@ paths:
       summary: Auth - Register
       tags:
       - auth
-  /api/characters:
-    get:
-      description: Reads all characters data
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/characters.RowReadResponse'
-            type: array
-      summary: Reads all characters data
-      tags:
-      - characters
-  /api/characters/:id:
-    get:
-      description: Reads the given character/entity data including all components
-        and their values
-      parameters:
-      - description: ID of the character to read
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/characters.CharacterReadResponse'
-      summary: Reads given character data with all components
-      tags:
-      - characters
-  /api/characters/id:
-    delete:
-      description: Deletes the given character<br> <b>Careful, there is no turn back
-        or check, once called, this route will delete the character no matter what</b>
-        <br> It also deletes all content related to the character
-      parameters:
-      - description: id of the character to do the action on
-        in: query
-        name: id
-        required: true
-        type: string
-      responses:
-        "204":
-          description: No Content
-      summary: Deletes given character
-      tags:
-      - characters
-    put:
-      consumes:
-      - application/json
-      description: ⚠️ Only accessible to admins ⚠️<br><br>Updates given character
-        with arguments in body
-      parameters:
-      - description: id of the character to update
-        in: query
-        name: id
-        required: true
-        type: string
-      - description: New arguments to be set in the character given
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/characters.UpdateArgs'
-      responses:
-        "200":
-          description: OK
-      summary: Updates given character
-      tags:
-      - characters
   /api/dev/callengine:
     post:
       description: Makes a HTTP call to whatever URI given using the method, headers
@@ -1389,6 +1269,14 @@ paths:
       summary: Img - Read
       tags:
       - img
+schemes:
+- http
+- https
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: ApiKey
+    type: apiKey
 swagger: "2.0"
 x-tagGroups:
 - name: User
@@ -1399,7 +1287,7 @@ x-tagGroups:
 - name: Game
   tags:
   - rulesets
-  - character
+  - characters
   - components
   - enums
   - nodes

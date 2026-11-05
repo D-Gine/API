@@ -10,12 +10,7 @@ package main
 import (
 	"api/src/controllers/account"
 	"api/src/controllers/auth"
-	charactrerCreate "api/src/controllers/characters/create"
-	charactrerDelete "api/src/controllers/characters/delete"
-	characterGet "api/src/controllers/characters/get"
-	characterSave "api/src/controllers/characters/save"
-	characterSubmit "api/src/controllers/characters/submit"
-	characterValidate "api/src/controllers/characters/validate"
+	"api/src/controllers/characters"
 	"api/src/controllers/components"
 	"api/src/controllers/enums"
 
@@ -69,7 +64,19 @@ func setTrustedProxies(r *gin.Engine) {
 }
 
 // @title D&GINE API
-// @x-tagGroups [{"name":"User","tags":["auth","account","users"]},{"name":"Game","tags":["rulesets", "character","components","enums","nodes"]},{"name":"Others","tags":["img","apidata"]},{"name":"Dev","tags":["CRUDTEMPLATEs","dev"]}]
+// @schemes http https
+// @x-tagGroups [{"name":"User","tags":["auth","account","users"]},{"name":"Game","tags":["rulesets", "characters","components","enums","nodes"]},{"name":"Others","tags":["img","apidata"]},{"name":"Dev","tags":["CRUDTEMPLATEs","dev"]}]
+
+// @license.name Running on Docker
+
+// @securityDefinitions.apikey  ApiKeyAuth
+// @in                          header
+// @name                        ApiKey
+
+// @contact.name D&Gine Team
+// @contact.url https://discord.gg/VUXSSHB4Zd
+
+// @externalDocs.url https://github.com/D-Gine/API/blob/dev/README.md
 func main() {
 	port := ":" + os.Getenv("API_PORT")
 	config.LoadConfig()
@@ -124,12 +131,12 @@ func main() {
 
 			characters_group := rulesetGroup.Group("/character")
 			{
-				characters_group.GET("/:id", characterGet.GetOneCharacter)
-				characters_group.POST("/:id/validate", characterValidate.ValidateCharacter)
-				characters_group.POST("/create", charactrerCreate.CreateCharater)
-				characters_group.DELETE(":id", charactrerDelete.DeleteCharater)
-				characters_group.PUT(":id/save", characterSave.SaveCharacter)
-				characters_group.PUT(":id/submit", characterSubmit.SumbitCharacter)
+				characters_group.GET("/:id", characters.GetOneCharacter)
+				characters_group.POST("/:id/validate", characters.ValidateCharacter)
+				characters_group.POST("/create", characters.CreateCharater)
+				characters_group.DELETE(":id", characters.DeleteCharater)
+				characters_group.PUT(":id/save", characters.SaveCharacter)
+				characters_group.PUT(":id/submit", characters.SubmitCharacter)
 
 				characters_group.GET("/first_node", nodes.ReadRulesetFirstNode)
 				characters_group.POST("/get_next_node/:target_node", nodes.GetNextNode)

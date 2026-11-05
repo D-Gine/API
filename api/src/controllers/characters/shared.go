@@ -2,7 +2,7 @@
 ** D&GINE Project, 2026
 ** API
 ** File description:
-** user/shared.go
+** characters/shared.go
  */
 
 package characters

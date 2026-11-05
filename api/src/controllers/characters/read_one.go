@@ -1,7 +1,13 @@
-package characterGet
+/*
+** D&GINE Project, 2026
+** API
+** File description:
+** characters/read_one.go
+ */
+
+package characters
 
 import (
-	"api/src/controllers/characters"
 	"api/src/database"
 	"encoding/json"
 	"net/http"
@@ -11,14 +17,14 @@ import (
 
 // @BasePath api/:ruleset_id/character/:id
 // Nodes godoc
-// @Summary Character - Read
+// @Summary Characters - Read
 // @Schemes
 // @Description get character infos from the db
-// @Tags character
+// @Tags characters
 // @Accept json
 // @Produce json
 // @Param creds body string true "ruleset related informations that will be later needed for the login process"
-// @Success 200 {object} characters.Entity
+// @Success 200 {object} Entity
 // @Router /api/:ruleset_id/character/:id [get]
 func GetOneCharacter(c *gin.Context) {
 	character_id := c.Param("id")
@@ -66,7 +72,7 @@ func GetOneCharacter(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	var res characters.Entity
+	var res Entity
 	err = json.Unmarshal(jsonData, &res)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

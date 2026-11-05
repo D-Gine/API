@@ -1,4 +1,11 @@
-package charactersCreate
+/*
+** D&GINE Project, 2026
+** API
+** File description:
+** characters/create.go
+ */
+
+package characters
 
 import (
 	"api/src/database"
@@ -14,10 +21,10 @@ type CreateCharacterBody struct {
 
 // @BasePath api/:ruleset_id/character/create
 // Nodes godoc
-// @Summary Character - Create
+// @Summary Characters - Create
 // @Schemes
 // @Description create an empty character, returning his ID
-// @Tags character
+// @Tags characters
 // @Accept json
 // @Produce json
 // @Param creds body CreateCharacterBody true "ruleset related informations that will be later needed for the login process"

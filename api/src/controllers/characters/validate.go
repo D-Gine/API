@@ -1,4 +1,11 @@
-package characterValidate
+/*
+** D&GINE Project, 2026
+** API
+** File description:
+** characters/validate.go
+ */
+
+package characters
 
 import (
 	"api/src/controllers/shared_types"
@@ -55,10 +62,10 @@ func ValidateDbCharacter(c *gin.Context, id string) (int, map[string]string, err
 
 // @BasePath api/:ruleset_id/character/:id/validate
 // Nodes godoc
-// @Summary Character - Validate entity
+// @Summary Characters - Validate entity
 // @Schemes
 // @Description Validate an entity stored in the database by checking every component
-// @Tags character
+// @Tags characters
 // @Accept json
 // @Produce json
 // @Param creds body string true "ruleset related informations that will be later needed for the login process"
