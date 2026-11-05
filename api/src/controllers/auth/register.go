@@ -105,14 +105,14 @@ func Register(c *gin.Context) {
 	}
 
 	if args.Image != "" {
-		if err := os.MkdirAll(os.Getenv("USERS_IMAGES_PATH"), os.ModePerm); err != nil {
+		if err := os.MkdirAll(os.Getenv("USERS_IMAGES_PATH"), 0750); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to create image directory"})
 			return
 		}
 
 		imgPath = os.Getenv("USERS_IMAGES_PATH") + id.String + "." + imgExt
 
-		if err := os.WriteFile(imgPath, imgData, 0644); err != nil {
+		if err := os.WriteFile(imgPath, imgData, 0600); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to save user image"})
 			return
 		}

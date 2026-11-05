@@ -135,7 +135,7 @@ func UpdateAccount(c *gin.Context) {
 		}
 
 		newImagePath = filepath.Join(imagesDir, user.Id+"."+normalizedExt)
-		if err := os.WriteFile(newImagePath, imgData, 0644); err != nil {
+		if err := os.WriteFile(newImagePath, imgData, 0600); err != nil {
 			log.Printf("UpdateAccount: write image failed: %v", err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to save new image"})
 			return
