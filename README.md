@@ -55,6 +55,33 @@ You have access to routes documentations via Swagger, it must be and shall be up
 You can add features whenever you feel like, but keep in mind to document them (in the swagger if they are routes)
 
 ## Useful knowledge for devs
+### Unit tests
+
+Unit tests in golang are automatically recognized and launched with the following command, executed where the `main.go` file sits
+```sh
+go test ./...
+```
+Basic golang **testing** module working :
+- It browses automatically files ending with `_test.go` (ex : `api/src/controllers/auth/auth_test.go`)
+- Inside the files, it browses automatically functions starting with `Test` (ex : `Test_CreateToken`)
+
+A few rules for this project specifically :
+1. Each package needs to have one unit tests file with the syntax `<package>_test.go` (ex: `auth_test.go`)
+2. Each function tested must have only one starting point function of testing called `Test_<Function>`
+3. If you need multiple tests cases for a function, you will use subfunctions. subfonctions format is `Sub_<Function>_<CaseTested>`
+
+Example of subfunctions to test `ExtractFromToken`:
+```go
+func Test_ExtractFromToken(t *testing.T) { // tests starting point function
+	t.Run("extract from token", Sub_ExtractFromToken) // call to subfunction to test case OK
+	t.Run("with bearer prefix", Sub_ExtractFromToken_WithBearerPrefix) // call to subfunction to test case OK with bearer
+	t.Run("invalid token", Sub_ExtractFromToken_Invalid) // call to subfunction to test case of invalid token
+	t.Run("missing or invalid claim", Sub_ExtractFromToken_MissingOrInvalidClaim) // call to subfunction to test case of missing or invalid claim
+}
+```
+
+---
+
 ### Swagger
 Swagger is now automatically reloaded on every build of the API
 
