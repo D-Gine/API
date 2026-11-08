@@ -1,0 +1,3 @@
+[submodule "api/src/gdt"]
+	path = api/src/gdt
+	url = https://github.com/D-Gine/Gestionnaire2Type
