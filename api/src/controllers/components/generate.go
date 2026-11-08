@@ -2,19 +2,19 @@ package components
 
 import (
 	"api/src/controllers/shared_types"
-	typegeneration "api/src/controllers/type_generation"
 	"api/src/database"
 	"net/http"
 
+	gdt "github.com/D-Gine/Gestionnaire2Type"
+	typegeneration "github.com/D-Gine/Gestionnaire2Type/type_generation"
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
 )
 
 func generateComponentsByIds(
-	ctx *gin.Context,
 	toGenerate []string,
-	components shared_types.ComponentMap,
-) (shared_types.ComponentMap, int, error) {
+	components gdt.ComponentMap,
+) (gdt.ComponentMap, int, error) {
 	rows, err := database.Db.Query(`
 			SELECT
 				sct.id,
@@ -30,23 +30,8 @@ func generateComponentsByIds(
 	}
 	defer database.CloseRows(rows)
 
-	generated := make(shared_types.ComponentMap)
-	for rows.Next() {
-		var result typegeneration.GenerationInfos
-		var component_id string
-		if err = rows.Scan(&component_id, &result.Script, &result.TypeName, &result.Restrictions); err != nil {
-			return nil, http.StatusInternalServerError, err
-		}
-		value, code, err := typegeneration.GenerateKnownedType(ctx, components, result)
-		if err != nil {
-			return nil, code, err
-		}
-		generated[component_id] = value
-	}
-	if err = rows.Err(); err != nil {
-		return nil, http.StatusInternalServerError, err
-	}
-	return generated, http.StatusOK, nil
+	generated, err := typegeneration.GenerateRowTypes(database.Db, components, rows)
+	return generated, shared_types.GenerationErrorCode(err), err
 }
 
 // @BasePath /api/:ruleset_id/component/:id/generate
@@ -57,19 +42,19 @@ func generateComponentsByIds(
 // @Tags components
 // @Accept json
 // @Produce json
-// @Param creds body shared_types.ComponentMap true "ruleset related informations that will be later needed for the login process"
+// @Param creds body gdt.ComponentMap true "ruleset related informations that will be later needed for the login process"
 // @Success 200 {object} map[string]object "generated components"
 // @Router /api/:ruleset_id/component/:id/generate [post]
 func GenerateComponent(ctx *gin.Context) {
 	// ruleset_id := ctx.Param("ruleset_id")
 	id := ctx.Param("id")
 
-	var body shared_types.ComponentMap
+	var body gdt.ComponentMap
 	if err := ctx.ShouldBindBodyWithJSON(&body); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request: Invalid body"})
 		return
 	}
-	generated, code, err := generateComponentsByIds(ctx, []string{id}, body)
+	generated, code, err := generateComponentsByIds([]string{id}, body)
 
 	if err != nil {
 		ctx.JSON(code, gin.H{"error": err.Error()})
@@ -96,7 +81,7 @@ func GenerateComponents(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request: Invalid body"})
 		return
 	}
-	generated, code, err := generateComponentsByIds(ctx, body.Ids, body.Components)
+	generated, code, err := generateComponentsByIds(body.Ids, body.Components)
 
 	if err != nil {
 		ctx.JSON(code, gin.H{"error": err.Error()})

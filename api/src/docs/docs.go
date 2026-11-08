@@ -277,7 +277,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/shared_types.ComponentMap"
+                            "$ref": "#/definitions/gdt.ComponentMap"
                         }
                     }
                 ],
@@ -425,7 +425,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/shared_types.EnumRestrictions"
+                            "$ref": "#/definitions/gdt.EnumRestrictions"
                         }
                     }
                 ],
@@ -539,7 +539,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/shared_types.MultipleNodeValidation"
+                            "$ref": "#/definitions/validate.MultipleNodeValidation"
                         }
                     }
                 ],
@@ -610,7 +610,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/shared_types.NodeList"
+                            "$ref": "#/definitions/validate.NodeList"
                         }
                     }
                 ],
@@ -644,7 +644,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/shared_types.ComponentMap"
+                            "$ref": "#/definitions/gdt.ComponentMap"
                         }
                     }
                 ],
@@ -1570,7 +1570,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "components": {
-                    "$ref": "#/definitions/shared_types.ComponentMap"
+                    "$ref": "#/definitions/gdt.ComponentMap"
                 },
                 "value": {
                     "type": "object"
@@ -1581,7 +1581,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "components": {
-                    "$ref": "#/definitions/shared_types.ComponentMap"
+                    "$ref": "#/definitions/gdt.ComponentMap"
                 },
                 "values": {
                     "type": "object"
@@ -1631,6 +1631,23 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "gdt.ComponentMap": {
+            "type": "object"
+        },
+        "gdt.EnumRestrictions": {
+            "type": "object",
+            "properties": {
+                "optional": {
+                    "type": "boolean"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -1734,56 +1751,17 @@ const docTemplate = `{
                 }
             }
         },
-        "shared_types.ComponentMap": {
-            "type": "object"
-        },
-        "shared_types.EnumRestrictions": {
-            "type": "object",
-            "properties": {
-                "optional": {
-                    "type": "boolean"
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
         "shared_types.GenerationMultipleBody": {
             "type": "object",
             "properties": {
                 "components": {
-                    "$ref": "#/definitions/shared_types.ComponentMap"
+                    "$ref": "#/definitions/gdt.ComponentMap"
                 },
                 "ids": {
                     "type": "array",
                     "items": {
                         "type": "string"
                     }
-                }
-            }
-        },
-        "shared_types.MultipleNodeValidation": {
-            "type": "object",
-            "properties": {
-                "node_ids": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "node_values": {
-                    "type": "object"
-                }
-            }
-        },
-        "shared_types.NodeList": {
-            "type": "object",
-            "properties": {
-                "node_values": {
-                    "type": "object"
                 }
             }
         },
@@ -1799,7 +1777,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "components": {
-                    "$ref": "#/definitions/shared_types.ComponentMap"
+                    "$ref": "#/definitions/gdt.ComponentMap"
                 },
                 "value": {
                     "type": "object"
@@ -1810,7 +1788,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "components": {
-                    "$ref": "#/definitions/shared_types.ComponentMap"
+                    "$ref": "#/definitions/gdt.ComponentMap"
                 },
                 "values": {
                     "type": "object"
@@ -1868,6 +1846,28 @@ const docTemplate = `{
                 },
                 "role": {
                     "type": "string"
+                }
+            }
+        },
+        "validate.MultipleNodeValidation": {
+            "type": "object",
+            "properties": {
+                "node_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "node_values": {
+                    "type": "object"
+                }
+            }
+        },
+        "validate.NodeList": {
+            "type": "object",
+            "properties": {
+                "node_values": {
+                    "type": "object"
                 }
             }
         }

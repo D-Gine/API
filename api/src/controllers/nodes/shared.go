@@ -8,8 +8,9 @@
 package nodes
 
 import (
-	"api/src/controllers/shared_types"
 	"database/sql"
+
+	"github.com/D-Gine/Gestionnaire2Type/validate"
 )
 
 type NodeTypeResponse struct {
@@ -29,7 +30,7 @@ type CurrentTree struct {
 }
 
 type GetNextNodeRequest struct {
-	shared_types.NodeList
+	validate.NodeList
 	CurrentTree *CurrentTree `json:"current_tree"`
 }
 

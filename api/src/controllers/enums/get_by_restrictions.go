@@ -1,11 +1,11 @@
 package enums
 
 import (
-	"api/src/controllers/shared_types"
 	"api/src/database"
 	"encoding/json"
 	"net/http"
 
+	gdt "github.com/D-Gine/Gestionnaire2Type"
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
 )
@@ -23,12 +23,12 @@ type EnumInfos struct {
 // @Tags enums
 // @Accept json
 // @Produce json
-// @Param creds body shared_types.EnumRestrictions true "ruleset related informations that will be later needed for the login process"
+// @Param creds body gdt.EnumRestrictions true "ruleset related informations that will be later needed for the login process"
 // @Success 200 {object} map[string]EnumInfos
 // @Router /api/:ruleset_id/enums/get_by_restrictions [post]
 func GetEnumsByRestrictions(c *gin.Context) {
 	ruleset_id := c.Param("ruleset_id")
-	var restrictions shared_types.EnumRestrictions
+	var restrictions gdt.EnumRestrictions
 
 	if err := c.ShouldBindBodyWithJSON(&restrictions); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid body: " + err.Error()})

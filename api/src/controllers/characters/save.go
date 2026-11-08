@@ -8,16 +8,16 @@
 package characters
 
 import (
-	"api/src/controllers/shared_types"
 	"api/src/database"
 	"encoding/json"
 	"errors"
 	"net/http"
 
+	"github.com/D-Gine/Gestionnaire2Type/validate"
 	"github.com/gin-gonic/gin"
 )
 
-func WriteCharacterInDb(character_id string, nodes shared_types.NodeList) (int, error) {
+func WriteCharacterInDb(character_id string, nodes validate.NodeList) (int, error) {
 	jsonValues, parseErr := json.Marshal(nodes.NodeValues)
 	if parseErr != nil {
 		return http.StatusBadRequest, errors.New("failed to parse node values")
@@ -41,7 +41,7 @@ func WriteCharacterInDb(character_id string, nodes shared_types.NodeList) (int, 
 // @Router /api/:ruleset_id/character/:id/save [put]
 func SaveCharacter(c *gin.Context) {
 	id := c.Param("id")
-	var body shared_types.NodeList
+	var body validate.NodeList
 
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON body"})

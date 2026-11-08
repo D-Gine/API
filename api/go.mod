@@ -2,14 +2,16 @@ module api
 
 go 1.27.1
 
+toolchain go1.27.3
+
 require (
+	github.com/D-Gine/Gestionnaire2Type v0.0.0-00010101000000-000000000000
 	github.com/gin-gonic/gin v1.12.0
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/lib/pq v1.12.3
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.1
 	github.com/swaggo/swag v1.16.6
-	go.starlark.net v0.0.0-20260908191801-89a6a09411d5
 	golang.org/x/crypto v0.58.0
 )
 
@@ -49,6 +51,7 @@ require (
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.3.1 // indirect
 	go.mongodb.org/mongo-driver/v2 v2.8.0 // indirect
+	go.starlark.net v0.0.0-20261021141710-4f4267fb140d // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/arch v0.29.0 // indirect
 	golang.org/x/mod v0.41.0 // indirect
@@ -59,3 +62,5 @@ require (
 	golang.org/x/tools v0.51.0 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 )
+
+replace github.com/D-Gine/Gestionnaire2Type => ./src/gdt
