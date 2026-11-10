@@ -16,7 +16,7 @@ import (
 // @Tags nodes
 // @Param ruleset_id path string true "id of the ruleset"
 // @Produce json
-// @Success 200 {object} FirstNodeResponse
+// @Success 200 {object} NodeInfos
 // @Router /api/:ruleset_id/first_node [get]
 func ReadRulesetFirstNode(c *gin.Context) {
 	rulesetID := c.Param("ruleset_id")

@@ -157,19 +157,6 @@ definitions:
       node_id:
         type: string
     type: object
-  nodes.FirstNodeResponse:
-    properties:
-      description:
-        type: string
-      name:
-        type: string
-      node_id:
-        type: string
-      template_id:
-        type: string
-      type:
-        $ref: '#/definitions/nodes.NodeTypeResponse'
-    type: object
   nodes.GetNextNodeRequest:
     properties:
       current_tree:
@@ -192,6 +179,19 @@ definitions:
         type: string
       next:
         $ref: '#/definitions/nodes.NextNodeResponse'
+      node_id:
+        type: string
+      template_id:
+        type: string
+      type:
+        $ref: '#/definitions/nodes.NodeTypeResponse'
+    type: object
+  nodes.NodeInfos:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
       node_id:
         type: string
       template_id:
@@ -626,7 +626,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/nodes.FirstNodeResponse'
+            $ref: '#/definitions/nodes.NodeInfos'
       summary: Nodes - Get first node
       tags:
       - nodes

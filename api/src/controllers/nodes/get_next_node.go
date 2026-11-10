@@ -69,12 +69,8 @@ func GetNextNode(c *gin.Context) {
 	if !targetData.NextScriptID.Valid || targetData.NextScriptID.String == "" {
 		c.JSON(http.StatusOK, GetNextNodeResponse{
 			Next: &NextNodeResponse{
-				NodeId:      targetData.NodeID,
-				TemplateId:  targetData.TemplateID,
-				Name:        targetData.Name,
-				Description: targetData.Description,
-				Final:       true,
-				Type:        targetData.Type,
+				NodeInfos: targetData.NodeInfos,
+				Final:     true,
 			},
 		})
 		return
@@ -130,7 +126,7 @@ func resolveNextChain(
 		c.Request.Context(),
 		current.Script.String,
 		"get_next_node",
-		[]any{nodeList.NodeValues, currentTree, current.NodeID, current.Params},
+		[]any{nodeList.NodeValues, currentTree, current.NodeId, current.Params},
 		nil,
 	)
 	if err != nil {
@@ -159,12 +155,8 @@ func resolveNextChain(
 	}
 
 	response := &NextNodeResponse{
-		NodeId:      nextData.NodeID,
-		TemplateId:  nextData.TemplateID,
-		Name:        nextData.Name,
-		Description: nextData.Description,
-		Type:        nextData.Type,
-		Final:       !nextData.NextScriptID.Valid || nextData.NextScriptID.String == "",
+		NodeInfos: nextData.NodeInfos,
+		Final:     !nextData.NextScriptID.Valid || nextData.NextScriptID.String == "",
 	}
 
 	if response.Final {
@@ -172,10 +164,10 @@ func resolveNextChain(
 	}
 
 	if !nextData.Script.Valid || nextData.Script.String == "" {
-		return nil, fmt.Errorf("next script id is set but script content is missing for node %s", nextData.NodeID)
+		return nil, fmt.Errorf("next script id is set but script content is missing for node %s", nextData.NodeId)
 	}
 
-	appendNodeToTree(currentTree, nextData.NodeID)
+	appendNodeToTree(currentTree, nextData.NodeId)
 	child, err := resolveNextChain(c, rulesetID, nextData, nodeList, currentTree, visited, remainingDepth-1)
 	if err != nil {
 		return nil, err
@@ -206,7 +198,7 @@ func loadNodeData(rulesetID string, nodeID string) (DbNodeData, error) {
 			ON ns.id = n.next_script_id
 		WHERE n.ruleset_id = $1 AND n.id = $2
 		LIMIT 1
-	`, rulesetID, nodeID).Scan(&out.NodeID, &out.TemplateID, &out.Name, &out.Description, &out.NextScriptID, &out.Script, &paramsRaw, &typeRaw)
+	`, rulesetID, nodeID).Scan(&out.NodeId, &out.TemplateId, &out.Name, &out.Description, &out.NextScriptID, &out.Script, &paramsRaw, &typeRaw)
 	if err != nil {
 		return out, err
 	}

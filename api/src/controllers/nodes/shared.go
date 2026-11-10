@@ -18,7 +18,8 @@ type NodeTypeResponse struct {
 	Restrictions map[string]any `json:"restrictions"`
 }
 
-type FirstNodeResponse struct {
+// NodeInfos holds what describes a node, shared by every node response.
+type NodeInfos struct {
 	NodeId      string           `json:"node_id"`
 	TemplateId  string           `json:"template_id"`
 	Name        string           `json:"name"`
@@ -37,13 +38,9 @@ type GetNextNodeRequest struct {
 }
 
 type NextNodeResponse struct {
-	NodeId      string            `json:"node_id"`
-	TemplateId  string            `json:"template_id"`
-	Name        string            `json:"name"`
-	Description string            `json:"description"`
-	Final       bool              `json:"final,omitempty"`
-	Type        NodeTypeResponse  `json:"type"`
-	Next        *NextNodeResponse `json:"next,omitempty"`
+	NodeInfos
+	Final bool              `json:"final,omitempty"`
+	Next  *NextNodeResponse `json:"next,omitempty"`
 }
 
 type GetNextNodeResponse struct {
@@ -51,12 +48,8 @@ type GetNextNodeResponse struct {
 }
 
 type DbNodeData struct {
-	NodeID       string
-	TemplateID   string
-	Name         string
-	Description  string
+	NodeInfos
 	NextScriptID sql.NullString
 	Script       sql.NullString
 	Params       map[string]any
-	Type         NodeTypeResponse
 }

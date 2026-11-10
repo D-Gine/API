@@ -465,7 +465,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nodes.FirstNodeResponse"
+                            "$ref": "#/definitions/nodes.NodeInfos"
                         }
                     }
                 }
@@ -1645,26 +1645,6 @@ const docTemplate = `{
                 }
             }
         },
-        "nodes.FirstNodeResponse": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "node_id": {
-                    "type": "string"
-                },
-                "template_id": {
-                    "type": "string"
-                },
-                "type": {
-                    "$ref": "#/definitions/nodes.NodeTypeResponse"
-                }
-            }
-        },
         "nodes.GetNextNodeRequest": {
             "type": "object",
             "properties": {
@@ -1698,6 +1678,26 @@ const docTemplate = `{
                 },
                 "next": {
                     "$ref": "#/definitions/nodes.NextNodeResponse"
+                },
+                "node_id": {
+                    "type": "string"
+                },
+                "template_id": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/nodes.NodeTypeResponse"
+                }
+            }
+        },
+        "nodes.NodeInfos": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
                 },
                 "node_id": {
                     "type": "string"
