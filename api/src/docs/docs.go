@@ -1648,7 +1648,16 @@ const docTemplate = `{
         "nodes.FirstNodeResponse": {
             "type": "object",
             "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
                 "node_id": {
+                    "type": "string"
+                },
+                "template_id": {
                     "type": "string"
                 },
                 "type": {
@@ -1678,13 +1687,22 @@ const docTemplate = `{
         "nodes.NextNodeResponse": {
             "type": "object",
             "properties": {
+                "description": {
+                    "type": "string"
+                },
                 "final": {
                     "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
                 },
                 "next": {
                     "$ref": "#/definitions/nodes.NextNodeResponse"
                 },
                 "node_id": {
+                    "type": "string"
+                },
+                "template_id": {
                     "type": "string"
                 },
                 "type": {

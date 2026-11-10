@@ -69,9 +69,12 @@ func GetNextNode(c *gin.Context) {
 	if !targetData.NextScriptID.Valid || targetData.NextScriptID.String == "" {
 		c.JSON(http.StatusOK, GetNextNodeResponse{
 			Next: &NextNodeResponse{
-				NodeId: targetData.NodeID,
-				Final:  true,
-				Type:   targetData.Type,
+				NodeId:      targetData.NodeID,
+				TemplateId:  targetData.TemplateID,
+				Name:        targetData.Name,
+				Description: targetData.Description,
+				Final:       true,
+				Type:        targetData.Type,
 			},
 		})
 		return
@@ -156,9 +159,12 @@ func resolveNextChain(
 	}
 
 	response := &NextNodeResponse{
-		NodeId: nextData.NodeID,
-		Type:   nextData.Type,
-		Final:  !nextData.NextScriptID.Valid || nextData.NextScriptID.String == "",
+		NodeId:      nextData.NodeID,
+		TemplateId:  nextData.TemplateID,
+		Name:        nextData.Name,
+		Description: nextData.Description,
+		Type:        nextData.Type,
+		Final:       !nextData.NextScriptID.Valid || nextData.NextScriptID.String == "",
 	}
 
 	if response.Final {
@@ -186,6 +192,9 @@ func loadNodeData(rulesetID string, nodeID string) (DbNodeData, error) {
 	err := database.Db.QueryRow(`
 		SELECT
 			n.id::text AS node_id,
+			n.template_id::text AS template_id,
+			sct.name AS name,
+			sct.description AS description,
 			n.next_script_id::text AS next_script_id,
 			ns.script AS script,
 			n.next_script_params::text AS params_json,
@@ -197,7 +206,7 @@ func loadNodeData(rulesetID string, nodeID string) (DbNodeData, error) {
 			ON ns.id = n.next_script_id
 		WHERE n.ruleset_id = $1 AND n.id = $2
 		LIMIT 1
-	`, rulesetID, nodeID).Scan(&out.NodeID, &out.NextScriptID, &out.Script, &paramsRaw, &typeRaw)
+	`, rulesetID, nodeID).Scan(&out.NodeID, &out.TemplateID, &out.Name, &out.Description, &out.NextScriptID, &out.Script, &paramsRaw, &typeRaw)
 	if err != nil {
 		return out, err
 	}

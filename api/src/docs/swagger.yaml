@@ -159,7 +159,13 @@ definitions:
     type: object
   nodes.FirstNodeResponse:
     properties:
+      description:
+        type: string
+      name:
+        type: string
       node_id:
+        type: string
+      template_id:
         type: string
       type:
         $ref: '#/definitions/nodes.NodeTypeResponse'
@@ -178,11 +184,17 @@ definitions:
     type: object
   nodes.NextNodeResponse:
     properties:
+      description:
+        type: string
       final:
         type: boolean
+      name:
+        type: string
       next:
         $ref: '#/definitions/nodes.NextNodeResponse'
       node_id:
+        type: string
+      template_id:
         type: string
       type:
         $ref: '#/definitions/nodes.NodeTypeResponse'

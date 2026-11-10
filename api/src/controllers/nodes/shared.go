@@ -19,8 +19,11 @@ type NodeTypeResponse struct {
 }
 
 type FirstNodeResponse struct {
-	NodeId string           `json:"node_id"`
-	Type   NodeTypeResponse `json:"type"`
+	NodeId      string           `json:"node_id"`
+	TemplateId  string           `json:"template_id"`
+	Name        string           `json:"name"`
+	Description string           `json:"description"`
+	Type        NodeTypeResponse `json:"type"`
 }
 
 type CurrentTree struct {
@@ -34,10 +37,13 @@ type GetNextNodeRequest struct {
 }
 
 type NextNodeResponse struct {
-	NodeId string            `json:"node_id"`
-	Final  bool              `json:"final,omitempty"`
-	Type   NodeTypeResponse  `json:"type"`
-	Next   *NextNodeResponse `json:"next,omitempty"`
+	NodeId      string            `json:"node_id"`
+	TemplateId  string            `json:"template_id"`
+	Name        string            `json:"name"`
+	Description string            `json:"description"`
+	Final       bool              `json:"final,omitempty"`
+	Type        NodeTypeResponse  `json:"type"`
+	Next        *NextNodeResponse `json:"next,omitempty"`
 }
 
 type GetNextNodeResponse struct {
@@ -46,6 +52,9 @@ type GetNextNodeResponse struct {
 
 type DbNodeData struct {
 	NodeID       string
+	TemplateID   string
+	Name         string
+	Description  string
 	NextScriptID sql.NullString
 	Script       sql.NullString
 	Params       map[string]any
