@@ -1,7 +1,7 @@
 services:
   dengine-api:
     container_name: dengine-api-${VERSION}
-    build: ./api_bin
+    build: ./api
     env_file: ".env"
     ports:
       - "${API_PORT}:${API_PORT}"

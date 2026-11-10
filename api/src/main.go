@@ -163,7 +163,7 @@ func main() {
 				type_group.POST("/:id/generate", types.GenerateType)
 				type_group.POST("/generate", types.GenerateTypes)
 			}
-
+			rulesetGroup.GET("/spritesheet_config", rulesets.GetSpritesheet)
 		}
 
 		// rulesetsGroup := api.Group("/rulesets", auth.AuthenticateMiddleware, auth.AdminMiddleware)

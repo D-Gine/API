@@ -725,6 +725,20 @@ paths:
       summary: Nodes - Validate one
       tags:
       - nodes
+  /api/:ruleset_id/spritesheet_config:
+    get:
+      description: get spritesheet config with ruleset id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Rulesets - get spritesheet config
+      tags:
+      - rulesets
   /api/:ruleset_id/type/:id/generate:
     post:
       consumes:

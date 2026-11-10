@@ -618,6 +618,27 @@
                 }
             }
         },
+        "/api/:ruleset_id/spritesheet_config": {
+            "get": {
+                "description": "get spritesheet config with ruleset id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "rulesets"
+                ],
+                "summary": "Rulesets - get spritesheet config",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/api/:ruleset_id/type/:id/generate": {
             "post": {
                 "description": "generate a type value with component map",
