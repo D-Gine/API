@@ -10,6 +10,7 @@ RUN go install github.com/swaggo/swag/cmd/swag@v1.16.4
 RUN go install github.com/cespare/reflex@v0.3.2
 
 COPY go.mod go.sum ./
+COPY src/gdt/go.mod src/gdt/go.sum src/gdt/
 RUN go mod download
 
 COPY Makefile ./

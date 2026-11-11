@@ -1,8 +1,6 @@
 package types
 
 import (
-	"api/src/controllers/shared_types"
-	"api/src/controllers/type_validation"
 	"api/src/database"
 	"encoding/json"
 	"errors"
@@ -10,14 +8,15 @@ import (
 	"net/http"
 	"slices"
 
+	gdt "github.com/D-Gine/Gestionnaire2Type"
+	"github.com/D-Gine/Gestionnaire2Type/validate"
 	"github.com/gin-gonic/gin"
 )
 
 func ValidateTypesValues(
-	ctx *gin.Context,
 	ruleset_id string,
-	values shared_types.TypeValueMap,
-	components shared_types.ComponentMap,
+	values gdt.TypeValueMap,
+	components gdt.ComponentMap,
 ) (int, map[string]string, error) {
 
 	row, err := database.Db.Query(`
@@ -35,7 +34,7 @@ func ValidateTypesValues(
 	}
 	defer database.CloseRows(row)
 
-	error_map, count, err := type_validation.ValidateRowTypes(ctx, &values, &components, row)
+	error_map, count, err := validate.ValidateRowTypes(database.Db, &values, &components, row)
 	if err != nil {
 		return http.StatusInternalServerError, error_map, err
 	}
@@ -69,7 +68,7 @@ func ValidateType(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request: Invalid body"})
 		return
 	}
-	code, error_map, err := ValidateTypesValues(ctx, ruleset_id, map[string]json.RawMessage{id: body.Value}, body.Components)
+	code, error_map, err := ValidateTypesValues(ruleset_id, map[string]json.RawMessage{id: body.Value}, body.Components)
 
 	if err != nil {
 		ctx.JSON(code, gin.H{"error": err.Error()})
@@ -97,7 +96,7 @@ func ValidateTypes(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request: Invalid body"})
 		return
 	}
-	code, error_map, err := ValidateTypesValues(ctx, ruleset_id, body.Values, body.Components)
+	code, error_map, err := ValidateTypesValues(ruleset_id, body.Values, body.Components)
 
 	if err != nil {
 		ctx.JSON(code, gin.H{"error": err.Error()})

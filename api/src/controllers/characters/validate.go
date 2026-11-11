@@ -8,48 +8,16 @@
 package characters
 
 import (
-	"api/src/controllers/shared_types"
-	"api/src/controllers/type_validation"
 	"api/src/database"
-	"database/sql"
-	"encoding/json"
-	"fmt"
 	"net/http"
 
+	"github.com/D-Gine/Gestionnaire2Type/validate"
 	"github.com/gin-gonic/gin"
 )
 
-func ValidateDbCharacter(c *gin.Context, id string) (int, map[string]string, error) {
-	var rawJSON []byte
-	err := database.Db.QueryRow(`
-		SELECT jsonb_object_agg(template_id, value)
-		FROM static_components
-		WHERE entity_id = $1
-	`, id).Scan(&rawJSON)
-	if err != nil && err != sql.ErrNoRows {
-		return http.StatusInternalServerError, nil, err
-	}
-	componentList := make(shared_types.ComponentMap)
-	if len(rawJSON) > 0 {
-		if err := json.Unmarshal(rawJSON, &componentList); err != nil {
-			return http.StatusInternalServerError, nil, fmt.Errorf("failed to parse components: %w", err)
-		}
-	}
-
-	verifyRows, err := database.Db.Query(`
-		SELECT * FROM get_entity_verifications($1)
-	`, id)
+func ValidateDbCharacter(id string) (int, map[string]string, error) {
+	error_map, err := validate.ValidateEntity(database.Db, id)
 	if err != nil {
-		return http.StatusInternalServerError, nil, err
-	}
-	defer database.CloseRows(verifyRows)
-
-	error_map, _, valErr := type_validation.ValidateRowComponents(c, &componentList, verifyRows)
-	if valErr != nil {
-		return http.StatusBadRequest, nil, valErr
-	}
-
-	if err = verifyRows.Err(); err != nil {
 		return http.StatusInternalServerError, nil, err
 	}
 
@@ -73,7 +41,7 @@ func ValidateDbCharacter(c *gin.Context, id string) (int, map[string]string, err
 // @Router /api/:ruleset_id/character/:id/validate [post]
 func ValidateCharacter(c *gin.Context) {
 	id := c.Param("id")
-	code, error_map, err := ValidateDbCharacter(c, id)
+	code, error_map, err := ValidateDbCharacter(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

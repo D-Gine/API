@@ -12,6 +12,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
@@ -42,6 +44,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Setup Go
         uses: actions/setup-go@v5
@@ -96,6 +100,8 @@ jobs:
       HOPPSCOTCH_ENV: 'tests/Hoppscotch/dengine api.json'
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Log in to GHCR
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin

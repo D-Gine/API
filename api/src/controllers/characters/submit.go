@@ -8,20 +8,21 @@
 package characters
 
 import (
-	"api/src/controllers/nodes"
 	"api/src/controllers/shared_types"
-	typegeneration "api/src/controllers/type_generation"
 	"api/src/database"
 	"encoding/json"
 	"maps"
 	"net/http"
 	"slices"
 
+	gdt "github.com/D-Gine/Gestionnaire2Type"
+	typegeneration "github.com/D-Gine/Gestionnaire2Type/type_generation"
+	"github.com/D-Gine/Gestionnaire2Type/validate"
 	"github.com/gin-gonic/gin"
 )
 
 type GenerateDynamicInfos struct {
-	StaticValues shared_types.ComponentMap                 `json:"static_values"`
+	StaticValues gdt.ComponentMap                          `json:"static_values"`
 	ToGenerate   map[string]typegeneration.GenerationInfos `json:"to_generate"`
 }
 
@@ -38,13 +39,13 @@ type GenerateDynamicInfos struct {
 // @Router /api/:ruleset_id/character/:id/submit [put]
 func SubmitCharacter(c *gin.Context) {
 	id := c.Param("id")
-	var body shared_types.NodeList
+	var body validate.NodeList
 
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON body"})
 		return
 	}
-	error_list, err := nodes.ValidateNodesTypes(c, &body, slices.Collect(maps.Keys(body.NodeValues)), c.Param("ruleset_id"))
+	error_list, err := validate.ValidateNodesTypes(database.Db, body.NodeValues, slices.Collect(maps.Keys(body.NodeValues)), c.Param("ruleset_id"))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -71,11 +72,11 @@ func SubmitCharacter(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	dynamic_map := make(shared_types.ComponentMap)
+	dynamic_map := make(gdt.ComponentMap)
 	for id, infos := range res.ToGenerate {
-		value, code, err := typegeneration.GenerateKnownedType(c, res.StaticValues, infos)
+		value, err := typegeneration.GenerateKnownedType(database.Db, res.StaticValues, infos)
 		if err != nil {
-			c.JSON(code, gin.H{"error": err.Error()})
+			c.JSON(shared_types.GenerationErrorCode(err), gin.H{"error": err.Error()})
 			return
 		}
 		dynamic_map[id] = value

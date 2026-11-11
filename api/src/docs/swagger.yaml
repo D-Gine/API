@@ -109,14 +109,14 @@ definitions:
   components.ValidateValue:
     properties:
       components:
-        $ref: '#/definitions/shared_types.ComponentMap'
+        $ref: '#/definitions/gdt.ComponentMap'
       value:
         type: object
     type: object
   components.ValidateValues:
     properties:
       components:
-        $ref: '#/definitions/shared_types.ComponentMap'
+        $ref: '#/definitions/gdt.ComponentMap'
       values:
         type: object
     type: object
@@ -149,6 +149,17 @@ definitions:
         type: string
       name:
         type: string
+    type: object
+  gdt.ComponentMap:
+    type: object
+  gdt.EnumRestrictions:
+    properties:
+      optional:
+        type: boolean
+      tags:
+        items:
+          type: string
+        type: array
     type: object
   nodes.CurrentTree:
     properties:
@@ -226,39 +237,14 @@ definitions:
       name:
         type: string
     type: object
-  shared_types.ComponentMap:
-    type: object
-  shared_types.EnumRestrictions:
-    properties:
-      optional:
-        type: boolean
-      tags:
-        items:
-          type: string
-        type: array
-    type: object
   shared_types.GenerationMultipleBody:
     properties:
       components:
-        $ref: '#/definitions/shared_types.ComponentMap'
+        $ref: '#/definitions/gdt.ComponentMap'
       ids:
         items:
           type: string
         type: array
-    type: object
-  shared_types.MultipleNodeValidation:
-    properties:
-      node_ids:
-        items:
-          type: string
-        type: array
-      node_values:
-        type: object
-    type: object
-  shared_types.NodeList:
-    properties:
-      node_values:
-        type: object
     type: object
   structs.PostResponse:
     properties:
@@ -268,14 +254,14 @@ definitions:
   types.ValidateValue:
     properties:
       components:
-        $ref: '#/definitions/shared_types.ComponentMap'
+        $ref: '#/definitions/gdt.ComponentMap'
       value:
         type: object
     type: object
   types.ValidateValues:
     properties:
       components:
-        $ref: '#/definitions/shared_types.ComponentMap'
+        $ref: '#/definitions/gdt.ComponentMap'
       values:
         type: object
     type: object
@@ -313,6 +299,20 @@ definitions:
         type: string
       role:
         type: string
+    type: object
+  validate.MultipleNodeValidation:
+    properties:
+      node_ids:
+        items:
+          type: string
+        type: array
+      node_values:
+        type: object
+    type: object
+  validate.NodeList:
+    properties:
+      node_values:
+        type: object
     type: object
 externalDocs:
   url: https://github.com/D-Gine/API/blob/dev/README.md
@@ -497,7 +497,7 @@ paths:
         name: creds
         required: true
         schema:
-          $ref: '#/definitions/shared_types.ComponentMap'
+          $ref: '#/definitions/gdt.ComponentMap'
       produces:
       - application/json
       responses:
@@ -598,7 +598,7 @@ paths:
         name: creds
         required: true
         schema:
-          $ref: '#/definitions/shared_types.EnumRestrictions'
+          $ref: '#/definitions/gdt.EnumRestrictions'
       produces:
       - application/json
       responses:
@@ -676,7 +676,7 @@ paths:
         name: creds
         required: true
         schema:
-          $ref: '#/definitions/shared_types.MultipleNodeValidation'
+          $ref: '#/definitions/validate.MultipleNodeValidation'
       produces:
       - application/json
       responses:
@@ -726,7 +726,7 @@ paths:
         name: creds
         required: true
         schema:
-          $ref: '#/definitions/shared_types.NodeList'
+          $ref: '#/definitions/validate.NodeList'
       produces:
       - application/json
       responses:
@@ -763,7 +763,7 @@ paths:
         name: creds
         required: true
         schema:
-          $ref: '#/definitions/shared_types.ComponentMap'
+          $ref: '#/definitions/gdt.ComponentMap'
       produces:
       - application/json
       responses:

@@ -1,15 +1,15 @@
 package nodes
 
 import (
-	"api/src/controllers/shared_types"
 	"api/src/database"
-	"api/src/internal/scripting"
 	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 
+	"github.com/D-Gine/Gestionnaire2Type/scripting"
+	"github.com/D-Gine/Gestionnaire2Type/validate"
 	"github.com/gin-gonic/gin"
 )
 
@@ -113,7 +113,7 @@ func resolveNextChain(
 	c *gin.Context,
 	rulesetID string,
 	current DbNodeData,
-	nodeList shared_types.NodeList,
+	nodeList validate.NodeList,
 	currentTree map[string]any,
 	visited map[string]struct{},
 	remainingDepth int,
@@ -123,7 +123,6 @@ func resolveNextChain(
 	}
 
 	rawResult, err := scripting.ScriptEngine.Eval(
-		c.Request.Context(),
 		current.Script.String,
 		"get_next_node",
 		[]any{nodeList.NodeValues, currentTree, current.NodeId, current.Params},

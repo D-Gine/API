@@ -19,7 +19,7 @@ NC=$'\e[0m'
 export DB_HOST=127.0.0.1
 DB_CONTAINER=dengine-db-test
 
-export GOTOOLCHAIN="${GOTOOLCHAIN:-go1.27.1}"
+export GOTOOLCHAIN="${GOTOOLCHAIN:-go1.27.3}"
 export PATH="$(go env GOPATH)/bin:$PATH"
 
 # '--reset' flag to reset installations
@@ -43,6 +43,8 @@ cleanup() {
 }
 trap cleanup EXIT
 
+FAILED_STEPS=()
+
 run() {
   local title="$1" log="$2"
   shift 2
@@ -51,6 +53,7 @@ run() {
     echo "${G}DONE${NC}"
   else
     echo "${R}FAILED${NC} (see tests/test_outputs/$log)"
+    FAILED_STEPS+=("$title")
   fi
   echo ""
 }
@@ -70,7 +73,7 @@ docker run -d --name "$DB_CONTAINER" \
   -e POSTGRES_USER="$DB_USER" \
   -e POSTGRES_PASSWORD="$DB_PWD" \
   -p "$DB_PORT:$DB_PORT" \
-  --health-cmd="pg_isready -U $DB_USER -d $DB_NAME" \
+  --health-cmd="pg_isready -h 127.0.0.1 -p $DB_PORT -U $DB_USER -d $DB_NAME" \
   --health-interval=2s --health-timeout=5s --health-retries=30 \
   ghcr.io/d-gine/database-test:latest >/dev/null || { echo "${R}FAILED${NC}"; exit 1; }
 
@@ -81,7 +84,7 @@ done
 echo "${G}DONE${NC}"
 echo ""
 
-run "Build API" build_api.log bash -c "cd '$API_DIR' && make build"
+run "Build API" build_api.log bash -c "cd '$API_DIR' && make build SWAG='go run github.com/swaggo/swag/cmd/swag@v1.16.4'"
 
 echo "RUN Start API"
 (cd "$API_DIR" && ./api_bin > "$OUT_DIR/api.log" 2>&1) &
@@ -97,4 +100,8 @@ run "Hoppscotch" hoppscotch.log npx -y @hoppscotch/cli@latest test \
   "$ROOT_DIR/tests/Hoppscotch/D-Gine API.json" \
   -e "$ROOT_DIR/tests/Hoppscotch/dengine api.json"
 
-echo "ALL TESTS PASSED"
+if [ ${#FAILED_STEPS[@]} -ne 0 ]; then
+  echo "${R}FAILED STEPS:${NC} ${FAILED_STEPS[*]}"
+  exit 1
+fi
+echo "${G}ALL TESTS PASSED${NC}"

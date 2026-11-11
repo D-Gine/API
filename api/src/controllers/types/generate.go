@@ -2,19 +2,19 @@ package types
 
 import (
 	"api/src/controllers/shared_types"
-	typegeneration "api/src/controllers/type_generation"
 	"api/src/database"
 	"net/http"
 
+	gdt "github.com/D-Gine/Gestionnaire2Type"
+	typegeneration "github.com/D-Gine/Gestionnaire2Type/type_generation"
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
 )
 
 func generateTypesByIds(
-	ctx *gin.Context,
 	toGenerate []string,
-	components shared_types.ComponentMap,
-) (shared_types.TypeValueMap, int, error) {
+	components gdt.ComponentMap,
+) (gdt.TypeValueMap, int, error) {
 	rows, err := database.Db.Query(`
 			SELECT
 				to_generate.id,
@@ -29,7 +29,8 @@ func generateTypesByIds(
 	}
 	defer database.CloseRows(rows)
 
-	return typegeneration.GenerateRowTypes(ctx, components, rows)
+	generated, err := typegeneration.GenerateRowTypes(database.Db, components, rows)
+	return generated, shared_types.GenerationErrorCode(err), err
 }
 
 // @BasePath /api/:ruleset_id/type/:id/generate
@@ -40,19 +41,19 @@ func generateTypesByIds(
 // @Tags types
 // @Accept json
 // @Produce json
-// @Param creds body shared_types.ComponentMap true "ruleset related informations that will be later needed for the login process"
+// @Param creds body gdt.ComponentMap true "ruleset related informations that will be later needed for the login process"
 // @Success 200 {object} map[string]object "generated components"
 // @Router /api/:ruleset_id/type/:id/generate [post]
 func GenerateType(ctx *gin.Context) {
 	// ruleset_id := ctx.Param("ruleset_id")
 	id := ctx.Param("id")
 
-	var body shared_types.ComponentMap
+	var body gdt.ComponentMap
 	if err := ctx.ShouldBindBodyWithJSON(&body); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request: Invalid body"})
 		return
 	}
-	generated, code, err := generateTypesByIds(ctx, []string{id}, body)
+	generated, code, err := generateTypesByIds([]string{id}, body)
 
 	if err != nil {
 		ctx.JSON(code, gin.H{"error": err.Error()})
@@ -79,7 +80,7 @@ func GenerateTypes(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request: Invalid body"})
 		return
 	}
-	generated, code, err := generateTypesByIds(ctx, body.Ids, body.Components)
+	generated, code, err := generateTypesByIds(body.Ids, body.Components)
 
 	if err != nil {
 		ctx.JSON(code, gin.H{"error": err.Error()})
