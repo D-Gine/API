@@ -16,7 +16,7 @@ import (
 // @Tags nodes
 // @Param ruleset_id path string true "id of the ruleset"
 // @Produce json
-// @Success 200 {object} FirstNodeResponse
+// @Success 200 {object} NodeInfos
 // @Router /api/:ruleset_id/first_node [get]
 func ReadRulesetFirstNode(c *gin.Context) {
 	rulesetID := c.Param("ruleset_id")
@@ -30,6 +30,9 @@ func ReadRulesetFirstNode(c *gin.Context) {
 	err := database.Db.QueryRow(`
 		SELECT jsonb_build_object(
 			'node_id', fn.node_id::text,
+			'template_id', n.template_id::text,
+			'name', sct.name,
+			'description', sct.description,
 			'type', COALESCE(get_base_type_json(sct.type_id), '{}'::jsonb)
 		)::text
 		FROM public.first_nodes fn
